@@ -1,39 +1,48 @@
 # GHP Connector
 
-Une bibliothèque Node.js en ligne de commande pour interagir avec les Issues et Projects GitHub.
+A Node.js command line library for interacting with GitHub Issues and Projects.
 
-## 🚀 Statut du projet
+## 🚀 Project Status
 
-Ce projet est en développement actif. La version actuelle est `0.0.1`.
+This project is in active development. The current version is `0.0.1`.
 
-## 📚 À propos
+## 📚 About
 
-GHP Connector est une bibliothèque open-source qui permet d'interagir facilement avec les Issues et Projects GitHub directement depuis la ligne de commande. Écrite en TypeScript, elle offre une alternative simple et lisible aux commandes curl pour les utilisateurs et les agents IA.
+GHP Connector is an open-source library that allows easy interaction with GitHub Issues and Projects directly from the command line. Written in TypeScript, it offers a simple and readable alternative to curl commands for users and AI agents.
 
-## ✨ Fonctionnalités
+## ✨ Features
 
-- Gestion complète des Issues GitHub (création, lecture, mise à jour, suppression)
-- Formatage convivial des résultats pour l'affichage dans le terminal
-- Interface simple et intuitive adaptée à l'utilisation par des humains et des agents IA
+- Complete GitHub Issues management (creation, reading, updating, deletion)
+- User-friendly formatting of results for terminal display
+- Simple and intuitive interface suitable for use by humans and AI agents
 
 ## 🛠️ Installation
 
 ```bash
-# Installation globale
+# Global installation
 npm install -g ghp-connector
 
-# Installation locale
+# Local installation
 npm install --save-dev ghp-connector
 ```
 
+## 🗓️ Roadmap
+
+The project development is organized around the following milestones:
+
+1. **Initial Setup**: Project foundation, architecture, and configuration
+2. **Issues CRUD**: Basic operations for managing GitHub Issues
+
+For more details on our development roadmap, check the [milestones documentation](./docs/milestones.md).
+
 ## 📖 Documentation
 
-Pour plus de détails sur l'utilisation et les fonctionnalités, consultez le [dossier de documentation](./docs).
+For more details on usage and features, see the [documentation folder](./docs).
 
-## 🤝 Contribution
+## 🤝 Contributing
 
-Les contributions sont les bienvenues ! N'hésitez pas à ouvrir une issue ou une pull request.
+Contributions are welcome! Feel free to open an issue or submit a pull request.
 
-## 📄 Licence
+## 📄 License
 
-Ce projet est sous licence MIT - voir le fichier [LICENSE](./LICENSE) pour plus de détails. 
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details. 

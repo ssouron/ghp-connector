@@ -1,0 +1,62 @@
+name: 📚 Documentation
+description: Improve or add documentation
+title: "[DOCS] "
+labels: ["documentation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for contributing to documentation improvements!
+  
+  - type: dropdown
+    id: doc-type
+    attributes:
+      label: Documentation Type
+      description: What type of documentation do you want to improve or add?
+      options:
+        - README
+        - User Guides
+        - Command Reference
+        - Examples
+        - Other (specify in description)
+    validations:
+      required: true
+  
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe what is missing or what needs to be improved in the documentation
+      placeholder: The information about X is not clear...
+    validations:
+      required: true
+  
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: If you have a specific proposal, please detail it here
+      placeholder: I suggest adding a section that explains...
+    validations:
+      required: false
+  
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: What is the priority of this documentation update?
+      options:
+        - Low
+        - Medium
+        - High
+    validations:
+      required: true
+  
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: Additional Information
+      description: Any additional context or information regarding this request
+      placeholder: Links to references, examples of similar documentation, etc.
+    validations:
+      required: false 

@@ -1,0 +1,75 @@
+name: 🏗️ Architecture / Refactoring
+description: Propose architecture changes or refactoring
+title: "[ARCH] "
+labels: ["architecture", "refactoring"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for proposing architecture or refactoring improvements!
+  
+  - type: dropdown
+    id: change-type
+    attributes:
+      label: Change Type
+      description: What type of architectural change are you proposing?
+      options:
+        - Refactoring (improving existing code)
+        - New Architecture (structural change)
+        - Performance (optimization)
+        - Technical Debt (reduction)
+        - Other (specify in description)
+    validations:
+      required: true
+  
+  - type: textarea
+    id: current-state
+    attributes:
+      label: Current State
+      description: Describe the current state and why it's problematic
+      placeholder: The current architecture has the following issues...
+    validations:
+      required: true
+  
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: Describe your improvement proposal
+      placeholder: I propose to restructure X in the following way...
+    validations:
+      required: true
+  
+  - type: textarea
+    id: benefits
+    attributes:
+      label: Benefits
+      description: What are the expected benefits of this change?
+      placeholder: |
+        - Improved maintainability
+        - Reduced complexity
+        - Better performance
+    validations:
+      required: true
+  
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks and Considerations
+      description: Are there any risks or challenges to consider?
+      placeholder: This change could impact...
+    validations:
+      required: false
+  
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: What is the priority of this change?
+      options:
+        - Low
+        - Medium
+        - High
+        - Critical
+    validations:
+      required: true 

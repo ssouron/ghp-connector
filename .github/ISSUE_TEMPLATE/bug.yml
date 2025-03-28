@@ -1,0 +1,81 @@
+name: 🐛 Bug Report
+description: Report a bug or an issue
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to fill out this bug report!
+  
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of the bug encountered
+      placeholder: What happened?
+    validations:
+      required: true
+  
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this behavior?
+      placeholder: |
+        1. Run the command '...'
+        2. Enter '...'
+        3. Observe the following error...
+    validations:
+      required: true
+  
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: A clear and concise description of what you expected to happen
+      placeholder: What should have happened...
+    validations:
+      required: true
+  
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs and Error Messages
+      description: Copy and paste any relevant logs or error messages
+      render: shell
+    validations:
+      required: false
+  
+  - type: dropdown
+    id: version
+    attributes:
+      label: Version
+      description: Which version of GHP Connector are you using?
+      options:
+        - 0.0.1 (dev)
+        - Other (specify in additional information)
+    validations:
+      required: true
+  
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: What is the priority of this bug?
+      options:
+        - Low
+        - Medium
+        - High
+        - Critical (blocking)
+    validations:
+      required: true
+  
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: Additional Information
+      description: Any additional context or information regarding this bug
+      placeholder: Environment, Node.js version, etc.
+    validations:
+      required: false 

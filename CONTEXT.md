@@ -1,88 +1,88 @@
 # CONTEXT - GHP Connector
 
-## Présentation du projet
-GHP Connector est une bibliothèque Node.js open-source pour interagir avec les Issues et Projects GitHub via la ligne de commande. Elle est écrite en TypeScript, compilée en JavaScript et publiée comme package npm.
+## Project Overview
+GHP Connector is an open-source Node.js library for interacting with GitHub Issues and Projects via the command line. It is written in TypeScript, compiled to JavaScript, and published as an npm package.
 
-## État actuel du projet
-- Initialisation du projet npm (version 0.0.1)
-- Licence MIT
-- Structure de base du projet mise en place
-- Spécifications initiales documentées
+## Current Project Status
+- npm project initialization (version 0.0.1)
+- MIT License
+- Basic project structure in place
+- Initial specifications documented
 
-## Objectifs principaux
-- Fournir une interface en ligne de commande simple pour interagir avec GitHub
-- Alternative aux commandes curl pour les utilisateurs et agents IA
-- Focus initial sur les fonctionnalités liées aux issues GitHub
+## Main Objectives
+- Provide a simple command-line interface to interact with GitHub
+- Alternative to curl commands for users and AI agents
+- Initial focus on GitHub issues-related functionalities
 
-## Spécifications techniques importantes
-- Le projet utilise TypeScript
-- Installable comme package npm (globalement ou localement)
-- Les paramètres par défaut (repo, projet) sont fournis par un fichier de configuration
-- Les secrets (token GitHub, API keys) sont fournis par variables d'environnement
-- Pas besoin de spécifier le repo dans chaque commande (--repo)
+## Important Technical Specifications
+- Project uses TypeScript
+- Installable as an npm package (globally or locally)
+- Default parameters (repo, project) are provided by a configuration file
+- Secrets (GitHub token, API keys) are provided via environment variables
+- No need to specify the repo in each command (--repo)
 
-## Structure du projet
-- `/src` - Code source TypeScript
-- `/dist` - Code JavaScript compilé (généré)
+## Project Structure
+- `/src` - TypeScript source code
+- `/dist` - Compiled JavaScript code (generated)
 - `/docs` - Documentation
-- `/bin` - Scripts exécutables
+- `/bin` - Executable scripts
 
 ## Configuration
-- Configuration via fichier local (ex: `.ghprc.json`)
-- Variables d'environnement pour les secrets (GITHUB_TOKEN, GITHUB_API_KEY)
+- Configuration via local file (e.g. `.ghprc.json`)
+- Environment variables for secrets (GITHUB_TOKEN, GITHUB_API_KEY)
 
-## Commandes prévues
+## Planned Commands
 Format: `ghp [resource] [action] [options]`
 
-Exemples:
+Examples:
 ```
 ghp issue list
-ghp issue create --title="Nouveau bug" --body="Description du bug"
+ghp issue create --title="New bug" --body="Bug description"
 ghp issue update --id=123 --status="closed"
 ```
 
-## Notes pour le développement
-- Ne pas réimplémenter d'arguments --repo dans les commandes
-- Maintenir une interface simple et intuitive
-- Prévoir des sorties formatées pour terminal et intégration avec d'autres outils
+## Development Notes
+- Do not reimplement --repo arguments in commands
+- Maintain a simple and intuitive interface
+- Plan for formatted outputs for terminal and integration with other tools
 
-## Règles de langage et de code
-- **Interactions humain/assistant** : principalement en français (parfois en anglais)
-- **Code et commentaires** : exclusivement en anglais
-- **Documentation technique** : exclusivement en anglais
-- **Termes techniques** : conserver les termes anglais d'usage dans le métier
-- **Noms de branches, tags et commits** : en anglais
-- **Style d'interaction** : tutoiement dans les conversations en français
-- **Documentation** : tous les documents doivent être liés depuis README.md ou CONTEXT.md (pas de documents orphelins)
-- **Mise à jour documentation** : vérifier et mettre à jour la documentation avant chaque merge sur main
+## Language and Code Rules
+- **Human/Assistant interactions**: primarily in French (sometimes in English)
+- **Code and comments**: exclusively in English
+- **Technical documentation**: exclusively in English
+- **Technical terms**: keep common English terms used in the industry
+- **Branch, tag, and commit names**: in English
+- **Interaction style**: "tu" form in French conversations
+- **Documentation**: all documents must be linked from README.md or CONTEXT.md (no orphaned documents)
+- **Documentation updates**: check and update documentation before each merge to main
 
-## Standards de commits et branches
-- **Format de commit** : Conventional Commits (https://www.conventionalcommits.org/)
+## Commit and Branch Standards
+- **Commit format**: Conventional Commits (https://www.conventionalcommits.org/)
   - Structure: `<type>[optional scope]: <description>`
-  - Types principaux: feat, fix, docs, style, refactor, test, chore
-  - Exemple: `feat(issues): add list command implementation`
-- **Noms de branches**:
+  - Main types: feat, fix, docs, style, refactor, test, chore
+  - Example: `feat(issues): add list command implementation`
+- **Branch names**:
   - Features: `feature/short-description`
-  - Corrections: `fix/issue-description`
+  - Fixes: `fix/issue-description`
   - Documentation: `docs/what-is-changing`
   - Refactoring: `refactor/component-name`
 
-## Méthodologie de travail
-- Validation régulière pendant les implémentations complexes
-- Explication et validation des solutions avant implémentation
-- Pas de Pull Requests (développeur unique) - procéder par merges avec commits de merge
-- Taille de review raisonnable
+## Work Methodology
+- Regular validation during complex implementations
+- Explanation and validation of solutions before implementation
+- No Pull Requests (single developer) - proceed with merges with merge commits
+- Reasonable review size
 
-## Prochaines étapes
-- Implémenter les fonctionnalités de base pour la gestion des issues
-- Mettre en place les mécanismes de configuration
-- Développer l'interface CLI
+## Next Steps
+- Implement core functionalities for issue management
+- Set up configuration mechanisms
+- Develop CLI interface
 
-## Points à discuter
-- Structure détaillée des commandes
-- Format des données en entrée/sortie
-- Stratégie de test
+## Discussion Points
+- Detailed command structure
+- Input/output data format
+- Testing strategy
 
-## Documentation du projet
-- [README.md](./README.md) - Documentation principale du projet
-- [docs/initial-specs.md](./docs/initial-specs.md) - Spécifications initiales 
+## Project Documentation
+- [README.md](./README.md) - Main project documentation
+- [docs/initial-specs.md](./docs/initial-specs.md) - Initial specifications 

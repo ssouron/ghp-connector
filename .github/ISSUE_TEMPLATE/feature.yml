@@ -1,0 +1,52 @@
+name: 🚀 New Feature
+description: Propose a new feature for GHP Connector
+title: "[FEAT] "
+labels: ["feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to fill out this form!
+  
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of the desired feature
+      placeholder: As a user, I want to be able to...
+    validations:
+      required: true
+  
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: List of criteria that must be met to consider this feature complete
+      placeholder: |
+        - [ ] Command X accepts parameter Y
+        - [ ] Output format complies with Z
+        - [ ] Errors are handled correctly
+    validations:
+      required: true
+  
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: What is the priority of this feature?
+      options:
+        - Low
+        - Medium
+        - High
+        - Critical
+    validations:
+      required: true
+  
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: Additional Information
+      description: Any additional context or information regarding this feature
+      placeholder: Usage examples, documentation links, etc.
+    validations:
+      required: false 
