@@ -78,6 +78,7 @@ For more details on usage and features, see the documentation files:
 - [CLI Architecture](./docs/cli-architecture.md)
 - [Architecture Diagram](./docs/architecture-diagram.md)
 - [Configuration Guide](./docs/configuration.md)
+- [Code Coverage Reports](./docs/testing/code-coverage.md)
 
 ## 🤝 Contributing
 

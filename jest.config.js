@@ -19,6 +19,38 @@ module.exports = {
     '!src/**/test-helpers/**'
   ],
   coverageDirectory: 'coverage',
+  coverageReporters: [
+    'text',
+    'lcov',
+    'clover',
+    'html'
+  ],
+  coverageThreshold: {
+    global: {
+      branches: 0,
+      functions: 0,
+      lines: 0,
+      statements: 0
+    },
+    './src/lib/config/index.ts': {
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: 80
+    },
+    './src/lib/errors/index.ts': {
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: 80
+    },
+    './src/lib/formatters/index.ts': {
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: 80
+    }
+  },
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   verbose: false,
   bail: 1,
