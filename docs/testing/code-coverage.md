@@ -1,42 +1,42 @@
-# Rapports de couverture de code
+# Code Coverage Reports
 
-Ce document explique comment utiliser et interpréter les rapports de couverture de code dans GHP Connector.
+This document explains how to use and interpret code coverage reports in GHP Connector.
 
-## Présentation
+## Overview
 
-La couverture de code est une métrique qui mesure le pourcentage de code source exécuté pendant les tests. C'est un indicateur important pour identifier les parties du code qui ne sont pas testées ou insuffisamment testées.
+Code coverage is a metric that measures the percentage of source code executed during tests. It's an important indicator for identifying parts of the code that are not tested or insufficiently tested.
 
-GHP Connector exige une couverture minimale de 80% pour les modules testés (actuellement les modules dans `src/lib/config`, `src/lib/errors` et `src/lib/formatters`), ce qui signifie que :
-- 80% des lignes de code doivent être exécutées pendant les tests
-- 80% des branches conditionnelles doivent être testées
-- 80% des fonctions doivent être couvertes
-- 80% des instructions doivent être couvertes
+GHP Connector requires a minimum coverage of 80% for tested modules (currently the modules in `src/lib/config`, `src/lib/errors`, and `src/lib/formatters`), which means that:
+- 80% of code lines must be executed during tests
+- 80% of conditional branches must be tested
+- 80% of functions must be covered
+- 80% of statements must be covered
 
-À mesure que de nouveaux modules sont développés et testés, ils seront ajoutés à la liste des modules soumis au seuil de couverture de 80%.
+As new modules are developed and tested, they will be added to the list of modules subject to the 80% coverage threshold.
 
-## Génération des rapports de couverture
+## Generating Coverage Reports
 
-Pour générer un rapport de couverture de code, utilisez la commande :
+To generate a code coverage report, use the command:
 
 ```bash
 npm run test:coverage
 ```
 
-Cette commande exécute les tests et génère un rapport détaillé dans le dossier `coverage/`.
+This command runs the tests and generates a detailed report in the `coverage/` folder.
 
-Pour vérifier si votre code respecte les seuils minimaux de couverture (80%), utilisez :
+To check if your code meets the minimum coverage thresholds (80%), use:
 
 ```bash
 npm run test:coverage:check
 ```
 
-Cette commande échouera si la couverture est inférieure aux seuils définis.
+This command will fail if the coverage is below the defined thresholds.
 
-## Interprétation des rapports
+## Interpreting Reports
 
-### Rapport dans le terminal
+### Terminal Report
 
-Le rapport affiché dans le terminal donne un aperçu rapide de la couverture :
+The report displayed in the terminal gives a quick overview of the coverage:
 
 ```
 --------------|---------|----------|---------|---------|-------------------
@@ -51,41 +51,41 @@ All files     |   85.71 |    83.33 |   84.62 |   85.71 |
 --------------|---------|----------|---------|---------|-------------------
 ```
 
-Les colonnes indiquent :
-- **% Stmts** : Pourcentage d'instructions couvertes
-- **% Branch** : Pourcentage de branches conditionnelles couvertes
-- **% Funcs** : Pourcentage de fonctions couvertes
-- **% Lines** : Pourcentage de lignes couvertes
-- **Uncovered Line #s** : Numéros des lignes non couvertes
+The columns indicate:
+- **% Stmts**: Percentage of statements covered
+- **% Branch**: Percentage of conditional branches covered
+- **% Funcs**: Percentage of functions covered
+- **% Lines**: Percentage of lines covered
+- **Uncovered Line #s**: Numbers of lines not covered
 
-### Rapport HTML
+### HTML Report
 
-Un rapport HTML plus détaillé est disponible dans `coverage/lcov-report/index.html`. Pour le consulter :
+A more detailed HTML report is available in `coverage/lcov-report/index.html`. To view it:
 
-1. Ouvrez ce fichier dans votre navigateur
-2. Naviguez dans l'arborescence des fichiers
-3. Les lignes en vert sont couvertes, les lignes en rouge ne le sont pas
+1. Open this file in your browser
+2. Navigate through the file tree
+3. Lines in green are covered, lines in red are not
 
-## Amélioration de la couverture
+## Improving Coverage
 
-Pour améliorer la couverture de code :
+To improve code coverage:
 
-1. **Identifiez les zones non couvertes** : Consultez les rapports pour identifier les parties du code non testées
-2. **Ajoutez des tests ciblés** : Écrivez des tests spécifiquement pour les fonctionnalités non couvertes
-3. **Testez les cas limites** : Assurez-vous de tester les conditions aux limites et les chemins d'erreur
-4. **Vérifiez les branches conditionnelles** : Testez toutes les branches des instructions if/else et des opérateurs ternaires
+1. **Identify uncovered areas**: Check the reports to identify untested parts of the code
+2. **Add targeted tests**: Write tests specifically for uncovered features
+3. **Test edge cases**: Make sure to test boundary conditions and error paths
+4. **Check conditional branches**: Test all branches of if/else statements and ternary operators
 
-## Intégration CI/CD
+## CI/CD Integration
 
-La vérification de la couverture est intégrée au pipeline CI/CD :
+Coverage checking is integrated into the CI/CD pipeline:
 
-1. Chaque pull request et push sur la branche principale déclenchent des tests
-2. La couverture de code est vérifiée par rapport aux seuils définis
-3. Les rapports de couverture sont générés et disponibles comme artefacts
+1. Each pull request and push to the main branch triggers tests
+2. Code coverage is checked against the defined thresholds
+3. Coverage reports are generated and available as artifacts
 
-## Bonnes pratiques
+## Best Practices
 
-- Ne baissez pas les seuils de couverture sans discussion préalable
-- Écrivez les tests en même temps que le code
-- Prioritisez les tests sur la logique métier critique
-- Ne cherchez pas à atteindre 100% de couverture à tout prix, certaines parties du code peuvent être difficiles à tester avec un bon rapport coût/bénéfice 
+- Don't lower coverage thresholds without prior discussion
+- Write tests at the same time as the code
+- Prioritize tests on critical business logic
+- Don't aim for 100% coverage at all costs; some parts of the code may be difficult to test with a good cost/benefit ratio 

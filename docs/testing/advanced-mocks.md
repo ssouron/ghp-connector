@@ -1,74 +1,74 @@
-# Rapport d'implémentation : Ticket #21 - Advanced mocks for external dependencies
+# Implementation Report: Ticket #21 - Advanced mocks for external dependencies
 
-## Résumé des changements
+## Summary of Changes
 
-Nous avons mis en place des mocks avancés pour les dépendances externes afin de permettre des tests isolés et fiables. Ce travail était essentiel pour garantir que les tests unitaires ne dépendent pas de services externes ou de configurations locales.
+We have implemented advanced mocks for external dependencies to enable isolated and reliable tests. This work was essential to ensure that unit tests do not depend on external services or local configurations.
 
-## Dépendances installées
+## Installed Dependencies
 
-- `jest-mock-extended` : Bibliothèque permettant de créer des mocks typés avec TypeScript
+- `jest-mock-extended`: Library for creating typed mocks with TypeScript
 
-## Structure implémentée
+## Implemented Structure
 
 ```
 src/lib/test-helpers/
-├── mocks/                      # Dossier contenant les mocks
-│   ├── fs-mock.ts              # Mocks pour le système de fichiers
-│   ├── octokit-mock.ts         # Mocks pour l'API GitHub
-│   ├── env-mock.ts             # Mocks pour les variables d'environnement
-│   └── index.ts                # Point d'entrée des mocks
-├── index.ts                    # Point d'entrée des test helpers
-├── mock-github.ts              # Générateurs de données GitHub pour les tests
-├── test-utils.ts               # Utilitaires généraux pour les tests
-├── mocks.spec.ts               # Tests des mocks
-└── README.md                   # Documentation des test helpers
+├── mocks/                      # Folder containing mocks
+│   ├── fs-mock.ts              # Mocks for the file system
+│   ├── octokit-mock.ts         # Mocks for the GitHub API
+│   ├── env-mock.ts             # Mocks for environment variables
+│   └── index.ts                # Entry point for mocks
+├── index.ts                    # Entry point for test helpers
+├── mock-github.ts              # GitHub data generators for tests
+├── test-utils.ts               # General test utilities
+├── mocks.spec.ts               # Tests for mocks
+└── README.md                   # Documentation for test helpers
 ```
 
-## Mocks implémentés
+## Implemented Mocks
 
-### 1. Mocks pour le système de fichiers (`fs-mock.ts`)
+### 1. File System Mocks (`fs-mock.ts`)
 
-- **`mockFs()`** : Crée un mock simple du module fs avec des comportements par défaut
-- **`mockVirtualFs()`** : Crée un système de fichiers virtuel en mémoire pour les tests
+- **`mockFs()`**: Creates a simple mock of the fs module with default behaviors
+- **`mockVirtualFs()`**: Creates an in-memory virtual file system for tests
 
-Ces mocks permettent d'éviter les accès réels au système de fichiers lors des tests, ce qui les rend plus stables et indépendants de l'environnement d'exécution.
+These mocks avoid real file system access during tests, making them more stable and independent of the execution environment.
 
-### 2. Mocks pour l'API GitHub (`octokit-mock.ts`)
+### 2. GitHub API Mocks (`octokit-mock.ts`)
 
-- **`mockOctokit()`** : Crée un mock de l'API Octokit pour les tests
-- **`mockGitHubClient()`** : Crée un mock de notre wrapper GitHubClient
+- **`mockOctokit()`**: Creates a mock of the Octokit API for tests
+- **`mockGitHubClient()`**: Creates a mock of our GitHubClient wrapper
 
-Ces mocks éliminent la dépendance aux services GitHub lors des tests, permettant des tests plus rapides et sans risque de quota d'API.
+These mocks eliminate dependency on GitHub services during tests, allowing faster tests without API quota risks.
 
-### 3. Mocks pour les variables d'environnement (`env-mock.ts`)
+### 3. Environment Variable Mocks (`env-mock.ts`)
 
-- **`mockEnv()`** : Mock générique pour les variables d'environnement
-- **`mockGitHubEnv()`** : Mock préconfigurée pour les variables GitHub
-- **`mockCIEnv()`** : Mock préconfigurée pour l'environnement CI
+- **`mockEnv()`**: Generic mock for environment variables
+- **`mockGitHubEnv()`**: Preconfigured mock for GitHub variables
+- **`mockCIEnv()`**: Preconfigured mock for CI environment
 
-Ces mocks permettent de contrôler précisément l'environnement d'exécution des tests, sans affecter l'environnement réel.
+These mocks allow precise control of the test execution environment without affecting the real environment.
 
 ## Tests
 
-Les mocks ont été testés via des tests unitaires dans `mocks.spec.ts` qui vérifient leur fonctionnement correct pour divers scénarios.
+The mocks have been tested via unit tests in `mocks.spec.ts` which verify their correct operation for various scenarios.
 
 ## Documentation
 
-Une documentation complète a été créée pour expliquer l'utilisation des mocks :
+Comprehensive documentation has been created to explain the use of mocks:
 
-- Comment créer et utiliser les mocks
-- Bonnes pratiques pour les tests
-- Exemples de code pour différents scénarios de test
-- Documentation pour chaque type de mock
+- How to create and use mocks
+- Best practices for tests
+- Code examples for different test scenarios
+- Documentation for each type of mock
 
-## Critères d'acceptation satisfaits
+## Acceptance Criteria Met
 
-✅ Les mocks sont correctement typés avec TypeScript  
-✅ Les dépendances externes peuvent être mockées de manière fiable  
-✅ Les mocks fournissent un comportement réaliste pour les scénarios de test  
-✅ Les tests utilisant les mocks s'exécutent de manière cohérente dans différents environnements  
-✅ L'utilisation des mocks est bien documentée pour le développement futur  
+✅ Mocks are correctly typed with TypeScript  
+✅ External dependencies can be reliably mocked  
+✅ Mocks provide realistic behavior for test scenarios  
+✅ Tests using mocks run consistently in different environments  
+✅ The use of mocks is well-documented for future development  
 
 ## Conclusion
 
-L'implémentation des mocks avancés fournit une fondation solide pour les tests de l'application GHP Connector. Elle permet d'écrire des tests plus fiables, plus rapides et indépendants de l'environnement d'exécution ou des services externes. 
+The implementation of advanced mocks provides a solid foundation for testing the GHP Connector application. It enables writing more reliable, faster tests that are independent of the execution environment or external services. 

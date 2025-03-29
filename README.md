@@ -63,6 +63,40 @@ GHP Connector uses:
 
 For more details on the architecture, see the [CLI Architecture documentation](./docs/cli-architecture.md).
 
+## 🧪 Testing
+
+GHP Connector follows comprehensive testing practices:
+
+### Running Tests
+
+```bash
+# Standard tests
+npm test
+
+# Watch mode for development
+npm run test:watch
+
+# With code coverage report
+npm run test:coverage
+```
+
+### Testing Structure
+
+- Tests are located alongside their implementation files
+- Test files follow the naming pattern `<filename>.spec.ts`
+- All external dependencies are properly mocked
+- Code coverage thresholds are set to 80%
+
+### Test Documentation
+
+Comprehensive test documentation is available:
+
+- [Complete Testing Guide](./docs/testing/guide.md)
+- [Code Coverage Information](./docs/testing/code-coverage.md)
+- [Advanced Mocking Strategies](./docs/testing/advanced-mocks.md)
+
+For contributors, please ensure all new code includes appropriate tests as outlined in the [Contributing Guide](./CONTRIBUTING.md).
+
 ## 🗓️ Roadmap
 
 La feuille de route du projet s'articule autour des jalons suivants :

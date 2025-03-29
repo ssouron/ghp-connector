@@ -64,12 +64,14 @@ The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the pro
 
 - **Human/Assistant interactions**: MUST be primarily in French (sometimes in English when appropriate)
 - **Code and comments**: MUST be exclusively in English
-- **Technical documentation**: MUST be exclusively in English
+- **Technical documentation**: MUST be exclusively in English (including ALL markdown files in the docs/ directory)
 - **Technical terms**: MUST keep common English terms used in the industry
 - **Branch, tag, and commit names**: MUST be in English
 - **Interaction style**: MUST use "tu" form in French conversations
 - **Documentation**: MUST link ALL documents from README.md or CONTEXT.md (NO orphaned documents allowed)
 - **Documentation updates**: MUST check and update documentation before each merge to main
+
+⚠️ **IMPORTANT: All documentation files (.md files) are considered technical documentation and MUST be written EXCLUSIVELY in English. This includes all files in the docs/ directory, README.md, CONTRIBUTING.md, etc. Only the conversational interactions between human and assistant can be in French.**
 
 ## Commit and Branch Standards - MANDATORY
 - **Commit format**: MUST follow Conventional Commits (https://www.conventionalcommits.org/)
