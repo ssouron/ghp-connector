@@ -5,10 +5,12 @@
 GHP Connector is an open-source Node.js library for interacting with GitHub Issues and Projects via the command line. It is written in TypeScript, compiled to JavaScript, and published as an npm package.
 
 ## Current Project Status
-- npm project initialization (version 0.0.1)
+- npm project initialization (version 0.0.3)
 - MIT License
 - Basic project structure in place
 - Initial specifications documented
+- Comprehensive testing infrastructure implemented
+- Versioning follows Semantic Versioning (SemVer) - see https://semver.org/
 
 ## Main Objectives
 - Provide a simple command-line interface to interact with GitHub
@@ -47,17 +49,31 @@ ghp issue update --id=123 --status="closed"
 - Maintain a simple and intuitive interface
 - Plan for formatted outputs for terminal and integration with other tools
 
+## Testing Conventions - MANDATORY
+The following rules MUST be followed for all testing in the project:
+
+- **Test location**: MUST be placed in the same directory as the file being tested
+- **Test naming**: MUST follow the pattern `<filename>.spec.ts` (e.g., `issue.ts` -> `issue.spec.ts`)
+- **Test structure**: MUST use Jest's describe/it pattern for organization
+- **Test isolation**: MUST NOT depend on local system configurations
+- **Test helpers**: Common test helpers MUST be placed in `src/lib/test-helpers`
+- **Platform compatibility**: Tests MUST run correctly on Windows, Mac, and Linux
+- **Mocking**: External dependencies SHOULD be mocked appropriately
+- **Coverage**: Tests SHOULD aim for reasonable coverage of core functionality
+
 ## Language and Code Rules - MANDATORY
 The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the project:
 
 - **Human/Assistant interactions**: MUST be primarily in French (sometimes in English when appropriate)
 - **Code and comments**: MUST be exclusively in English
-- **Technical documentation**: MUST be exclusively in English
+- **Technical documentation**: MUST be exclusively in English (including ALL markdown files in the docs/ directory)
 - **Technical terms**: MUST keep common English terms used in the industry
 - **Branch, tag, and commit names**: MUST be in English
 - **Interaction style**: MUST use "tu" form in French conversations
 - **Documentation**: MUST link ALL documents from README.md or CONTEXT.md (NO orphaned documents allowed)
 - **Documentation updates**: MUST check and update documentation before each merge to main
+
+⚠️ **IMPORTANT: All documentation files (.md files) are considered technical documentation and MUST be written EXCLUSIVELY in English. This includes all files in the docs/ directory, README.md, CONTRIBUTING.md, etc. Only the conversational interactions between human and assistant can be in French.**
 
 ## Commit and Branch Standards - MANDATORY
 - **Commit format**: MUST follow Conventional Commits (https://www.conventionalcommits.org/)
@@ -70,6 +86,20 @@ The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the pro
   - Fixes: `fix/issue-description`
   - Documentation: `docs/what-is-changing`
   - Refactoring: `refactor/component-name`
+
+## Version Management - MANDATORY
+- **Versioning standard**: Project MUST use Semantic Versioning (SemVer) as defined at https://semver.org/
+  - Increment MAJOR version when making incompatible API changes
+  - Increment MINOR version when adding functionality in a backward compatible manner
+  - Increment PATCH version when making backward compatible bug fixes
+- **Version change locations**: When bumping version, ALL of these MUST be updated:
+  - package.json (version field)
+  - CHANGELOG.md (add new version section)
+  - README.md (Project Status section)
+  - CONTEXT.md (Current Project Status section)
+- **CHANGELOG format**: MUST follow Keep a Changelog format (https://keepachangelog.com/)
+  - Group changes by type: Added, Changed, Deprecated, Removed, Fixed, Security
+  - Every significant change MUST have an entry
 
 ## Work Methodology - MANDATORY
 - ⚠️ **CRITICAL**: MUST ALWAYS explain planned approaches and get explicit approval BEFORE implementing ANY code
