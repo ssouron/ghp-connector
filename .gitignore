@@ -7,7 +7,7 @@ yarn-error.log
 # Fichiers de compilation
 dist/
 build/
-lib/
+/lib/
 *.tsbuildinfo
 
 # Fichiers d'environnement

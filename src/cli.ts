@@ -13,7 +13,9 @@ import { registerIssueCommands } from './commands/issue';
 // import { registerProjectCommands } from './commands/project';
 
 // Import config manager
-// import { loadConfig } from './lib/config';
+import { loadConfig, cmdArgsToConfig, initConfigFile, CONFIG_FILENAME } from './lib/config';
+import path from 'path';
+import os from 'os';
 
 // Create the root command
 const program = new Command();
@@ -29,6 +31,29 @@ program
 registerIssueCommands(program);
 // registerProjectCommands(program);
 
+// Add config command
+const configCommand = program
+  .command('config')
+  .description('Manage GHP configuration');
+
+// Add init subcommand
+configCommand
+  .command('init')
+  .description('Initialize a new configuration file')
+  .option('-g, --global', 'Create a global configuration file in your home directory')
+  .action((options) => {
+    try {
+      const targetPath = options.global
+        ? path.join(os.homedir(), CONFIG_FILENAME)
+        : path.join(process.cwd(), CONFIG_FILENAME);
+      
+      initConfigFile(targetPath);
+      console.log(`Configuration file created at: ${targetPath}`);
+    } catch (error) {
+      handleError(error, program.opts().debug);
+    }
+  });
+
 // Global options that apply to all commands
 program
   .option('-o, --owner <owner>', 'GitHub repository owner')
@@ -41,6 +66,17 @@ program
 program
   .action(() => {
     if (process.argv.length <= 2) {
+      // Load and use configuration
+      try {
+        const config = loadConfig(cmdArgsToConfig(program.opts()));
+        if (program.opts().verbose) {
+          console.log('Using configuration:');
+          console.log(JSON.stringify(config, null, 2));
+        }
+      } catch (error) {
+        handleError(error, program.opts().debug);
+      }
+      
       program.help();
     }
   });

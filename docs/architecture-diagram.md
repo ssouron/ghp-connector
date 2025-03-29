@@ -11,6 +11,7 @@ graph TD
     C --> E[Project Commands]
     C --> F[Other Commands]
     C --> G[Config Manager]
+    C --> CM[Configuration<br>Commands]
     
     D --> H[GitHub Client<br>Octokit]
     E --> H
@@ -20,9 +21,14 @@ graph TD
     H --> I[GitHub API]
     
     J[Configuration Sources] --> G
-    J --> J1[Command Line Args]
-    J --> J2[Environment Vars]
-    J --> J3[Config Files]
+    J --> J1[Command Line Args<br>Highest Priority]
+    J --> J2[Environment Vars<br>For Secrets]
+    J --> J3[Local Config File<br>./.ghprc.json]
+    J --> J4[Global Config File<br>~/.ghprc.json]
+    J --> J5[Default Values<br>Lowest Priority]
+    
+    CM --> G
+    CM --> CM1[Init Config]
     
     K[Error Handler] --> L[User Output]
     H --> K
@@ -43,14 +49,27 @@ graph TD
 - **Error Handler**: Centralized error processing and user-friendly messaging
 - **Output Formatter**: Handles formatting output in different styles (human, JSON, etc.)
 
+### Configuration System
+
+The configuration system loads and merges settings from multiple sources:
+
+1. **Command Line Arguments**: Highest priority, allows overriding settings for a single command
+2. **Environment Variables**: For sensitive information like tokens
+3. **Local Config File**: Project-specific settings in the current directory
+4. **Global Config File**: User-specific settings in the home directory
+5. **Default Values**: Fallback settings when none of the above are specified
+
+Configuration is loaded at the start of each command execution and can be managed through dedicated configuration commands.
+
 ### Data Flow
 
 1. User enters a command like `ghp issue list`
 2. Commander.js parses the command and routes to the Issue command module
-3. Issue module validates input and calls appropriate GitHub client methods
-4. GitHub client uses configuration and makes API requests
-5. Results are processed, formatted, and displayed to the user
-6. Any errors are caught and handled by the error handler
+3. Configuration is loaded from all sources and merged according to precedence
+4. Issue module validates input and calls appropriate GitHub client methods
+5. GitHub client uses configuration settings to make API requests
+6. Results are processed, formatted, and displayed to the user
+7. Any errors are caught and handled by the error handler
 
 ## Design Principles
 

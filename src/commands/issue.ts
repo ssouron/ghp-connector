@@ -10,7 +10,8 @@ import {
   formatOutput, 
   wrapWithErrorHandler, 
   ValidationError,
-  FormatType 
+  FormatType,
+  cmdArgsToConfig
 } from '../lib';
 
 /**
@@ -72,12 +73,7 @@ async function listIssues(options: any): Promise<void> {
   const verbose = options.parent.parent.opts().verbose || false;
   
   // Load config and merge with command line options
-  const config = loadConfig({
-    github: {
-      owner: options.parent.parent.opts().owner,
-      repo: options.parent.parent.opts().repo,
-    },
-  });
+  const config = loadConfig(cmdArgsToConfig(options.parent.parent.opts()));
   
   // Create GitHub client
   const client = GitHubClient.fromConfig(config);
@@ -120,12 +116,7 @@ async function getIssue(issueNumber: string, options: any): Promise<void> {
   }
   
   // Load config and merge with command line options
-  const config = loadConfig({
-    github: {
-      owner: options.parent.parent.opts().owner,
-      repo: options.parent.parent.opts().repo,
-    },
-  });
+  const config = loadConfig(cmdArgsToConfig(options.parent.parent.opts()));
   
   // Create GitHub client
   const client = GitHubClient.fromConfig(config);
@@ -156,12 +147,7 @@ async function createIssue(options: any): Promise<void> {
   }
   
   // Load config and merge with command line options
-  const config = loadConfig({
-    github: {
-      owner: options.parent.parent.opts().owner,
-      repo: options.parent.parent.opts().repo,
-    },
-  });
+  const config = loadConfig(cmdArgsToConfig(options.parent.parent.opts()));
   
   // Create GitHub client
   const client = GitHubClient.fromConfig(config);
@@ -208,12 +194,7 @@ async function updateIssue(issueNumber: string, options: any): Promise<void> {
   }
   
   // Load config and merge with command line options
-  const config = loadConfig({
-    github: {
-      owner: options.parent.parent.opts().owner,
-      repo: options.parent.parent.opts().repo,
-    },
-  });
+  const config = loadConfig(cmdArgsToConfig(options.parent.parent.opts()));
   
   // Create GitHub client
   const client = GitHubClient.fromConfig(config);
