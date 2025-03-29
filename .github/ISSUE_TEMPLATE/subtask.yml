@@ -1,0 +1,76 @@
+name: 🔖 Sous-tâche
+description: Créer une sous-tâche pour un ticket existant
+title: "[SUB] "
+labels: ["subtask"]
+assignees:
+  - ssouron
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Remplissez ce formulaire pour créer une sous-tâche.
+  
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Description claire et concise de la sous-tâche à réaliser
+      placeholder: Cette sous-tâche consiste à...
+    validations:
+      required: true
+  
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Tâches
+      description: Liste des tâches à accomplir pour cette sous-tâche
+      placeholder: |
+        - [ ] Tâche 1
+        - [ ] Tâche 2
+        - [ ] Tâche 3
+    validations:
+      required: true
+  
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Critères d'acceptation
+      description: Liste des critères qui doivent être remplis pour considérer cette sous-tâche comme terminée
+      placeholder: |
+        - Critère 1
+        - Critère 2
+        - Critère 3
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priorité
+      description: Quelle est la priorité de cette sous-tâche?
+      options:
+        - Low
+        - Medium
+        - High
+        - Critical
+      default: 1
+    validations:
+      required: true
+  
+  - type: input
+    id: parent-issue
+    attributes:
+      label: Issue parent
+      description: Numéro de l'issue parent à laquelle cette sous-tâche est rattachée
+      placeholder: "#15"
+    validations:
+      required: true
+  
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: Informations additionnelles
+      description: Toute information supplémentaire utile pour comprendre ou réaliser la sous-tâche
+      placeholder: Contexte, liens vers des ressources, etc.
+    validations:
+      required: false 
