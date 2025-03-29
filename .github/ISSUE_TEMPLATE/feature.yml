@@ -2,6 +2,8 @@ name: 🚀 New Feature
 description: Propose a new feature for GHP Connector
 title: "[FEAT] "
 labels: ["feature"]
+assignees:
+  - ssouron
 body:
   - type: markdown
     attributes:
@@ -39,6 +41,7 @@ body:
         - Medium
         - High
         - Critical
+      default: 1
     validations:
       required: true
   

@@ -1,7 +1,9 @@
 name: 🏗️ Architecture / Refactoring
 description: Propose architecture changes or refactoring
 title: "[ARCH] "
-labels: ["architecture", "refactoring"]
+labels: ["architecture"]
+assignees:
+  - ssouron
 body:
   - type: markdown
     attributes:
@@ -71,5 +73,6 @@ body:
         - Medium
         - High
         - Critical
+      default: 1
     validations:
       required: true 

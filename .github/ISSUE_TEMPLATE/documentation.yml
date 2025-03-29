@@ -2,6 +2,8 @@ name: 📚 Documentation
 description: Improve or add documentation
 title: "[DOCS] "
 labels: ["documentation"]
+assignees:
+  - ssouron
 body:
   - type: markdown
     attributes:
@@ -49,6 +51,7 @@ body:
         - Low
         - Medium
         - High
+      default: 1
     validations:
       required: true
   
