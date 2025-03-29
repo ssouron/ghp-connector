@@ -5,6 +5,19 @@ All notable changes to GHP Connector will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.2] - 2023-03-29
+
+### Added
+
+- Configuration file system with support for:
+  - Local configuration file (`./.ghprc.json`)
+  - Global configuration file (`~/.ghprc.json`)
+  - Environment variables for sensitive information
+  - Command-line overrides
+- Configuration initialization command (`ghp config init`)
+- Comprehensive configuration documentation
+- GitHub Enterprise support via `baseUrl` configuration
+
 ## [0.0.1] - 2023-03-29
 
 ### Added
