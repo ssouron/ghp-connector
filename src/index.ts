@@ -3,12 +3,13 @@
  * Une bibliothèque pour interagir avec les Issues et Projects GitHub
  */
 
-// TODO: Ajouter les exports lorsque les modules seront implémentés
-// export * from './lib/issues';
-// export * from './lib/config';
-// export * from './lib/types';
+// Export library modules
+export * from './lib';
 
-// Exportation temporaire d'une fonction de base
+// Exports commands
+export * from './commands';
+
+// Export package version
 export const getVersion = (): string => {
   return '0.0.1';
 }; 

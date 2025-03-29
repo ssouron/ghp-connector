@@ -26,6 +26,27 @@ npm install -g ghp-connector
 npm install --save-dev ghp-connector
 ```
 
+## 📝 Usage
+
+```bash
+# List issues
+ghp issue list
+
+# Create an issue
+ghp issue create --title "Bug report" --body "Description"
+
+# Update an issue status
+ghp issue update --id 123 --status closed
+```
+
+## 🏗️ Architecture
+
+GHP Connector uses:
+- **Commander.js** as the CLI framework
+- **Octokit** as the GitHub API client
+
+For more details on the architecture, see the [CLI Architecture documentation](./docs/cli-architecture.md).
+
 ## 🗓️ Roadmap
 
 La feuille de route du projet s'articule autour des jalons suivants :
@@ -35,7 +56,11 @@ La feuille de route du projet s'articule autour des jalons suivants :
 
 ## 📖 Documentation
 
-For more details on usage and features, see the [documentation folder](./docs).
+For more details on usage and features, see the documentation files:
+
+- [Initial Specifications](./docs/initial-specs.md)
+- [CLI Architecture](./docs/cli-architecture.md)
+- [Architecture Diagram](./docs/architecture-diagram.md)
 
 ## 🤝 Contributing
 

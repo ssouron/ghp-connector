@@ -72,8 +72,13 @@ The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the pro
   - Refactoring: `refactor/component-name`
 
 ## Work Methodology - MANDATORY
+- ⚠️ **CRITICAL**: MUST ALWAYS explain planned approaches and get explicit approval BEFORE implementing ANY code
+- MUST present a clear plan with detailed steps for each implementation task
+- MUST present alternative technical approaches with pros and cons before choosing one
+- MUST break down complex implementations into smaller, individually-approved steps
+- MUST obtain explicit confirmation before proceeding to the next implementation step
+- MUST NOT implement multiple components simultaneously without explicit approval
 - MUST perform regular validation during complex implementations
-- MUST explain and validate solutions before implementation
 - MUST proceed with merges with merge commits (No Pull Requests - single developer)
 - MUST keep review size reasonable
 

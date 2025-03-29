@@ -37,3 +37,6 @@ logs/
 # Fichiers temporaires
 tmp/
 temp/ 
+
+# Fichiers personnels
+INITIAL_MSG.md
