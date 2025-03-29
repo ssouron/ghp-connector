@@ -1,4 +1,5 @@
 # CONTEXT - GHP Connector
+# ⚠️ MUST BE STRICTLY FOLLOWED IN ALL INTERACTIONS AND DEVELOPMENT ⚠️
 
 ## Project Overview
 GHP Connector is an open-source Node.js library for interacting with GitHub Issues and Projects via the command line. It is written in TypeScript, compiled to JavaScript, and published as an npm package.
@@ -46,32 +47,35 @@ ghp issue update --id=123 --status="closed"
 - Maintain a simple and intuitive interface
 - Plan for formatted outputs for terminal and integration with other tools
 
-## Language and Code Rules
-- **Human/Assistant interactions**: primarily in French (sometimes in English)
-- **Code and comments**: exclusively in English
-- **Technical documentation**: exclusively in English
-- **Technical terms**: keep common English terms used in the industry
-- **Branch, tag, and commit names**: in English
-- **Interaction style**: "tu" form in French conversations
-- **Documentation**: all documents must be linked from README.md or CONTEXT.md (no orphaned documents)
-- **Documentation updates**: check and update documentation before each merge to main
+## Language and Code Rules - MANDATORY
+The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the project:
 
-## Commit and Branch Standards
-- **Commit format**: Conventional Commits (https://www.conventionalcommits.org/)
+- **Human/Assistant interactions**: MUST be primarily in French (sometimes in English when appropriate)
+- **Code and comments**: MUST be exclusively in English
+- **Technical documentation**: MUST be exclusively in English
+- **Technical terms**: MUST keep common English terms used in the industry
+- **Branch, tag, and commit names**: MUST be in English
+- **Interaction style**: MUST use "tu" form in French conversations
+- **Documentation**: MUST link ALL documents from README.md or CONTEXT.md (NO orphaned documents allowed)
+- **Documentation updates**: MUST check and update documentation before each merge to main
+
+## Commit and Branch Standards - MANDATORY
+- **Commit format**: MUST follow Conventional Commits (https://www.conventionalcommits.org/)
   - Structure: `<type>[optional scope]: <description>`
   - Main types: feat, fix, docs, style, refactor, test, chore
   - Example: `feat(issues): add list command implementation`
-- **Branch names**:
+  - CRITICAL: Commit messages MUST ALWAYS be in English
+- **Branch names**: MUST follow these patterns:
   - Features: `feature/short-description`
   - Fixes: `fix/issue-description`
   - Documentation: `docs/what-is-changing`
   - Refactoring: `refactor/component-name`
 
-## Work Methodology
-- Regular validation during complex implementations
-- Explanation and validation of solutions before implementation
-- No Pull Requests (single developer) - proceed with merges with merge commits
-- Reasonable review size
+## Work Methodology - MANDATORY
+- MUST perform regular validation during complex implementations
+- MUST explain and validate solutions before implementation
+- MUST proceed with merges with merge commits (No Pull Requests - single developer)
+- MUST keep review size reasonable
 
 ## Next Steps
 - Implement core functionalities for issue management

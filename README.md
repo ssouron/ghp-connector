@@ -28,12 +28,10 @@ npm install --save-dev ghp-connector
 
 ## 🗓️ Roadmap
 
-The project development is organized around the following milestones:
+La feuille de route du projet s'articule autour des jalons suivants :
 
-1. **Initial Setup**: Project foundation, architecture, and configuration
-2. **Issues CRUD**: Basic operations for managing GitHub Issues
-
-For more details on our development roadmap, check the [milestones documentation](./docs/milestones.md).
+1. **Initial Setup**: Mise en place du projet, architecture et configuration
+2. **Issues CRUD**: Opérations de base pour la gestion des Issues GitHub
 
 ## 📖 Documentation
 
