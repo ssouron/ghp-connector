@@ -47,6 +47,18 @@ ghp issue update --id=123 --status="closed"
 - Maintain a simple and intuitive interface
 - Plan for formatted outputs for terminal and integration with other tools
 
+## Testing Conventions - MANDATORY
+The following rules MUST be followed for all testing in the project:
+
+- **Test location**: MUST be placed in the same directory as the file being tested
+- **Test naming**: MUST follow the pattern `<filename>.spec.ts` (e.g., `issue.ts` -> `issue.spec.ts`)
+- **Test structure**: MUST use Jest's describe/it pattern for organization
+- **Test isolation**: MUST NOT depend on local system configurations
+- **Test helpers**: Common test helpers MUST be placed in `src/lib/test-helpers`
+- **Platform compatibility**: Tests MUST run correctly on Windows, Mac, and Linux
+- **Mocking**: External dependencies SHOULD be mocked appropriately
+- **Coverage**: Tests SHOULD aim for reasonable coverage of core functionality
+
 ## Language and Code Rules - MANDATORY
 The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the project:
 
