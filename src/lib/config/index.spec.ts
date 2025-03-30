@@ -2,7 +2,6 @@
  * Tests for configuration module
  */
 
-import { existsSync, readFileSync } from 'fs';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
@@ -21,9 +20,6 @@ import {
   GitHubConfig
 } from './index';
 import {
-  createTempTestDir,
-  createTempTestFile,
-  createTempConfigFile,
   cleanupTestFiles,
   mockProcessEnv
 } from '../test-helpers/test-utils';
@@ -532,7 +528,7 @@ describe('Configuration Module', () => {
       };
       
       // Simuler les opérations du système de fichiers
-      const mockExistsSync = jest.spyOn(fs, 'existsSync').mockReturnValue(true);
+      const _mockExistsSync = jest.spyOn(fs, 'existsSync').mockReturnValue(true);
       jest.spyOn(process, 'cwd').mockReturnValue('/fake/dir');
       jest.spyOn(path, 'join').mockImplementation((...paths) => paths.join('/'));
       jest.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify(testConfig));

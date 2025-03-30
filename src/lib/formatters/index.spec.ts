@@ -3,8 +3,6 @@
  */
 
 import {
-  FormatType,
-  Formatter,
   JsonFormatter,
   TableFormatter,
   MinimalFormatter,

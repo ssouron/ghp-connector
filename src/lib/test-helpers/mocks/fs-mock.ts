@@ -2,7 +2,7 @@
  * Mocks pour le système de fichiers (fs)
  */
 
-import * as fs from 'fs';
+// Import inutilisé supprimé
 
 /**
  * Interface pour le système de fichiers virtuel
