@@ -11,4 +11,4 @@ describe('Configuration Jest', () => {
     const result = await Promise.resolve(42);
     expect(result).toBe(42);
   });
-}); 
+});

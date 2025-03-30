@@ -8,7 +8,7 @@ import {
   MinimalFormatter,
   HumanFormatter,
   createFormatter,
-  formatOutput
+  formatOutput,
 } from './index';
 
 describe('Formatters Module', () => {
@@ -83,13 +83,15 @@ describe('Formatters Module', () => {
     });
 
     it('should extract names when ID is not available', () => {
-      expect(formatter.format({ name: 'Test Name', description: 'Test Description' })).toBe('Test Name');
+      expect(formatter.format({ name: 'Test Name', description: 'Test Description' })).toBe(
+        'Test Name'
+      );
     });
 
     it('should handle arrays of objects by extracting identifiers', () => {
       const data = [
         { id: 1, name: 'Item 1' },
-        { id: 2, name: 'Item 2' }
+        { id: 2, name: 'Item 2' },
       ];
       expect(formatter.format(data)).toBe('1\n2');
     });
@@ -99,7 +101,7 @@ describe('Formatters Module', () => {
         { id: 1 },
         { number: 2 },
         { name: 'Item 3' },
-        { description: 'No identifier' }
+        { description: 'No identifier' },
       ];
       expect(formatter.format(mixedData)).toBe('1\n2\nItem 3\n');
     });
@@ -137,11 +139,11 @@ describe('Formatters Module', () => {
     });
 
     it('should include body in GitHub issue formatting if available', () => {
-      const issue = { 
-        number: 42, 
-        title: 'Bug fix', 
+      const issue = {
+        number: 42,
+        title: 'Bug fix',
         state: 'open',
-        body: 'This is a bug description'
+        body: 'This is a bug description',
       };
       expect(formatter.format(issue)).toBe('#42 Bug fix [open]\n\nThis is a bug description');
     });
@@ -149,7 +151,7 @@ describe('Formatters Module', () => {
     it('should format arrays of GitHub issues', () => {
       const issues = [
         { number: 1, title: 'First Issue', state: 'open' },
-        { number: 2, title: 'Second Issue', state: 'closed' }
+        { number: 2, title: 'Second Issue', state: 'closed' },
       ];
       expect(formatter.format(issues)).toBe('#1 First Issue [open]\n\n#2 Second Issue [closed]');
     });
@@ -168,9 +170,9 @@ describe('Formatters Module', () => {
     });
 
     it('should handle nested objects', () => {
-      const data = { 
+      const data = {
         name: 'Parent',
-        child: { name: 'Child', value: 123 }
+        child: { name: 'Child', value: 123 },
       };
       expect(formatter.format(data)).toContain('name: Parent');
       expect(formatter.format(data)).toContain('child:');
@@ -184,7 +186,7 @@ describe('Formatters Module', () => {
         name: 'Test',
         description: undefined,
         value: null,
-        count: 0
+        count: 0,
       };
       expect(formatter.format(data)).toBe('name: Test\ncount: 0');
     });
@@ -231,18 +233,20 @@ describe('Formatters Module', () => {
     });
 
     it('should handle large datasets', () => {
-      const largeDataset = Array(100).fill(0).map((_, i) => ({ id: i, name: `Item ${i}` }));
+      const largeDataset = Array(100)
+        .fill(0)
+        .map((_, i) => ({ id: i, name: `Item ${i}` }));
       const jsonResult = formatOutput(largeDataset, 'json');
       const minimalResult = formatOutput(largeDataset, 'minimal');
       const humanResult = formatOutput(largeDataset, 'human');
-      
+
       expect(jsonResult).toContain('"id": 0');
       expect(jsonResult).toContain('"id": 99');
-      
+
       expect(minimalResult.split('\n').length).toBe(100);
       expect(minimalResult).toContain('0');
       expect(minimalResult).toContain('99');
-      
+
       expect(humanResult).toContain('id: 0');
       expect(humanResult).toContain('id: 99');
     });
@@ -250,19 +254,19 @@ describe('Formatters Module', () => {
     it('should handle special characters in data', () => {
       const dataWithSpecialChars = {
         title: 'Special: "quotes", \'apostrophes\', &amp; more!',
-        description: '< > & " \' \n \t \\ /'
+        description: '< > & " \' \n \t \\ /',
       };
-      
+
       // Test that each formatter properly handles special characters
       const jsonResult = formatOutput(dataWithSpecialChars, 'json');
       const humanResult = formatOutput(dataWithSpecialChars, 'human');
-      
+
       expect(jsonResult).toContain('Special: \\"quotes\\"');
-      expect(jsonResult).toContain('\'apostrophes\'');
+      expect(jsonResult).toContain("'apostrophes'");
       expect(jsonResult).toContain('&amp; more!');
-      
+
       expect(humanResult).toContain('title: Special: "quotes", \'apostrophes\', &amp; more!');
       expect(humanResult).toContain('description: < > & " \' \n \t \\ /');
     });
   });
-}); 
+});

@@ -5,4 +5,4 @@
 
 export * from './mock-github';
 export * from './test-utils';
-export * from './mocks'; 
+export * from './mocks';

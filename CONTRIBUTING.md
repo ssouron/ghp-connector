@@ -43,6 +43,25 @@ This project and all its participants are governed by a code of conduct that pro
 - Write comments for complex code
 - Follow recommended TypeScript practices (explicit types, etc.)
 
+### Linting and Formatting
+
+#### ESLint
+- Run `npm run lint` before committing code
+- Fix all ESLint errors and warnings
+- ESLint configuration is in `.eslintrc.js`
+
+#### Prettier
+- All code must be formatted with Prettier
+- Run `npm run format` to format all files
+- Run `npm run format:check` to verify formatting
+- Prettier configuration is in `.prettierrc`
+- CI pipeline will verify formatting on all supported Node.js versions
+- Formatting settings include:
+  - Single quotes
+  - 2 spaces indentation
+  - 100 characters line width
+  - Trailing commas for ES5 compatibility
+
 ## Testing Requirements
 
 ### General Rules for Tests

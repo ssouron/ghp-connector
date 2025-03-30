@@ -12,4 +12,4 @@ export * from './commands';
 // Export package version
 export const getVersion = (): string => {
   return '0.0.2';
-}; 
+};

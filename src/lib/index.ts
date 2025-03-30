@@ -12,4 +12,4 @@ export * from './config';
 export * from './errors';
 
 // Export formatters
-export * from './formatters'; 
+export * from './formatters';

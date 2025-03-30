@@ -5,4 +5,4 @@
 
 export * from './fs-mock';
 export * from './octokit-mock';
-export * from './env-mock'; 
+export * from './env-mock';

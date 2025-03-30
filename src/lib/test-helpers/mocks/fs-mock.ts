@@ -30,7 +30,7 @@ export function mockFs(): { fs: MockedFs; restore: () => void } {
     readFileSync: jest.fn().mockImplementation(() => Buffer.from('')),
     writeFileSync: jest.fn().mockImplementation(() => undefined),
     mkdirSync: jest.fn().mockImplementation(() => undefined),
-    rmSync: jest.fn().mockImplementation(() => undefined)
+    rmSync: jest.fn().mockImplementation(() => undefined),
   };
 
   const restore = () => {
@@ -43,38 +43,40 @@ export function mockFs(): { fs: MockedFs; restore: () => void } {
 /**
  * Crée un système de fichiers virtuel pour les tests
  */
-export function mockVirtualFs(initialFiles: VirtualFileSystem = {}): { 
-  fs: MockedFs; 
-  restore: () => void; 
-  getVirtualFs: () => VirtualFileSystem 
+export function mockVirtualFs(initialFiles: VirtualFileSystem = {}): {
+  fs: MockedFs;
+  restore: () => void;
+  getVirtualFs: () => VirtualFileSystem;
 } {
   const virtualFs: VirtualFileSystem = { ...initialFiles };
-  
+
   // Créer un objet qui contient les fonctions mockées pour le système de fichiers virtuel
   const mockFsModule: MockedFs = {
-    existsSync: jest.fn().mockImplementation((path) => {
+    existsSync: jest.fn().mockImplementation(path => {
       const pathStr = path.toString();
       return pathStr in virtualFs;
     }),
-    
+
     readFileSync: jest.fn().mockImplementation((path, options) => {
       const pathStr = path.toString();
       if (!(pathStr in virtualFs)) {
-        const error = new Error(`ENOENT: no such file or directory, open '${pathStr}'`) as NodeJS.ErrnoException;
+        const error = new Error(
+          `ENOENT: no such file or directory, open '${pathStr}'`
+        ) as NodeJS.ErrnoException;
         error.code = 'ENOENT';
         throw error;
       }
 
       const content = virtualFs[pathStr];
       const encoding = typeof options === 'string' ? options : options?.encoding;
-      
+
       if (typeof content === 'string' && encoding === 'utf8') {
         return content;
       }
-      
+
       return Buffer.isBuffer(content) ? content : Buffer.from(String(content));
     }),
-    
+
     writeFileSync: jest.fn().mockImplementation((path, data) => {
       const pathStr = path.toString();
       // Conversion safe pour s'assurer que data est stockée correctement
@@ -85,26 +87,26 @@ export function mockVirtualFs(initialFiles: VirtualFileSystem = {}): {
       } else {
         // Pour d'autres types ArrayBufferView
         try {
-          virtualFs[pathStr] = Buffer.from(data as any);  
+          virtualFs[pathStr] = Buffer.from(data as any);
         } catch (e) {
           // Fallback en cas d'erreur
           virtualFs[pathStr] = data.toString();
         }
       }
     }),
-    
-    mkdirSync: jest.fn().mockImplementation((path) => {
+
+    mkdirSync: jest.fn().mockImplementation(path => {
       const pathStr = path.toString();
       virtualFs[pathStr] = '';
       return pathStr;
     }),
-    
-    rmSync: jest.fn().mockImplementation((path) => {
+
+    rmSync: jest.fn().mockImplementation(path => {
       const pathStr = path.toString();
       if (pathStr in virtualFs) {
         delete virtualFs[pathStr];
       }
-    })
+    }),
   };
 
   const restore = () => {
@@ -115,4 +117,4 @@ export function mockVirtualFs(initialFiles: VirtualFileSystem = {}): {
   const getVirtualFs = () => virtualFs;
 
   return { fs: mockFsModule, restore, getVirtualFs };
-} 
+}

@@ -31,7 +31,7 @@ function restoreEnv(backup: Record<string, string | undefined>): void {
       delete process.env[key];
     }
   }
-  
+
   // Restaure les variables sauvegardées
   for (const [key, value] of Object.entries(backup)) {
     if (value === undefined) {
@@ -44,7 +44,7 @@ function restoreEnv(backup: Record<string, string | undefined>): void {
 
 /**
  * Mock pour les variables d'environnement
- * 
+ *
  * @example
  * ```
  * // Dans un test
@@ -55,19 +55,19 @@ function restoreEnv(backup: Record<string, string | undefined>): void {
  *   },
  *   unset: ['HOME']
  * });
- * 
+ *
  * // Puis, dans le teardown du test
  * afterEach(() => {
  *   restoreEnv();
  * });
  * ```
- * 
+ *
  * @param options Options de configuration
  * @returns Fonction pour restaurer les variables d'environnement
  */
 export function mockEnv(options: EnvMockOptions = {}): () => void {
   const backup = backupEnv();
-  
+
   // Définir les variables
   if (options.vars) {
     for (const [key, value] of Object.entries(options.vars)) {
@@ -78,14 +78,14 @@ export function mockEnv(options: EnvMockOptions = {}): () => void {
       }
     }
   }
-  
+
   // Supprimer les variables
   if (options.unset) {
     for (const key of options.unset) {
       delete process.env[key];
     }
   }
-  
+
   // Retourner la fonction de restauration
   return () => restoreEnv(backup);
 }
@@ -99,8 +99,8 @@ export function mockGitHubEnv(): () => void {
     vars: {
       GITHUB_TOKEN: 'mock-github-token-for-tests',
       GITHUB_API_URL: 'https://api.github.com',
-      GITHUB_REPOSITORY: 'test-owner/test-repo'
-    }
+      GITHUB_REPOSITORY: 'test-owner/test-repo',
+    },
   });
 }
 
@@ -115,7 +115,7 @@ export function mockCIEnv(): () => void {
       GITHUB_ACTIONS: 'true',
       GITHUB_WORKFLOW: 'Test Workflow',
       GITHUB_RUN_ID: '12345',
-      GITHUB_TOKEN: 'mock-github-token-for-ci'
-    }
+      GITHUB_TOKEN: 'mock-github-token-for-ci',
+    },
   });
-} 
+}

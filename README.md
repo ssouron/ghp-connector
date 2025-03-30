@@ -80,6 +80,19 @@ npm run test:watch
 npm run test:coverage
 ```
 
+### Code Style and Formatting
+
+```bash
+# Check code style with ESLint
+npm run lint
+
+# Format code with Prettier
+npm run format
+
+# Check code formatting
+npm run format:check
+```
+
 ### Testing Structure
 
 - Tests are located alongside their implementation files

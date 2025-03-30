@@ -85,7 +85,9 @@ export function loadConfigFile(filePath: string): Partial<GHPConfig> {
     const configContent = fs.readFileSync(filePath, 'utf-8');
     return JSON.parse(configContent) as Partial<GHPConfig>;
   } catch (error) {
-    throw new Error(`Failed to load config file: ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(
+      `Failed to load config file: ${error instanceof Error ? error.message : String(error)}`
+    );
   }
 }
 
@@ -94,30 +96,30 @@ export function loadConfigFile(filePath: string): Partial<GHPConfig> {
  */
 export function getEnvConfig(): Partial<GHPConfig> {
   const github: Partial<GitHubConfig> = {};
-  
+
   // Only set properties that are actually defined in environment variables
   if (process.env.GITHUB_OWNER) {
     github.owner = process.env.GITHUB_OWNER;
   }
-  
+
   if (process.env.GITHUB_REPO) {
     github.repo = process.env.GITHUB_REPO;
   }
-  
+
   if (process.env.GITHUB_TOKEN) {
     github.token = process.env.GITHUB_TOKEN;
   }
-  
+
   if (process.env.GITHUB_API_URL) {
     github.baseUrl = process.env.GITHUB_API_URL;
   }
-  
+
   // Only include github config if at least one property is set
   const envConfig: Partial<GHPConfig> = {};
   if (Object.keys(github).length > 0) {
     envConfig.github = github as GitHubConfig;
   }
-  
+
   return envConfig;
 }
 
@@ -132,11 +134,11 @@ export function getEnvConfig(): Partial<GHPConfig> {
 export function mergeConfigs(
   cmdConfig: Partial<GHPConfig>,
   envConfig: Partial<GHPConfig>,
-  fileConfig: Partial<GHPConfig>,
+  fileConfig: Partial<GHPConfig>
 ): GHPConfig {
   // Start with default config
   const result = JSON.parse(JSON.stringify(defaultConfig)) as GHPConfig;
-  
+
   // Merge in order of priority (lowest to highest)
   return deepMerge(deepMerge(deepMerge(result, fileConfig), envConfig), cmdConfig);
 }
@@ -146,23 +148,15 @@ export function mergeConfigs(
  */
 function deepMerge<T>(target: T, source: Partial<T>): T {
   if (!source) return target;
-  
+
   const output = { ...target };
-  
+
   Object.keys(source).forEach(key => {
     const targetValue = (output as any)[key];
     const sourceValue = (source as any)[key];
-    
-    if (
-      typeof sourceValue === 'object' && 
-      sourceValue !== null && 
-      !Array.isArray(sourceValue)
-    ) {
-      if (
-        typeof targetValue === 'object' && 
-        targetValue !== null && 
-        !Array.isArray(targetValue)
-      ) {
+
+    if (typeof sourceValue === 'object' && sourceValue !== null && !Array.isArray(sourceValue)) {
+      if (typeof targetValue === 'object' && targetValue !== null && !Array.isArray(targetValue)) {
         (output as any)[key] = deepMerge(targetValue, sourceValue);
       } else {
         (output as any)[key] = { ...sourceValue };
@@ -171,7 +165,7 @@ function deepMerge<T>(target: T, source: Partial<T>): T {
       (output as any)[key] = sourceValue;
     }
   });
-  
+
   return output;
 }
 
@@ -180,26 +174,26 @@ function deepMerge<T>(target: T, source: Partial<T>): T {
  */
 export function cmdArgsToConfig(options: any): Partial<GHPConfig> {
   const config: Partial<GHPConfig> = {};
-  
+
   if (options.owner || options.repo) {
     config.github = {} as GitHubConfig;
-    
+
     if (options.owner) {
       config.github.owner = options.owner;
     }
-    
+
     if (options.repo) {
       config.github.repo = options.repo;
     }
   }
-  
+
   if (options.format) {
     if (!config.defaults) {
       config.defaults = {} as GHPConfig['defaults'];
     }
     config.defaults.format = options.format;
   }
-  
+
   return config;
 }
 
@@ -209,7 +203,7 @@ export function cmdArgsToConfig(options: any): Partial<GHPConfig> {
 export function loadConfig(cmdArgs: Partial<GHPConfig> = {}): GHPConfig {
   // Load config from environment
   const envConfig = getEnvConfig();
-  
+
   // Load config from file
   let fileConfig: Partial<GHPConfig> = {};
   const configPath = findConfigFile();
@@ -220,7 +214,7 @@ export function loadConfig(cmdArgs: Partial<GHPConfig> = {}): GHPConfig {
       console.error(`Warning: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-  
+
   // Merge all configs
   return mergeConfigs(cmdArgs, envConfig, fileConfig);
 }
@@ -233,7 +227,9 @@ export function initConfigFile(filePath: string): void {
     const configStr = JSON.stringify(defaultConfig, null, 2);
     fs.writeFileSync(filePath, configStr, 'utf-8');
   } catch (error) {
-    throw new Error(`Failed to create config file: ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(
+      `Failed to create config file: ${error instanceof Error ? error.message : String(error)}`
+    );
   }
 }
 
@@ -259,6 +255,6 @@ export function validateConfig(config: Partial<GHPConfig>): boolean {
       }
     }
   }
-  
+
   return true;
-} 
+}
