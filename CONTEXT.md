@@ -5,11 +5,13 @@
 GHP Connector is an open-source Node.js library for interacting with GitHub Issues and Projects via the command line. It is written in TypeScript, compiled to JavaScript, and published as an npm package.
 
 ## Current Project Status
-- npm project initialization (version 0.0.3)
+- npm project initialization (version 0.1.0)
 - MIT License
 - Basic project structure in place
 - Initial specifications documented
 - Comprehensive testing infrastructure implemented
+- CI/CD pipeline setup with GitHub Actions
+- ESLint configuration for code quality
 - Versioning follows Semantic Versioning (SemVer) - see https://semver.org/
 
 ## Main Objectives

@@ -5,6 +5,19 @@ All notable changes to GHP Connector will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.0] - 2023-05-10
+
+### Added
+- ESLint configuration with TypeScript support
+- CI/CD pipeline configuration with GitHub Actions
+- Support for multiple Node.js versions in CI pipeline
+- Linting rules for better code quality
+
+### Fixed
+- Unused variables across the codebase
+- Pipeline failures in GitHub Actions
+- Improper handling of Jest cache in Git
+
 ## [0.0.3] - 2023-04-05
 
 ### Added
