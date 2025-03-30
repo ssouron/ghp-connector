@@ -2,9 +2,9 @@
  * Unit tests for error handling module
  */
 
-import { 
+import {
   ExitCode,
-  GHPError, 
+  GHPError,
   ValidationError,
   NetworkError,
   AuthenticationError,
@@ -12,7 +12,7 @@ import {
   GitHubAPIError,
   ConfigurationError,
   handleError,
-  wrapWithErrorHandler
+  wrapWithErrorHandler,
 } from './index';
 
 describe('Error Types', () => {
@@ -110,134 +110,142 @@ describe('Error Handling Functions', () => {
   describe('handleError', () => {
     let consoleErrorSpy: jest.SpyInstance;
     let processExitSpy: jest.SpyInstance;
-    
+
     beforeEach(() => {
       consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
       processExitSpy = jest.spyOn(process, 'exit').mockImplementation((() => {}) as any);
     });
-    
+
     afterEach(() => {
       consoleErrorSpy.mockRestore();
       processExitSpy.mockRestore();
     });
-    
+
     it('should handle GHPError correctly', () => {
       const error = new ValidationError('Invalid input');
       handleError(error);
-      
+
       expect(consoleErrorSpy).toHaveBeenCalledWith('Error: Invalid input');
       expect(processExitSpy).toHaveBeenCalledWith(ExitCode.ValidationError);
     });
-    
+
     it('should handle GitHubAPIError with response data in verbose mode', () => {
       const responseData = { status: 403, message: 'Rate limit exceeded' };
       const error = new GitHubAPIError('API error', responseData);
       handleError(error, true);
-      
-      expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('GitHub API Error: API error'));
-      expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining(JSON.stringify(responseData, null, 2)));
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('GitHub API Error: API error')
+      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(JSON.stringify(responseData, null, 2))
+      );
       expect(processExitSpy).toHaveBeenCalledWith(ExitCode.GitHubAPIError);
     });
-    
+
     it('should handle GitHubAPIError without response data details in non-verbose mode', () => {
       const responseData = { status: 403, message: 'Rate limit exceeded' };
       const error = new GitHubAPIError('API error', responseData);
       handleError(error, false);
-      
-      expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('GitHub API Error: API error'));
-      expect(consoleErrorSpy).not.toHaveBeenCalledWith(expect.stringContaining(JSON.stringify(responseData, null, 2)));
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('GitHub API Error: API error')
+      );
+      expect(consoleErrorSpy).not.toHaveBeenCalledWith(
+        expect.stringContaining(JSON.stringify(responseData, null, 2))
+      );
       expect(processExitSpy).toHaveBeenCalledWith(ExitCode.GitHubAPIError);
     });
-    
+
     it('should handle non-GHPError with message', () => {
       const error = new Error('Standard error');
       handleError(error);
-      
+
       expect(consoleErrorSpy).toHaveBeenCalledWith('Error: Standard error');
       expect(processExitSpy).toHaveBeenCalledWith(ExitCode.GeneralError);
     });
-    
+
     it('should handle non-Error objects', () => {
       handleError('String error');
-      
+
       expect(consoleErrorSpy).toHaveBeenCalledWith('Error: String error');
       expect(processExitSpy).toHaveBeenCalledWith(ExitCode.GeneralError);
     });
-    
+
     it('should print stack trace in verbose mode', () => {
       const error = new Error('With stack');
       error.stack = 'Error: With stack\n    at file.js:1:1';
       handleError(error, true);
-      
+
       expect(consoleErrorSpy).toHaveBeenCalledWith('\nStack trace:');
       expect(consoleErrorSpy).toHaveBeenCalledWith(error.stack);
     });
   });
-  
+
   describe('wrapWithErrorHandler', () => {
     it('should return function result on success', async () => {
       // Créer une fonction qui retourne toujours une valeur de succès
       const successFn = async () => 'success';
       const wrapped = wrapWithErrorHandler(successFn);
-      
+
       const result = await wrapped();
       expect(result).toBe('success');
     });
-    
+
     it('should pass arguments correctly to the wrapped function', async () => {
       const argTestFn = async (a: string, b: number) => `${a}-${b}`;
       const wrapped = wrapWithErrorHandler(argTestFn);
-      
+
       const result = await wrapped('test', 123);
       expect(result).toBe('test-123');
     });
-    
+
     it('should handle errors with default verbose setting', async () => {
       // Espionner sans empêcher le comportement normal
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
-      
+
       // Remplacer process.exit pour éviter qu'il ne termine le processus de test
       const originalExit = process.exit;
       process.exit = jest.fn() as any;
-      
+
       const errorFn = async () => {
         throw new ValidationError('Test validation error');
       };
-      
+
       const wrapped = wrapWithErrorHandler(errorFn);
-      
+
       // Exécuter la fonction mais ignorer l'erreur
       await wrapped().catch(() => {});
-      
+
       expect(consoleErrorSpy).toHaveBeenCalledWith('Error: Test validation error');
       expect(process.exit).toHaveBeenCalledWith(ExitCode.ValidationError);
-      
+
       // Restaurer les fonctions originales
       consoleErrorSpy.mockRestore();
       process.exit = originalExit;
     });
-    
+
     it('should handle errors with verbose=true', async () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
-      
+
       // Remplacer process.exit
       const originalExit = process.exit;
       process.exit = jest.fn() as any;
-      
+
       const errorWithStackFn = async () => {
         const error = new Error('Error with stack');
         error.stack = 'Error: Error with stack\n    at file.js:1:1';
         throw error;
       };
-      
+
       const wrapped = wrapWithErrorHandler(errorWithStackFn, true);
-      
+
       // Exécuter la fonction mais ignorer l'erreur
       await wrapped().catch(() => {});
-      
+
       expect(consoleErrorSpy).toHaveBeenCalledWith('\nStack trace:');
       expect(process.exit).toHaveBeenCalledWith(ExitCode.GeneralError);
-      
+
       // Restaurer les fonctions originales
       consoleErrorSpy.mockRestore();
       process.exit = originalExit;
@@ -256,4 +264,4 @@ describe('Exit Codes', () => {
     expect(ExitCode.GitHubAPIError).toBe(6);
     expect(ExitCode.ConfigurationError).toBe(7);
   });
-}); 
+});

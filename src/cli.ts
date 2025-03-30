@@ -21,10 +21,7 @@ import os from 'os';
 const program = new Command();
 
 // Set basic information
-program
-  .name('ghp')
-  .description('GitHub Issues and Projects CLI connector')
-  .version(getVersion());
+program.name('ghp').description('GitHub Issues and Projects CLI connector').version(getVersion());
 
 // Register all command modules
 // These will be uncommented as we implement each module
@@ -32,21 +29,19 @@ registerIssueCommands(program);
 // registerProjectCommands(program);
 
 // Add config command
-const configCommand = program
-  .command('config')
-  .description('Manage GHP configuration');
+const configCommand = program.command('config').description('Manage GHP configuration');
 
 // Add init subcommand
 configCommand
   .command('init')
   .description('Initialize a new configuration file')
   .option('-g, --global', 'Create a global configuration file in your home directory')
-  .action((options) => {
+  .action(options => {
     try {
       const targetPath = options.global
         ? path.join(os.homedir(), CONFIG_FILENAME)
         : path.join(process.cwd(), CONFIG_FILENAME);
-      
+
       initConfigFile(targetPath);
       console.log(`Configuration file created at: ${targetPath}`);
     } catch (error) {
@@ -63,26 +58,25 @@ program
   .option('--debug', 'Enable debug mode');
 
 // Add a default command for when no command is specified
-program
-  .action(() => {
-    if (process.argv.length <= 2) {
-      // Load and use configuration
-      try {
-        const config = loadConfig(cmdArgsToConfig(program.opts()));
-        if (program.opts().verbose) {
-          console.log('Using configuration:');
-          console.log(JSON.stringify(config, null, 2));
-        }
-      } catch (error) {
-        handleError(error, program.opts().debug);
+program.action(() => {
+  if (process.argv.length <= 2) {
+    // Load and use configuration
+    try {
+      const config = loadConfig(cmdArgsToConfig(program.opts()));
+      if (program.opts().verbose) {
+        console.log('Using configuration:');
+        console.log(JSON.stringify(config, null, 2));
       }
-      
-      program.help();
+    } catch (error) {
+      handleError(error, program.opts().debug);
     }
-  });
+
+    program.help();
+  }
+});
 
 // Catch any unhandled errors
-process.on('unhandledRejection', (error) => {
+process.on('unhandledRejection', error => {
   handleError(error, program.opts().debug);
 });
 
@@ -91,4 +85,4 @@ try {
   program.parse(process.argv);
 } catch (error) {
   handleError(error, program.opts().debug);
-} 
+}

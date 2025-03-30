@@ -13,12 +13,15 @@ import { tmpdir } from 'os';
  * @returns Path to the created directory
  */
 export function createTempTestDir(prefix = 'ghp-test-'): string {
-  const dirPath = join(tmpdir(), `${prefix}${Date.now()}-${Math.random().toString(36).substring(2, 10)}`);
-  
+  const dirPath = join(
+    tmpdir(),
+    `${prefix}${Date.now()}-${Math.random().toString(36).substring(2, 10)}`
+  );
+
   if (!existsSync(dirPath)) {
     mkdirSync(dirPath, { recursive: true });
   }
-  
+
   return dirPath;
 }
 
@@ -32,7 +35,7 @@ export function createTempTestDir(prefix = 'ghp-test-'): string {
 export function createTempTestFile(content: string, fileName?: string, dirPath?: string): string {
   const testDir = dirPath || createTempTestDir();
   const filePath = join(testDir, fileName || `test-${Date.now()}.json`);
-  
+
   writeFileSync(filePath, content);
   return filePath;
 }
@@ -67,7 +70,7 @@ export function cleanupTestFiles(...paths: string[]): void {
  */
 export function mockProcessEnv(envVars: Record<string, string | undefined>): () => void {
   const originalEnv = { ...process.env };
-  
+
   // Set mocked environment variables
   for (const [key, value] of Object.entries(envVars)) {
     if (value === undefined) {
@@ -76,7 +79,7 @@ export function mockProcessEnv(envVars: Record<string, string | undefined>): () 
       process.env[key] = value;
     }
   }
-  
+
   // Return restore function
   return () => {
     // Restore original environment
@@ -85,9 +88,9 @@ export function mockProcessEnv(envVars: Record<string, string | undefined>): () 
         delete process.env[key];
       }
     }
-    
+
     for (const [key, value] of Object.entries(originalEnv)) {
       process.env[key] = value;
     }
   };
-} 
+}

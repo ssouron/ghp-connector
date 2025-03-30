@@ -22,7 +22,7 @@ export enum ExitCode {
  */
 export class GHPError extends Error {
   exitCode: ExitCode;
-  
+
   constructor(message: string, exitCode: ExitCode = ExitCode.GeneralError) {
     super(message);
     this.name = this.constructor.name;
@@ -71,7 +71,7 @@ export class NotFoundError extends GHPError {
  */
 export class GitHubAPIError extends GHPError {
   response?: any;
-  
+
   constructor(message: string, response?: any) {
     super(message, ExitCode.GitHubAPIError);
     this.response = response;
@@ -93,13 +93,13 @@ export class ConfigurationError extends GHPError {
 export function handleError(error: any, verbose = false): void {
   // Determine if it's a known error type
   const isGHPError = error instanceof GHPError;
-  
+
   // Get the exit code
   const exitCode = isGHPError ? error.exitCode : ExitCode.GeneralError;
-  
+
   // Format the error message
   let message: string;
-  
+
   if (error instanceof GitHubAPIError && error.response) {
     if (verbose) {
       message = `GitHub API Error: ${error.message}\nResponse: ${JSON.stringify(error.response, null, 2)}`;
@@ -111,16 +111,16 @@ export function handleError(error: any, verbose = false): void {
   } else {
     message = String(error);
   }
-  
+
   // Print error message
   console.error(`Error: ${message}`);
-  
+
   // In verbose mode, print stack trace for debugging
   if (verbose && error.stack) {
     console.error('\nStack trace:');
     console.error(error.stack);
   }
-  
+
   // Exit process with appropriate code
   process.exit(exitCode);
 }
@@ -141,4 +141,4 @@ export function wrapWithErrorHandler<T extends any[], R>(
       throw error;
     }
   };
-} 
+}

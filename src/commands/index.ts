@@ -3,4 +3,4 @@
  * Exports all command modules
  */
 
-export { registerIssueCommands } from './issue'; 
+export { registerIssueCommands } from './issue';

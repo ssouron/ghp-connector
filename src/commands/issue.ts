@@ -4,23 +4,21 @@
  */
 
 import { Command } from 'commander';
-import { 
-  GitHubClient, 
-  loadConfig, 
-  formatOutput, 
-  wrapWithErrorHandler, 
+import {
+  GitHubClient,
+  loadConfig,
+  formatOutput,
+  wrapWithErrorHandler,
   ValidationError,
   FormatType,
-  cmdArgsToConfig
+  cmdArgsToConfig,
 } from '../lib';
 
 /**
  * Register issue commands with the CLI
  */
 export function registerIssueCommands(program: Command): void {
-  const issueCommand = program
-    .command('issue')
-    .description('Manage GitHub issues');
+  const issueCommand = program.command('issue').description('Manage GitHub issues');
 
   // List issues
   issueCommand
@@ -71,13 +69,13 @@ async function listIssues(options: any): Promise<void> {
   // Parse command line options
   const formatType = options.parent.parent.opts().format as FormatType;
   const verbose = options.parent.parent.opts().verbose || false;
-  
+
   // Load config and merge with command line options
   const config = loadConfig(cmdArgsToConfig(options.parent.parent.opts()));
-  
+
   // Create GitHub client
   const client = GitHubClient.fromConfig(config);
-  
+
   // Prepare API options
   const apiOptions = {
     state: options.state || config.defaults.issues.state,
@@ -87,16 +85,16 @@ async function listIssues(options: any): Promise<void> {
     sort: options.sort,
     direction: options.direction,
   };
-  
+
   // Optional extra information in verbose mode
   if (verbose) {
     console.log(`Fetching issues from ${config.github.owner}/${config.github.repo}`);
     console.log(`Options: ${JSON.stringify(apiOptions)}`);
   }
-  
+
   // Fetch issues
   const issues = await client.listIssues(apiOptions);
-  
+
   // Print results
   console.log(formatOutput(issues, formatType));
 }
@@ -108,27 +106,27 @@ async function getIssue(issueNumber: string, options: any): Promise<void> {
   // Parse command line options
   const formatType = options.parent.parent.opts().format as FormatType;
   const verbose = options.parent.parent.opts().verbose || false;
-  
+
   // Validate issue number
   const issueId = parseInt(issueNumber, 10);
   if (isNaN(issueId)) {
     throw new ValidationError('Issue number must be a valid number');
   }
-  
+
   // Load config and merge with command line options
   const config = loadConfig(cmdArgsToConfig(options.parent.parent.opts()));
-  
+
   // Create GitHub client
   const client = GitHubClient.fromConfig(config);
-  
+
   // Optional extra information in verbose mode
   if (verbose) {
     console.log(`Fetching issue #${issueId} from ${config.github.owner}/${config.github.repo}`);
   }
-  
+
   // Fetch issue
   const issue = await client.getIssue(issueId);
-  
+
   // Print results
   console.log(formatOutput(issue, formatType));
 }
@@ -140,29 +138,29 @@ async function createIssue(options: any): Promise<void> {
   // Parse command line options
   const formatType = options.parent.parent.opts().format as FormatType;
   const verbose = options.parent.parent.opts().verbose || false;
-  
+
   // Validate required fields
   if (!options.title) {
     throw new ValidationError('Issue title is required');
   }
-  
+
   // Load config and merge with command line options
   const config = loadConfig(cmdArgsToConfig(options.parent.parent.opts()));
-  
+
   // Create GitHub client
   const client = GitHubClient.fromConfig(config);
-  
+
   // Prepare API options
   const apiOptions: Record<string, any> = {};
-  
+
   if (options.assignees) {
     apiOptions.assignees = options.assignees.split(',').map((a: string) => a.trim());
   }
-  
+
   if (options.labels) {
     apiOptions.labels = options.labels.split(',').map((l: string) => l.trim());
   }
-  
+
   // Optional extra information in verbose mode
   if (verbose) {
     console.log(`Creating issue in ${config.github.owner}/${config.github.repo}`);
@@ -171,10 +169,10 @@ async function createIssue(options: any): Promise<void> {
     if (apiOptions.assignees) console.log(`Assignees: ${apiOptions.assignees.join(', ')}`);
     if (apiOptions.labels) console.log(`Labels: ${apiOptions.labels.join(', ')}`);
   }
-  
+
   // Create issue
   const issue = await client.createIssue(options.title, options.body, apiOptions);
-  
+
   // Print results
   console.log(formatOutput(issue, formatType));
 }
@@ -186,34 +184,34 @@ async function updateIssue(issueNumber: string, options: any): Promise<void> {
   // Parse command line options
   const formatType = options.parent.parent.opts().format as FormatType;
   const verbose = options.parent.parent.opts().verbose || false;
-  
+
   // Validate issue number
   const issueId = parseInt(issueNumber, 10);
   if (isNaN(issueId)) {
     throw new ValidationError('Issue number must be a valid number');
   }
-  
+
   // Load config and merge with command line options
   const config = loadConfig(cmdArgsToConfig(options.parent.parent.opts()));
-  
+
   // Create GitHub client
   const client = GitHubClient.fromConfig(config);
-  
+
   // Prepare API options
   const apiOptions: Record<string, any> = {};
-  
+
   if (options.title) apiOptions.title = options.title;
   if (options.body) apiOptions.body = options.body;
   if (options.state) apiOptions.state = options.state;
-  
+
   if (options.assignees) {
     apiOptions.assignees = options.assignees.split(',').map((a: string) => a.trim());
   }
-  
+
   if (options.labels) {
     apiOptions.labels = options.labels.split(',').map((l: string) => l.trim());
   }
-  
+
   // Optional extra information in verbose mode
   if (verbose) {
     console.log(`Updating issue #${issueId} in ${config.github.owner}/${config.github.repo}`);
@@ -221,10 +219,10 @@ async function updateIssue(issueNumber: string, options: any): Promise<void> {
       console.log(`${key}: ${value}`);
     });
   }
-  
+
   // Update issue
   const issue = await client.updateIssue(issueId, apiOptions);
-  
+
   // Print results
   console.log(formatOutput(issue, formatType));
-} 
+}

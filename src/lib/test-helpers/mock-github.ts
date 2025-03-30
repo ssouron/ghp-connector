@@ -10,9 +10,13 @@
  * @param options Additional options
  * @returns A mock GitHub issue object
  */
-export function createMockIssue(id: number, title: string, options: Partial<MockIssueOptions> = {}) {
+export function createMockIssue(
+  id: number,
+  title: string,
+  options: Partial<MockIssueOptions> = {}
+) {
   const now = new Date().toISOString();
-  
+
   return {
     id,
     number: id,
@@ -24,13 +28,13 @@ export function createMockIssue(id: number, title: string, options: Partial<Mock
     assignees: options.assignees || [],
     created_at: options.created_at || now,
     updated_at: options.updated_at || now,
-    closed_at: options.state === 'closed' ? (options.closed_at || now) : null,
+    closed_at: options.state === 'closed' ? options.closed_at || now : null,
     user: {
       login: options.creator || 'test-user',
       id: 1,
       avatar_url: 'https://github.com/test-user.png',
-      html_url: 'https://github.com/test-user'
-    }
+      html_url: 'https://github.com/test-user',
+    },
   };
 }
 
@@ -41,7 +45,7 @@ export function createMockIssue(id: number, title: string, options: Partial<Mock
  * @returns An array of mock GitHub issues
  */
 export function createMockIssueList(count: number, options: Partial<MockIssueOptions> = {}) {
-  return Array.from({ length: count }, (_, i) => 
+  return Array.from({ length: count }, (_, i) =>
     createMockIssue(i + 1, `Test issue ${i + 1}`, options)
   );
 }
@@ -52,10 +56,10 @@ export function createMockIssueList(count: number, options: Partial<MockIssueOpt
 export interface MockIssueOptions {
   body: string;
   state: 'open' | 'closed';
-  labels: Array<{ id: number, name: string, color: string }>;
-  assignees: Array<{ login: string, id: number }>;
+  labels: Array<{ id: number; name: string; color: string }>;
+  assignees: Array<{ login: string; id: number }>;
   created_at: string;
   updated_at: string;
   closed_at: string | null;
   creator: string;
-} 
+}

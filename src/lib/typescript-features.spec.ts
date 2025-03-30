@@ -20,9 +20,9 @@ describe('TypeScript Features', () => {
   it('devrait prendre en charge les interfaces TypeScript', () => {
     const data: TestInterface = {
       id: 1,
-      name: 'test'
+      name: 'test',
     };
-    
+
     expect(data.id).toBe(1);
     expect(data.name).toBe('test');
     expect(data.optional).toBeUndefined();
@@ -32,10 +32,10 @@ describe('TypeScript Features', () => {
     const data: TestTypeExample = {
       value: 'hello',
       nested: {
-        prop: 42
-      }
+        prop: 42,
+      },
     };
-    
+
     expect(data.value).toBe('hello');
     expect(data.nested.prop).toBe(42);
   });
@@ -44,11 +44,11 @@ describe('TypeScript Features', () => {
     function identity<T>(arg: T): T {
       return arg;
     }
-    
+
     const stringResult = identity('hello');
     const numberResult = identity(123);
-    
+
     expect(typeof stringResult).toBe('string');
     expect(typeof numberResult).toBe('number');
   });
-}); 
+});
