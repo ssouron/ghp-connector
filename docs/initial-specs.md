@@ -1,80 +1,79 @@
-# GHP Connector - Spécifications Initiales
+# GHP Connector - Initial Specifications
 
-## Présentation
+## Overview
 
-GHP Connector est une bibliothèque Node.js open-source qui fournit une interface en ligne de commande pour interagir avec les Issues et Projects de GitHub. Elle est écrite en TypeScript pur, compilée en JavaScript et publiée en tant que package npm.
+GHP Connector is an open-source Node.js library that provides a command-line interface to interact with GitHub Issues and Projects. It is written in pure TypeScript, compiled to JavaScript, and published as an npm package.
 
-## Objectifs
+## Purpose
 
-L'objectif principal de cette bibliothèque est de permettre aux utilisateurs et aux agents IA d'interagir avec les issues GitHub via la ligne de commande de manière simple et lisible, en évitant l'utilisation directe de commandes curl complexes.
+The main purpose of this library is to allow users and AI agents to interact with GitHub issues via the command line in a simple and readable way, avoiding the direct use of complex curl commands.
 
-## Fonctionnalités prioritaires
+## Priority Features
 
-Dans la première phase, nous nous concentrerons principalement sur les fonctionnalités liées aux issues GitHub :
+In the first phase, we will focus primarily on GitHub issues-related functionalities:
 
-### Issues GitHub
-- **Création d'issues** : Créer de nouvelles issues avec titre, description, labels, assignés, etc.
-- **Lecture d'issues** : Obtenir les détails d'une issue spécifique ou une liste d'issues avec filtrage
-- **Mise à jour d'issues** : Modifier les propriétés d'une issue existante
-- **Suppression d'issues** : Fermer ou supprimer une issue
-- **Changement de statut** : Modifier le statut d'une issue (ouvert, fermé)
-- **Listage d'issues** : Récupérer toutes les issues d'un dépôt avec options de filtrage
+- **Issue Creation**: Create new issues with title, description, labels, assignees, etc.
+- **Issue Reading**: Get details of a specific issue or a list of issues with filtering
+- **Issue Updates**: Modify properties of an existing issue
+- **Comments Management**: Add, read, and delete comments on issues
+- **Status Changes**: Change the status of an issue (open, closed)
+- **Issue Listing**: Retrieve all issues from a repository with filtering options
 
-## Spécifications techniques
+## Technical Specifications
 
-### Format
-- Package npm installable globalement ou localement
-- Utilisable via des commandes shell ou via npx
-- Peut être importé comme bibliothèque dans d'autres projets Node.js
+### General
 
-### Installation
-```bash
-# Installation globale
-npm install -g ghp-connector
+- Written in TypeScript for type safety and better developer experience
+- Distributed as an npm package (both for global and local installation)
+- Can be imported as a library in other Node.js projects
 
-# Installation locale
-npm install --save-dev ghp-connector
+### Command Line Interface
 
-# Utilisation sans installation via npx
-npx ghp-connector <commande>
-```
+- Clear and consistent command structure: `ghp [resource] [action] [options]`
+- Support for common options like `--json` for output formatting
+- Help commands and documentation built into the CLI
+- Interactive mode for complex operations
 
 ### Configuration
-- Fichier de configuration local (par exemple `.ghprc.json` ou `.ghprc.js`) pour stocker les paramètres par défaut comme le dépôt, le projet, etc.
-- Configuration par environnement pour les différents contextes (développement, production)
-- Les secrets (tokens d'accès GitHub, API keys) sont fournis par des variables d'environnement
 
-### Utilisation en ligne de commande
-```bash
-# Exemples d'utilisation
-ghp issue list
-ghp issue create --title="Nouveau bug" --body="Description du bug"
-ghp issue update --id=123 --status="closed"
-```
+- Local configuration file (e.g., `.ghprc.json` or `.ghprc.js`) to store default parameters like repository, project, etc.
+- Environment-based configuration for different contexts (development, production)
+- Secrets (GitHub access tokens, API keys) are provided through environment variables
 
-### Format de sortie
-- Format JSON par défaut pour l'interopérabilité
-- Option de formatage lisible pour l'affichage dans le terminal
-- Codes de retour standards pour faciliter l'intégration avec d'autres outils
+### GitHub API Integration
 
-### Authentification
-- Support de l'authentification via token GitHub (Personal Access Token)
-- Support des variables d'environnement pour les informations sensibles (GITHUB_TOKEN, GITHUB_API_KEY)
-- Configuration stockée localement pour un usage répété
+- Uses the GitHub REST API v3 via Octokit
+- Support for authentication with personal access tokens
+- Rate limit handling and retry mechanisms
+- Proper error handling with informative messages
 
-## Futurs développements
+### Output Formats
 
-Dans les phases ultérieures, nous envisageons d'ajouter :
-- Support complet pour les Projects GitHub
-- Gestion des Pull Requests
-- Intégration avec GitHub Actions
-- Fonctionnalités avancées de filtrage et de recherche
-- Support pour les webhooks GitHub
+- Default JSON format for interoperability
+- Human-readable formatted output for terminal display
+- Standard return codes to facilitate integration with other tools
 
-## Contribution
+### Usability Features
 
-Ce projet est open-source et les contributions sont les bienvenues. Nous suivrons les pratiques standards pour les projets open-source, notamment :
-- Utilisation d'issues pour le suivi des bugs et des fonctionnalités
-- Pull requests pour les contributions
-- Tests unitaires pour assurer la qualité du code
-- Documentation complète de l'API 
+- Intelligent defaults to minimize required parameters
+- Configuration stored locally for repeated use
+- Command history and favorites
+
+## Future Developments
+
+In later phases, we plan to add:
+
+- GitHub Projects integration
+- GitHub Actions integration
+- Advanced filtering and search functionalities
+- Batch operations for multiple issues
+- Custom templates for issues and comments
+- Webhook management
+
+## Development Practices
+
+- Semantic Versioning for releases
+- Use of GitHub issues for bug and feature tracking
+- Comprehensive documentation
+- Unit tests to ensure code quality
+- Complete API documentation 
