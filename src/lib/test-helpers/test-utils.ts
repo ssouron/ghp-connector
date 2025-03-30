@@ -63,8 +63,9 @@ export function cleanupTestFiles(...paths: string[]): void {
  * Mocks process.env for testing
  * @param envVars Environment variables to set
  * @returns Function to restore original environment
+ * @deprecated Use mockEnv from './mocks/env-mock' instead
  */
-export function mockEnv(envVars: Record<string, string | undefined>): () => void {
+export function mockProcessEnv(envVars: Record<string, string | undefined>): () => void {
   const originalEnv = { ...process.env };
   
   // Set mocked environment variables

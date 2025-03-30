@@ -35,6 +35,9 @@
   "devDependencies": {
     "@types/jest": "^29.5.14",
     "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^7.1.0",
+    "@typescript-eslint/parser": "^7.1.0",
+    "eslint": "^8.57.0",
     "jest": "^29.7.0",
     "jest-environment-node": "^29.7.0",
     "jest-mock-extended": "^4.0.0-beta1",
@@ -43,7 +46,7 @@
     "typescript": "^5.3.3"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   },
   "repository": {
     "type": "git",

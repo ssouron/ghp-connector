@@ -92,7 +92,7 @@ export class GitHubClient {
     }
     
     // Remove owner and repo from options and keep the rest
-    const { owner, repo, ...restOptions } = options;
+    const { owner: _owner, repo: _repo, ...restOptions } = options;
     
     const { data } = await this.octokit.rest.issues.listForRepo({
       owner: repoOwner,
@@ -135,7 +135,7 @@ export class GitHubClient {
     }
     
     // Remove owner and repo from options and keep the rest
-    const { owner, repo, ...restOptions } = options;
+    const { owner: _owner, repo: _repo, ...restOptions } = options;
     
     const { data } = await this.octokit.rest.issues.create({
       owner: repoOwner,
@@ -160,7 +160,7 @@ export class GitHubClient {
     }
     
     // Remove owner and repo from options and keep the rest
-    const { owner, repo, ...restOptions } = options;
+    const { owner: _owner, repo: _repo, ...restOptions } = options;
     
     const { data } = await this.octokit.rest.issues.update({
       owner: repoOwner,

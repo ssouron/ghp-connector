@@ -4,7 +4,7 @@
 
 import { Octokit } from 'octokit';
 import { GitHubClient } from '../../github/client';
-import { createMockIssue, createMockIssueList, MockIssueOptions } from '../mock-github';
+import { createMockIssue, createMockIssueList } from '../mock-github';
 import { mock, MockProxy } from 'jest-mock-extended';
 
 /**

@@ -2,9 +2,9 @@
  * Tests for configuration module
  */
 
-import fs from 'fs';
-import path from 'path';
-import os from 'os';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as os from 'os';
 import { 
   CONFIG_FILENAME,
   findConfigFile,
@@ -20,11 +20,8 @@ import {
   GitHubConfig
 } from './index';
 import {
-  createTempTestDir,
-  createTempTestFile,
-  createTempConfigFile,
   cleanupTestFiles,
-  mockEnv
+  mockProcessEnv
 } from '../test-helpers/test-utils';
 
 // Mock fs module
@@ -136,7 +133,7 @@ describe('Configuration Module', () => {
   describe('getEnvConfig', () => {
     it('devrait extraire la configuration depuis les variables d\'environnement', () => {
       // Mock environment variables
-      const restoreEnv = mockEnv({
+      const restoreEnv = mockProcessEnv({
         GITHUB_OWNER: 'env-owner',
         GITHUB_REPO: 'env-repo',
         GITHUB_TOKEN: 'env-token',
@@ -161,7 +158,7 @@ describe('Configuration Module', () => {
 
     it('devrait retourner un objet vide si aucune variable d\'environnement pertinente n\'est définie', () => {
       // Mock environment variables (clear relevant ones)
-      const restoreEnv = mockEnv({
+      const restoreEnv = mockProcessEnv({
         GITHUB_OWNER: undefined,
         GITHUB_REPO: undefined,
         GITHUB_TOKEN: undefined,
@@ -178,7 +175,7 @@ describe('Configuration Module', () => {
 
     it('devrait inclure seulement les variables définies', () => {
       // Mock only some environment variables
-      const restoreEnv = mockEnv({
+      const restoreEnv = mockProcessEnv({
         GITHUB_OWNER: 'env-owner',
         GITHUB_REPO: undefined,
         GITHUB_TOKEN: 'env-token',
@@ -338,7 +335,7 @@ describe('Configuration Module', () => {
       jest.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify(mockFileConfig));
       
       // Mock env
-      const restoreEnv = mockEnv({
+      const restoreEnv = mockProcessEnv({
         GITHUB_TOKEN: 'env-token'
       });
       
@@ -369,7 +366,7 @@ describe('Configuration Module', () => {
       jest.spyOn(fs, 'existsSync').mockReturnValue(false);
       
       // Mock env
-      const restoreEnv = mockEnv({
+      const restoreEnv = mockProcessEnv({
         GITHUB_OWNER: 'env-owner',
         GITHUB_REPO: 'env-repo'
       });
@@ -531,7 +528,7 @@ describe('Configuration Module', () => {
       };
       
       // Simuler les opérations du système de fichiers
-      const mockExistsSync = jest.spyOn(fs, 'existsSync').mockReturnValue(true);
+      const _mockExistsSync = jest.spyOn(fs, 'existsSync').mockReturnValue(true);
       jest.spyOn(process, 'cwd').mockReturnValue('/fake/dir');
       jest.spyOn(path, 'join').mockImplementation((...paths) => paths.join('/'));
       jest.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify(testConfig));
@@ -580,7 +577,7 @@ describe('Configuration Module', () => {
       jest.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify(fileConfig));
       
       // Mock les variables d'environnement
-      const restoreEnv = mockEnv({
+      const restoreEnv = mockProcessEnv({
         GITHUB_TOKEN: 'env-token'
       });
       

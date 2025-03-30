@@ -14,11 +14,11 @@ jest.mock('../lib', () => {
     GitHubClient: {
       fromConfig: jest.fn().mockReturnValue({
         listIssues: jest.fn().mockResolvedValue(createMockIssueList(3)),
-        getIssue: jest.fn().mockImplementation((id) => 
+        getIssue: jest.fn().mockImplementation((_id) => 
           Promise.resolve(createMockIssueList(1)[0])),
-        createIssue: jest.fn().mockImplementation((title, body, options) => 
+        createIssue: jest.fn().mockImplementation((_title, _body, _options) => 
           Promise.resolve(createMockIssueList(1)[0])),
-        updateIssue: jest.fn().mockImplementation((id, options) => 
+        updateIssue: jest.fn().mockImplementation((_id, _options) => 
           Promise.resolve(createMockIssueList(1)[0])),
       })
     },
