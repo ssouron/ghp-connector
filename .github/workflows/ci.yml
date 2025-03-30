@@ -1,5 +1,6 @@
 name: CI
 
+# Testing workflow trigger
 on:
   push:
     branches: [ '*' ]
