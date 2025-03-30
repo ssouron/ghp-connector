@@ -29,6 +29,7 @@ Thumbs.db
 
 # Fichiers de couverture de tests
 coverage/
+.jest-cache/
 
 # Fichiers de log
 logs/
