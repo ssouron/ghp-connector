@@ -127,7 +127,7 @@ export class HumanFormatter<T> implements Formatter<T> {
     
     // Default formatting for other object types
     return Object.entries(data)
-      .filter(([_, value]) => value !== undefined && value !== null)
+      .filter(([, value]) => value !== undefined && value !== null)
       .map(([key, value]) => {
         if (typeof value === 'object' && !Array.isArray(value)) {
           return `${key}:\n  ${JSON.stringify(value, null, 2).replace(/\n/g, '\n  ')}`;
