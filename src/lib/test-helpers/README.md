@@ -1,115 +1,115 @@
 # Test Helpers
 
-Ce répertoire contient des utilitaires pour faciliter les tests dans GHP Connector.
+This directory contains utilities to facilitate testing in GHP Connector.
 
-## Mocks pour les dépendances externes
+## Mocks for External Dependencies
 
-### Module fs (Système de fichiers)
+### fs Module (File System)
 
 ```typescript
 import { mockFs, mockVirtualFs } from './mocks/fs-mock';
 
-// Mock simple du système de fichiers
+// Simple fs mock
 const { fs: fsMock, restore } = mockFs();
-// Utilisez fsMock comme vous utiliseriez fs
-fsMock.existsSync('some-file.txt'); // Retourne false par défaut
-// Restaurez les mocks quand vous avez terminé
+// Use fsMock as you would use fs
+fsMock.existsSync('some-file.txt'); // Returns false by default
+// Restore mocks when you're done
 restore();
 
-// Mock avec système de fichiers virtuel
+// Mock with virtual file system
 const initialFiles = {
-  '/test.txt': 'Contenu du fichier',
+  '/test.txt': 'File content',
   '/config.json': '{ "key": "value" }'
 };
 const { fs: fsMock, restore, getVirtualFs } = mockVirtualFs(initialFiles);
-// Utilisez fsMock pour interagir avec le système de fichiers virtuel
+// Use fsMock to interact with the virtual file system
 fsMock.existsSync('/test.txt'); // true
-fsMock.readFileSync('/test.txt', 'utf8'); // 'Contenu du fichier'
-// Modifiez le système de fichiers
-fsMock.writeFileSync('/new-file.txt', 'Nouveau contenu');
-// Accédez au système de fichiers virtuel
+fsMock.readFileSync('/test.txt', 'utf8'); // 'File content'
+// Modify the file system
+fsMock.writeFileSync('/new-file.txt', 'New content');
+// Access the virtual file system
 const virtualFs = getVirtualFs();
-console.log(virtualFs['/new-file.txt']); // 'Nouveau contenu'
-// Restaurez les mocks quand vous avez terminé
+console.log(virtualFs['/new-file.txt']); // 'New content'
+// Restore mocks when you're done
 restore();
 ```
 
-### API GitHub (Octokit)
+### GitHub API (Octokit)
 
 ```typescript
 import { mockOctokit, mockGitHubClient } from './mocks/octokit-mock';
 
-// Mock de l'API Octokit
+// Mock Octokit API
 const octokit = mockOctokit({
-  defaultIssueCount: 10, // Nombre d'issues à générer par défaut
+  defaultIssueCount: 10, // Default number of issues to generate
   customResponses: {
-    // Réponses personnalisées pour certaines requêtes
+    // Custom responses for specific requests
     repo: { name: 'custom-repo' },
     issues: {
-      list: [/* issues personnalisées */],
+      list: [/* custom issues */],
       get: {
-        123: {/* issue personnalisée pour #123 */}
+        123: {/* custom issue for #123 */}
       }
     }
   }
 });
 
-// Utilisez octokit comme vous utiliseriez l'API GitHub
+// Use octokit as you would use the GitHub API
 const repo = await octokit.rest.repos.get({ owner: 'test-owner', repo: 'test-repo' });
 const issues = await octokit.rest.issues.listForRepo({ owner: 'test-owner', repo: 'test-repo' });
 
-// Mock du client GitHub
+// Mock GitHub client
 const client = mockGitHubClient({
-  // Même options que pour mockOctokit
+  // Same options as for mockOctokit
 });
 
-// Utilisez client comme vous utiliseriez GitHubClient
+// Use client as you would use GitHubClient
 const repo = await client.getRepository();
 const issues = await client.listIssues();
 const issue = await client.getIssue(123);
 ```
 
-### Variables d'environnement
+### Environment Variables
 
 ```typescript
 import { mockEnv, mockGitHubEnv, mockCIEnv } from './mocks/env-mock';
 
-// Mock personnalisé des variables d'environnement
+// Custom environment variables mock
 const restore = mockEnv({
   vars: {
     NODE_ENV: 'test',
     API_KEY: 'test-key'
   },
-  unset: ['HOME'] // Variables à supprimer
+  unset: ['HOME'] // Variables to remove
 });
 
-// Utilisez les variables d'environnement
+// Use environment variables
 console.log(process.env.NODE_ENV); // 'test'
 console.log(process.env.API_KEY); // 'test-key'
 console.log(process.env.HOME); // undefined
 
-// Restaurez les variables d'origine quand vous avez terminé
+// Restore original variables when done
 restore();
 
-// Mocks prédéfinis
-const restoreGitHub = mockGitHubEnv(); // Configure les variables GitHub pour les tests
-const restoreCI = mockCIEnv(); // Configure les variables CI pour les tests
+// Predefined mocks
+const restoreGitHub = mockGitHubEnv(); // Configure GitHub variables for tests
+const restoreCI = mockCIEnv(); // Configure CI variables for tests
 ```
 
-## Bonnes pratiques
+## Best Practices
 
-1. **Isoler les tests** : Utilisez les mocks pour isoler vos tests des dépendances externes.
-2. **Restaurer les mocks** : Appelez toujours la fonction `restore()` après vos tests pour éviter les effets de bord.
-3. **Setup/Teardown** : Utilisez `beforeEach` et `afterEach` pour configurer et nettoyer les mocks.
-4. **Test réaliste** : Configurez vos mocks pour qu'ils reflètent le comportement réel des dépendances.
-5. **Ne pas sur-mocker** : Ne mockez que ce qui est nécessaire pour isoler vos tests.
+1. **Isolate tests**: Use mocks to isolate your tests from external dependencies.
+2. **Restore mocks**: Always call the `restore()` function after your tests to avoid side effects.
+3. **Setup/Teardown**: Use `beforeEach` and `afterEach` to configure and clean up mocks.
+4. **Realistic tests**: Configure your mocks to reflect the real behavior of dependencies.
+5. **Don't over-mock**: Only mock what's necessary to isolate your tests.
 
-## Exemple complet
+## Complete Example
 
 ```typescript
 import { mockFs, mockGitHubEnv } from '../test-helpers';
 
-describe('Mon composant', () => {
+describe('My component', () => {
   let restoreFs;
   let restoreEnv;
 
@@ -125,8 +125,8 @@ describe('Mon composant', () => {
     restoreEnv();
   });
 
-  it('devrait faire quelque chose', () => {
-    // Test avec mocks
+  it('should do something', () => {
+    // Test with mocks
   });
 });
 ``` 

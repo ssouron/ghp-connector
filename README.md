@@ -104,6 +104,7 @@ npm run format:check
 
 Comprehensive test documentation is available:
 
+- [Quick Start Testing Guide](./docs/testing/quick-start.md)
 - [Complete Testing Guide](./docs/testing/guide.md)
 - [Code Coverage Information](./docs/testing/code-coverage.md)
 - [Advanced Mocking Strategies](./docs/testing/advanced-mocks.md)
@@ -112,10 +113,10 @@ For contributors, please ensure all new code includes appropriate tests as outli
 
 ## 🗓️ Roadmap
 
-La feuille de route du projet s'articule autour des jalons suivants :
+The project roadmap is structured around the following milestones:
 
-1. **Initial Setup**: Mise en place du projet, architecture et configuration
-2. **Issues CRUD**: Opérations de base pour la gestion des Issues GitHub
+1. **Initial Setup**: Project setup, architecture, and configuration
+2. **Issues CRUD**: Basic operations for GitHub Issues management
 
 ## 📖 Documentation
 
