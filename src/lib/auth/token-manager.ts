@@ -16,6 +16,7 @@ interface TokenData {
 export class TokenManager {
   private static instance: TokenManager;
   private tokenData: TokenData | null = null;
+  private lastRotationCount: number = 0;
   private readonly logger = createLogger('TokenManager');
   private readonly MAX_ROTATION_COUNT = 3;
   private readonly TOKEN_ROTATION_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours
@@ -75,9 +76,21 @@ export class TokenManager {
     this.tokenData.lastUsed = new Date();
 
     // Check if token needs rotation
-    this.checkAndRotateToken();
+    const timeSinceCreation = Date.now() - this.tokenData.createdAt.getTime();
+    const needsRotation = timeSinceCreation > this.TOKEN_ROTATION_INTERVAL;
 
-    return this.tokenData.value;
+    if (needsRotation) {
+      if (this.tokenData.rotationCount >= this.MAX_ROTATION_COUNT) {
+        this.logger.warn('Maximum rotation count reached');
+        this.secureCleanup();
+        return null;
+      } else {
+        this.logger.warn('Token rotation required');
+        this.rotateToken();
+      }
+    }
+
+    return this.tokenData?.value ?? null;
   }
 
   /**
@@ -109,24 +122,6 @@ export class TokenManager {
   }
 
   /**
-   * Check if token needs rotation and perform rotation if necessary
-   */
-  private checkAndRotateToken(): void {
-    if (!this.tokenData) {
-      return;
-    }
-
-    const timeSinceCreation = Date.now() - this.tokenData.createdAt.getTime();
-    const needsRotation =
-      timeSinceCreation > this.TOKEN_ROTATION_INTERVAL || this.tokenData.rotationCount >= this.MAX_ROTATION_COUNT;
-
-    if (needsRotation) {
-      this.logger.warn('Token rotation required');
-      this.rotateToken();
-    }
-  }
-
-  /**
    * Rotate the current token
    */
   private rotateToken(): void {
@@ -134,16 +129,28 @@ export class TokenManager {
       return;
     }
 
+    const newRotationCount = this.tokenData.rotationCount + 1;
+
+    // Check if we've reached the maximum rotation count
+    if (newRotationCount > this.MAX_ROTATION_COUNT) {
+      this.logger.warn('Maximum rotation count reached, cleaning up token');
+      this.lastRotationCount = this.MAX_ROTATION_COUNT;
+      this.secureCleanup();
+      return;
+    }
+
     // Log rotation attempt
-    this.logger.info(`Rotating token (rotation count: ${this.tokenData.rotationCount + 1})`);
+    this.logger.info(`Rotating token (rotation count: ${newRotationCount})`);
 
     // Create new token data with incremented rotation count
+    const oldToken = this.tokenData.value;
     this.tokenData = {
-      value: this.tokenData.value,
+      value: oldToken,
       createdAt: new Date(),
       lastUsed: new Date(),
-      rotationCount: this.tokenData.rotationCount + 1,
+      rotationCount: newRotationCount,
     };
+    this.lastRotationCount = newRotationCount;
 
     // Log successful rotation
     this.logger.info('Token rotated successfully');
@@ -174,7 +181,7 @@ export class TokenManager {
       return {
         createdAt: null,
         lastUsed: null,
-        rotationCount: 0,
+        rotationCount: this.lastRotationCount,
         age: 0,
       };
     }

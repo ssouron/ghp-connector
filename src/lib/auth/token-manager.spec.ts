@@ -3,15 +3,21 @@ import { GitHubConfig } from '../config';
 
 describe('TokenManager', () => {
   let tokenManager: TokenManager;
+  let originalDateNow: () => number;
 
   beforeEach(() => {
     // Reset singleton
     (TokenManager as any).instance = null;
     tokenManager = TokenManager.getInstance();
+
+    // Store original Date.now
+    originalDateNow = Date.now;
   });
 
   afterEach(() => {
     tokenManager.clearToken();
+    // Restore original Date.now
+    Date.now = originalDateNow;
   });
 
   describe('token management', () => {
@@ -40,44 +46,71 @@ describe('TokenManager', () => {
   describe('token rotation', () => {
     it('should track token usage', () => {
       const token = '1234567890abcdef1234567890abcdef12345678';
+      const baseTime = originalDateNow();
+
+      // Mock Date.now to return a fixed time
+      Date.now = jest.fn(() => baseTime);
       tokenManager.setToken(token);
+
+      // Mock Date.now to return a time 1 hour later
+      Date.now = jest.fn(() => baseTime + 60 * 60 * 1000);
 
       const stats = tokenManager.getTokenStats();
       expect(stats.rotationCount).toBe(0);
-      expect(stats.age).toBeGreaterThan(0);
+      expect(stats.age).toBeCloseTo(60 * 60 * 1000, -3); // 1 hour in milliseconds, with 3 digits of precision
     });
 
     it('should rotate token after interval', () => {
       const token = '1234567890abcdef1234567890abcdef12345678';
+      const baseTime = originalDateNow();
+
+      // Mock Date.now to return a fixed time
+      Date.now = jest.fn(() => baseTime);
       tokenManager.setToken(token);
 
-      // Mock Date.now to simulate time passing
-      const originalDateNow = Date.now;
-      Date.now = jest.fn(() => originalDateNow() + 25 * 60 * 60 * 1000); // 25 hours
+      // Mock Date.now to simulate time passing (25 hours)
+      Date.now = jest.fn(() => baseTime + 25 * 60 * 60 * 1000);
 
       tokenManager.getToken(); // This should trigger rotation
       const stats = tokenManager.getTokenStats();
       expect(stats.rotationCount).toBe(1);
 
+      // Restore original Date.now
       Date.now = originalDateNow;
     });
 
     it('should respect maximum rotation count', () => {
       const token = '1234567890abcdef1234567890abcdef12345678';
+      const baseTime = originalDateNow();
+
+      // Mock Date.now to return a fixed time
+      Date.now = jest.fn(() => baseTime);
       tokenManager.setToken(token);
 
-      // Mock Date.now to simulate time passing
-      const originalDateNow = Date.now;
-      Date.now = jest.fn(() => originalDateNow() + 25 * 60 * 60 * 1000); // 25 hours
-
-      // Trigger multiple rotations
+      // Trigger multiple rotations by simulating time passing
       for (let i = 0; i < 4; i++) {
-        tokenManager.getToken();
+        // Simulate 25 hours passing for each rotation
+        Date.now = jest.fn(() => baseTime + (i + 1) * 25 * 60 * 60 * 1000);
+        const currentToken = tokenManager.getToken();
+        const stats = tokenManager.getTokenStats();
+
+        if (i < 3) {
+          // For the first 3 rotations, we should still have a token
+          expect(currentToken).toBe(token);
+          expect(stats.rotationCount).toBe(i + 1);
+        } else {
+          // On the 4th attempt (after 3 rotations), the token should be cleared
+          expect(currentToken).toBeNull();
+          expect(stats.rotationCount).toBe(3);
+        }
       }
 
+      // Final verification
       const stats = tokenManager.getTokenStats();
       expect(stats.rotationCount).toBe(3); // Should not exceed MAX_ROTATION_COUNT
+      expect(tokenManager.getToken()).toBeNull(); // Token should be cleared after max rotations
 
+      // Restore original Date.now
       Date.now = originalDateNow;
     });
   });
@@ -136,13 +169,20 @@ describe('TokenManager', () => {
   describe('token stats', () => {
     it('should provide accurate token statistics', () => {
       const token = '1234567890abcdef1234567890abcdef12345678';
+      const baseTime = originalDateNow();
+
+      // Mock Date.now to return a fixed time
+      Date.now = jest.fn(() => baseTime);
       tokenManager.setToken(token);
+
+      // Mock Date.now to return a time 1 hour later
+      Date.now = jest.fn(() => baseTime + 60 * 60 * 1000);
 
       const stats = tokenManager.getTokenStats();
       expect(stats.createdAt).toBeDefined();
       expect(stats.lastUsed).toBeDefined();
       expect(stats.rotationCount).toBe(0);
-      expect(stats.age).toBeGreaterThan(0);
+      expect(stats.age).toBeCloseTo(60 * 60 * 1000, -3); // 1 hour in milliseconds, with 3 digits of precision
     });
 
     it('should return null stats when no token is set', () => {
