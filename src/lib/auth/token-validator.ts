@@ -5,6 +5,7 @@
 
 import { Octokit } from '@octokit/rest';
 import { TokenManager } from './token-manager';
+import { createLogger } from '../utils/logger';
 
 interface TokenValidationResult {
   isValid: boolean;
@@ -21,6 +22,7 @@ export class TokenValidator {
   private cache: Map<string, { result: TokenValidationResult; timestamp: number }>;
   private cacheDuration: number = 5 * 60 * 1000; // 5 minutes
   private requiredScopes: string[] = ['issues', 'repo', 'project'];
+  private readonly logger = createLogger('TokenValidator');
 
   private constructor() {
     this.cache = new Map();
@@ -44,19 +46,32 @@ export class TokenValidator {
   public async validateToken(): Promise<TokenValidationResult> {
     const token = TokenManager.getInstance().getToken();
     if (!token) {
+      this.logger.error('No token found');
       throw new Error('No GitHub token found. Please set a token first.');
     }
 
     // Check cache first
     const cached = this.cache.get(token);
     if (cached && Date.now() - cached.timestamp < this.cacheDuration) {
+      this.logger.debug('Using cached validation result');
       return cached.result;
     }
 
     try {
       const octokit = new Octokit({ auth: token });
-      const { data: user } = await octokit.users.getAuthenticated();
-      const scopes = user.scopes || [];
+      const response = await octokit.users.getAuthenticated();
+
+      if (!response || !response.data) {
+        this.logger.error('Invalid response from GitHub API');
+        throw new Error('Invalid response from GitHub API');
+      }
+
+      // Get scopes from response headers
+      const scopeHeader = response.headers['x-oauth-scopes'] || '';
+      const scopes = scopeHeader
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean);
 
       const result: TokenValidationResult = {
         isValid: this.requiredScopes.every((scope) => scopes.includes(scope)),
@@ -70,15 +85,26 @@ export class TokenValidator {
         timestamp: Date.now(),
       });
 
+      this.logger.info('Token validation successful', {
+        isValid: result.isValid,
+        scopes: result.scopes,
+        missingScopes: result.missingScopes,
+      });
+
       return result;
-    } catch (error) {
+    } catch (error: any) {
+      this.logger.error('Token validation failed', {
+        error: error.message,
+        status: error.status,
+      });
+
       if (error.status === 403) {
         throw new Error('GitHub token is invalid or has expired.');
       }
       if (error.status === 429) {
         throw new Error('Rate limit exceeded. Please try again later.');
       }
-      throw new Error(`Failed to validate token: ${error.message}`);
+      throw error;
     }
   }
 
@@ -113,5 +139,6 @@ export class TokenValidator {
    */
   public clearCache(): void {
     this.cache.clear();
+    this.logger.info('Token validation cache cleared');
   }
 }

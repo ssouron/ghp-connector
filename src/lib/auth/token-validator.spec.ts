@@ -1,12 +1,12 @@
 import { TokenValidator } from './token-validator';
 import { TokenManager } from './token-manager';
-import { Octokit } from '@octokit/rest';
 
 // Mock Octokit
+const mockGetAuthenticated = jest.fn();
 jest.mock('@octokit/rest', () => ({
   Octokit: jest.fn().mockImplementation(() => ({
     users: {
-      getAuthenticated: jest.fn(),
+      getAuthenticated: mockGetAuthenticated,
     },
   })),
 }));
@@ -14,7 +14,6 @@ jest.mock('@octokit/rest', () => ({
 describe('TokenValidator', () => {
   let validator: TokenValidator;
   let tokenManager: TokenManager;
-  let mockOctokit: jest.Mocked<Octokit>;
 
   beforeEach(() => {
     // Reset singletons
@@ -23,7 +22,7 @@ describe('TokenValidator', () => {
 
     validator = TokenValidator.getInstance();
     tokenManager = TokenManager.getInstance();
-    mockOctokit = new Octokit() as jest.Mocked<Octokit>;
+    mockGetAuthenticated.mockReset();
   });
 
   afterEach(() => {
@@ -39,11 +38,12 @@ describe('TokenValidator', () => {
       const mockToken = '1234567890abcdef1234567890abcdef12345678';
       tokenManager.setToken(mockToken);
 
-      mockOctokit.users.getAuthenticated.mockResolvedValueOnce({
-        data: {
-          scopes: ['issues', 'repo', 'project'],
+      mockGetAuthenticated.mockResolvedValueOnce({
+        data: {},
+        headers: {
+          'x-oauth-scopes': 'issues, repo, project',
         },
-      } as any);
+      });
 
       const result = await validator.validateToken();
       expect(result.isValid).toBe(true);
@@ -54,11 +54,12 @@ describe('TokenValidator', () => {
       const mockToken = '1234567890abcdef1234567890abcdef12345678';
       tokenManager.setToken(mockToken);
 
-      mockOctokit.users.getAuthenticated.mockResolvedValueOnce({
-        data: {
-          scopes: ['issues'],
+      mockGetAuthenticated.mockResolvedValueOnce({
+        data: {},
+        headers: {
+          'x-oauth-scopes': 'issues',
         },
-      } as any);
+      });
 
       const result = await validator.validateToken();
       expect(result.isValid).toBe(false);
@@ -72,7 +73,7 @@ describe('TokenValidator', () => {
 
       const error = new Error('Rate limit exceeded');
       (error as any).status = 429;
-      mockOctokit.users.getAuthenticated.mockRejectedValueOnce(error);
+      mockGetAuthenticated.mockRejectedValueOnce(error);
 
       await expect(validator.validateToken()).rejects.toThrow('Rate limit exceeded');
     });
@@ -83,7 +84,7 @@ describe('TokenValidator', () => {
 
       const error = new Error('Invalid token');
       (error as any).status = 403;
-      mockOctokit.users.getAuthenticated.mockRejectedValueOnce(error);
+      mockGetAuthenticated.mockRejectedValueOnce(error);
 
       await expect(validator.validateToken()).rejects.toThrow('GitHub token is invalid or has expired');
     });
@@ -94,11 +95,12 @@ describe('TokenValidator', () => {
       const mockToken = '1234567890abcdef1234567890abcdef12345678';
       tokenManager.setToken(mockToken);
 
-      mockOctokit.users.getAuthenticated.mockResolvedValueOnce({
-        data: {
-          scopes: ['issues', 'repo'],
+      mockGetAuthenticated.mockResolvedValueOnce({
+        data: {},
+        headers: {
+          'x-oauth-scopes': 'issues, repo',
         },
-      } as any);
+      });
 
       expect(await validator.hasScope('issues')).toBe(true);
       expect(await validator.hasScope('project')).toBe(false);
@@ -133,11 +135,12 @@ describe('TokenValidator', () => {
       const mockToken = '1234567890abcdef1234567890abcdef12345678';
       tokenManager.setToken(mockToken);
 
-      mockOctokit.users.getAuthenticated.mockResolvedValueOnce({
-        data: {
-          scopes: ['issues', 'repo', 'project'],
+      mockGetAuthenticated.mockResolvedValueOnce({
+        data: {},
+        headers: {
+          'x-oauth-scopes': 'issues, repo, project',
         },
-      } as any);
+      });
 
       // First call should hit the API
       await validator.validateToken();
@@ -145,24 +148,33 @@ describe('TokenValidator', () => {
       // Second call should use cache
       await validator.validateToken();
 
-      expect(mockOctokit.users.getAuthenticated).toHaveBeenCalledTimes(1);
+      expect(mockGetAuthenticated).toHaveBeenCalledTimes(1);
     });
 
     it('should clear cache when requested', async () => {
       const mockToken = '1234567890abcdef1234567890abcdef12345678';
       tokenManager.setToken(mockToken);
 
-      mockOctokit.users.getAuthenticated.mockResolvedValueOnce({
-        data: {
-          scopes: ['issues', 'repo', 'project'],
+      mockGetAuthenticated.mockResolvedValueOnce({
+        data: {},
+        headers: {
+          'x-oauth-scopes': 'issues, repo, project',
         },
-      } as any);
+      });
 
       await validator.validateToken();
       validator.clearCache();
+
+      mockGetAuthenticated.mockResolvedValueOnce({
+        data: {},
+        headers: {
+          'x-oauth-scopes': 'issues, repo, project',
+        },
+      });
+
       await validator.validateToken();
 
-      expect(mockOctokit.users.getAuthenticated).toHaveBeenCalledTimes(2);
+      expect(mockGetAuthenticated).toHaveBeenCalledTimes(2);
     });
   });
 });
