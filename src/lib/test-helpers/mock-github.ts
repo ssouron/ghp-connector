@@ -10,11 +10,7 @@
  * @param options Additional options
  * @returns A mock GitHub issue object
  */
-export function createMockIssue(
-  id: number,
-  title: string,
-  options: Partial<MockIssueOptions> = {}
-) {
+export function createMockIssue(id: number, title: string, options: Partial<MockIssueOptions> = {}) {
   const now = new Date().toISOString();
 
   return {
@@ -45,9 +41,7 @@ export function createMockIssue(
  * @returns An array of mock GitHub issues
  */
 export function createMockIssueList(count: number, options: Partial<MockIssueOptions> = {}) {
-  return Array.from({ length: count }, (_, i) =>
-    createMockIssue(i + 1, `Test issue ${i + 1}`, options)
-  );
+  return Array.from({ length: count }, (_, i) => createMockIssue(i + 1, `Test issue ${i + 1}`, options));
 }
 
 /**

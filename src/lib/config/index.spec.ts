@@ -42,7 +42,7 @@ describe('Configuration Module', () => {
   describe('findConfigFile', () => {
     it('devrait trouver le fichier de configuration dans le répertoire courant', () => {
       // Mock fs.existsSync
-      const mockExistsSync = jest.spyOn(fs, 'existsSync').mockImplementation(filePath => {
+      const mockExistsSync = jest.spyOn(fs, 'existsSync').mockImplementation((filePath) => {
         return filePath.toString().includes(CONFIG_FILENAME);
       });
 
@@ -58,10 +58,8 @@ describe('Configuration Module', () => {
 
     it('devrait trouver le fichier de configuration dans le répertoire home si absent du répertoire courant', () => {
       // Mock fs.existsSync to return false for current dir, true for home dir
-      const mockExistsSync = jest.spyOn(fs, 'existsSync').mockImplementation(filePath => {
-        return (
-          filePath.toString().includes('home') && filePath.toString().includes(CONFIG_FILENAME)
-        );
+      const mockExistsSync = jest.spyOn(fs, 'existsSync').mockImplementation((filePath) => {
+        return filePath.toString().includes('home') && filePath.toString().includes(CONFIG_FILENAME);
       });
 
       // Mock process.cwd, os.homedir, and path.join
@@ -406,11 +404,7 @@ describe('Configuration Module', () => {
 
       initConfigFile('/fake/path/.ghprc.json');
 
-      expect(mockWriteFileSync).toHaveBeenCalledWith(
-        '/fake/path/.ghprc.json',
-        expect.any(String),
-        'utf-8'
-      );
+      expect(mockWriteFileSync).toHaveBeenCalledWith('/fake/path/.ghprc.json', expect.any(String), 'utf-8');
 
       // Check content contains JSON
       const content = mockWriteFileSync.mock.calls[0][1] as string;
@@ -548,11 +542,7 @@ describe('Configuration Module', () => {
       initConfigFile('/fake/path/.ghprc.json');
 
       // Vérifier que writeFileSync a été appelé correctement
-      expect(mockWriteFileSync).toHaveBeenCalledWith(
-        '/fake/path/.ghprc.json',
-        expect.any(String),
-        'utf-8'
-      );
+      expect(mockWriteFileSync).toHaveBeenCalledWith('/fake/path/.ghprc.json', expect.any(String), 'utf-8');
 
       // Vérifier le contenu du fichier
       const content = mockWriteFileSync.mock.calls[0][1] as string;

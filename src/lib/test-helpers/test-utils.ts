@@ -13,10 +13,7 @@ import { tmpdir } from 'os';
  * @returns Path to the created directory
  */
 export function createTempTestDir(prefix = 'ghp-test-'): string {
-  const dirPath = join(
-    tmpdir(),
-    `${prefix}${Date.now()}-${Math.random().toString(36).substring(2, 10)}`
-  );
+  const dirPath = join(tmpdir(), `${prefix}${Date.now()}-${Math.random().toString(36).substring(2, 10)}`);
 
   if (!existsSync(dirPath)) {
     mkdirSync(dirPath, { recursive: true });

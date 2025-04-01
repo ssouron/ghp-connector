@@ -134,12 +134,8 @@ describe('Error Handling Functions', () => {
       const error = new GitHubAPIError('API error', responseData);
       handleError(error, true);
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('GitHub API Error: API error')
-      );
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        expect.stringContaining(JSON.stringify(responseData, null, 2))
-      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('GitHub API Error: API error'));
+      expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining(JSON.stringify(responseData, null, 2)));
       expect(processExitSpy).toHaveBeenCalledWith(ExitCode.GitHubAPIError);
     });
 
@@ -148,12 +144,8 @@ describe('Error Handling Functions', () => {
       const error = new GitHubAPIError('API error', responseData);
       handleError(error, false);
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('GitHub API Error: API error')
-      );
-      expect(consoleErrorSpy).not.toHaveBeenCalledWith(
-        expect.stringContaining(JSON.stringify(responseData, null, 2))
-      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining('GitHub API Error: API error'));
+      expect(consoleErrorSpy).not.toHaveBeenCalledWith(expect.stringContaining(JSON.stringify(responseData, null, 2)));
       expect(processExitSpy).toHaveBeenCalledWith(ExitCode.GitHubAPIError);
     });
 

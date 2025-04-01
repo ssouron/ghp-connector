@@ -67,4 +67,4 @@ export class TokenManager {
       this.setToken(config.token);
     }
   }
-} 
+}

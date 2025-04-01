@@ -57,9 +57,7 @@ export function mockOctokit(options: OctokitMockOptions = {}) {
           url: 'https://api.github.com/repos/test-owner/test-repo/issues',
         })),
         get: jest.fn().mockImplementation(async ({ issue_number }: { issue_number: number }) => ({
-          data:
-            customResponses.issues?.get?.[issue_number] ||
-            createMockIssue(issue_number, `Issue ${issue_number}`),
+          data: customResponses.issues?.get?.[issue_number] || createMockIssue(issue_number, `Issue ${issue_number}`),
           status: 200,
           headers: {},
           url: `https://api.github.com/repos/test-owner/test-repo/issues/${issue_number}`,
@@ -67,15 +65,7 @@ export function mockOctokit(options: OctokitMockOptions = {}) {
         create: jest
           .fn()
           .mockImplementation(
-            async ({
-              title,
-              body,
-              ...options
-            }: {
-              title: string;
-              body?: string;
-              [key: string]: any;
-            }) => ({
+            async ({ title, body, ...options }: { title: string; body?: string; [key: string]: any }) => ({
               data: createMockIssue(Date.now(), title, { body, ...options }),
               status: 201,
               headers: {},
@@ -84,37 +74,33 @@ export function mockOctokit(options: OctokitMockOptions = {}) {
           ),
         update: jest
           .fn()
-          .mockImplementation(
-            async ({ issue_number, ...updates }: { issue_number: number; [key: string]: any }) => ({
-              data: createMockIssue(issue_number, `Updated Issue ${issue_number}`, updates),
-              status: 200,
-              headers: {},
-              url: `https://api.github.com/repos/test-owner/test-repo/issues/${issue_number}`,
-            })
-          ),
+          .mockImplementation(async ({ issue_number, ...updates }: { issue_number: number; [key: string]: any }) => ({
+            data: createMockIssue(issue_number, `Updated Issue ${issue_number}`, updates),
+            status: 200,
+            headers: {},
+            url: `https://api.github.com/repos/test-owner/test-repo/issues/${issue_number}`,
+          })),
       },
     },
-    graphql: jest
-      .fn()
-      .mockImplementation(async (query: string, variables?: Record<string, any>) => {
-        // Si une réponse personnalisée est fournie pour cette requête, l'utiliser
-        const queryKey = query.replace(/\s+/g, ' ').trim();
-        if (customResponses.graphql?.[queryKey]) {
-          return customResponses.graphql[queryKey](variables);
-        }
+    graphql: jest.fn().mockImplementation(async (query: string, variables?: Record<string, any>) => {
+      // Si une réponse personnalisée est fournie pour cette requête, l'utiliser
+      const queryKey = query.replace(/\s+/g, ' ').trim();
+      if (customResponses.graphql?.[queryKey]) {
+        return customResponses.graphql[queryKey](variables);
+      }
 
-        // Réponse par défaut
-        return {
-          repository: {
-            id: 'R_123456',
-            name: 'test-repo',
-            owner: { login: 'test-owner' },
-            issues: {
-              nodes: createMockIssueList(3),
-            },
+      // Réponse par défaut
+      return {
+        repository: {
+          id: 'R_123456',
+          name: 'test-repo',
+          owner: { login: 'test-owner' },
+          issues: {
+            nodes: createMockIssueList(3),
           },
-        };
-      }),
+        },
+      };
+    }),
   };
 
   return octokitMock as unknown as Octokit;
@@ -144,12 +130,9 @@ interface MockIssue {
 /**
  * Crée un mock pour GitHubClient
  */
-export function mockGitHubClient(
-  options: OctokitMockOptions = {}
-): MockProxy<GitHubClient> & GitHubClient {
+export function mockGitHubClient(options: OctokitMockOptions = {}): MockProxy<GitHubClient> & GitHubClient {
   const clientMock = mock<GitHubClient>();
-  const mockIssueList =
-    options.customResponses?.issues?.list || createMockIssueList(options.defaultIssueCount || 5);
+  const mockIssueList = options.customResponses?.issues?.list || createMockIssueList(options.defaultIssueCount || 5);
 
   // Mock pour getRepository
   clientMock.getRepository.mockResolvedValue({

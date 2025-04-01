@@ -52,7 +52,7 @@ export function mockVirtualFs(initialFiles: VirtualFileSystem = {}): {
 
   // Créer un objet qui contient les fonctions mockées pour le système de fichiers virtuel
   const mockFsModule: MockedFs = {
-    existsSync: jest.fn().mockImplementation(path => {
+    existsSync: jest.fn().mockImplementation((path) => {
       const pathStr = path.toString();
       return pathStr in virtualFs;
     }),
@@ -60,9 +60,7 @@ export function mockVirtualFs(initialFiles: VirtualFileSystem = {}): {
     readFileSync: jest.fn().mockImplementation((path, options) => {
       const pathStr = path.toString();
       if (!(pathStr in virtualFs)) {
-        const error = new Error(
-          `ENOENT: no such file or directory, open '${pathStr}'`
-        ) as NodeJS.ErrnoException;
+        const error = new Error(`ENOENT: no such file or directory, open '${pathStr}'`) as NodeJS.ErrnoException;
         error.code = 'ENOENT';
         throw error;
       }
@@ -95,13 +93,13 @@ export function mockVirtualFs(initialFiles: VirtualFileSystem = {}): {
       }
     }),
 
-    mkdirSync: jest.fn().mockImplementation(path => {
+    mkdirSync: jest.fn().mockImplementation((path) => {
       const pathStr = path.toString();
       virtualFs[pathStr] = '';
       return pathStr;
     }),
 
-    rmSync: jest.fn().mockImplementation(path => {
+    rmSync: jest.fn().mockImplementation((path) => {
       const pathStr = path.toString();
       if (pathStr in virtualFs) {
         delete virtualFs[pathStr];

@@ -58,7 +58,7 @@ describe('TokenManager', () => {
       const config: GitHubConfig = {
         owner: 'test',
         repo: 'test',
-        token: '0123456789abcdef0123456789abcdef01234567'
+        token: '0123456789abcdef0123456789abcdef01234567',
       };
       tokenManager.initializeFromConfig(config);
       expect(tokenManager.getToken()).toBe(config.token);
@@ -67,10 +67,10 @@ describe('TokenManager', () => {
     it('should not set token if not present in config', () => {
       const config: GitHubConfig = {
         owner: 'test',
-        repo: 'test'
+        repo: 'test',
       };
       tokenManager.initializeFromConfig(config);
       expect(tokenManager.getToken()).toBeNull();
     });
   });
-}); 
+});

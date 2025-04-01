@@ -1,1 +1,1 @@
-export { TokenManager } from './token-manager'; 
+export { TokenManager } from './token-manager';
