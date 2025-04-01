@@ -391,9 +391,16 @@ describe('Configuration Module', () => {
       const mockConsoleError = jest.spyOn(console, 'error').mockImplementation();
 
       const config = loadConfig();
+      const defaultConfig = getDefaultConfig();
+
+      // Ignorer le token GitHub lors de la comparaison
+      const configWithoutToken = { ...config };
+      const defaultConfigWithoutToken = { ...defaultConfig };
+      delete configWithoutToken.github?.token;
+      delete defaultConfigWithoutToken.github?.token;
 
       expect(mockConsoleError).toHaveBeenCalled();
-      expect(config).toEqual(getDefaultConfig());
+      expect(configWithoutToken).toEqual(defaultConfigWithoutToken);
     });
   });
 

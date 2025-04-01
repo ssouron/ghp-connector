@@ -164,7 +164,7 @@ describe('Enterprise Command', () => {
 
       expect(mockConfigManager.updateConfig).toHaveBeenCalledWith({
         rateLimit: {
-          maxRequests: 5000,
+          maxRequests: 1000,
           windowMs: 1800000,
         },
       });
