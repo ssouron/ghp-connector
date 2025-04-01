@@ -107,8 +107,10 @@ export class TokenManager {
    * @returns true if the token format is valid, false otherwise
    */
   private validateToken(token: string): boolean {
-    // GitHub tokens are 40 characters long and contain only hexadecimal characters
-    return /^[0-9a-fA-F]{40}$/.test(token);
+    // GitHub tokens can be:
+    // 1. Classic Personal Access Tokens (40 hex chars)
+    // 2. Fine-grained Personal Access Tokens (starts with ghp_)
+    return /^[0-9a-fA-F]{40}$/.test(token) || /^ghp_[A-Za-z0-9]{36}$/.test(token);
   }
 
   /**

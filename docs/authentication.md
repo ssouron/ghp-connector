@@ -9,9 +9,8 @@ This document provides comprehensive information about the authentication system
 ### Token Requirements
 
 - Personal Access Token (PAT) with the following scopes:
-  - `issues`: For issue management
   - `repo`: For repository access
-  - `project`: For project board management
+  - `project`: For project board management (includes issues access)
 
 ### Token Storage
 

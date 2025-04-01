@@ -21,7 +21,7 @@ export class TokenValidator {
   private static instance: TokenValidator;
   private cache: Map<string, { result: TokenValidationResult; timestamp: number }>;
   private cacheDuration: number = 5 * 60 * 1000; // 5 minutes
-  private requiredScopes: string[] = ['issues', 'repo', 'project'];
+  private requiredScopes: string[] = ['repo', 'project'];
   private readonly logger = createLogger('TokenValidator');
 
   private constructor() {
@@ -130,7 +130,8 @@ export class TokenValidator {
 
     return (
       `Missing required GitHub permissions: ${result.missingScopes.join(', ')}. ` +
-      `Please ensure your token has the following scopes: ${this.requiredScopes.join(', ')}.`
+      `Please ensure your token has the following scopes: ${this.requiredScopes.join(', ')}. ` +
+      `Note: The 'project' scope includes access to issues.`
     );
   }
 

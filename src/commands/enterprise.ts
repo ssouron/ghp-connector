@@ -45,8 +45,11 @@ function createHealthCommand(): Command {
 function createValidateCommand(): Command {
   return new Command('validate').description('Validate the GitHub Enterprise configuration').action(async () => {
     try {
+      console.log('🔍 Starting configuration validation...');
       const configManager = new EnterpriseConfigManager();
       const config = configManager.getConfig();
+      console.log('📋 Current configuration:', JSON.stringify(config, null, 2));
+
       const validator = new EnterpriseValidator(config);
       const result = await validator.validate();
 
@@ -88,14 +91,14 @@ function createConfigCommand(): Command {
         if (options.verifySsl !== undefined) newConfig.verifySSL = options.verifySsl === 'true';
         if (options.maxRequests) {
           newConfig.rateLimit = {
-            ...currentConfig.rateLimit,
-            maxRequests: parseInt(options.maxRequests, 10),
+            maxRequests: parseInt(options.maxRequests),
+            windowMs: parseInt(options.windowMs) || 3600000, // 1 hour default
           };
         }
         if (options.windowMs) {
           newConfig.rateLimit = {
-            ...currentConfig.rateLimit,
-            windowMs: parseInt(options.windowMs, 10),
+            maxRequests: parseInt(options.maxRequests) || 5000, // 5000 requests default
+            windowMs: parseInt(options.windowMs),
           };
         }
 
