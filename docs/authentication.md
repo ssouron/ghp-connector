@@ -9,8 +9,32 @@ This document provides comprehensive information about the authentication system
 ### Token Requirements
 
 - Personal Access Token (PAT) with the following scopes:
-  - `repo`: For repository access
+  - `repo`: For repository access (required for all repository operations)
   - `project`: For project board management (includes issues access)
+  - `issues`: For issue management (included in `project` scope)
+
+### Token Validation
+
+The token is validated to ensure:
+
+- Correct format (40-character hexadecimal string)
+- Valid and active status
+- Required scopes are present
+- Rate limit status is acceptable
+
+You can validate your token using:
+
+```bash
+ghp token validate
+```
+
+The validation process checks:
+
+1. Token format and structure
+2. Token validity with GitHub API
+3. Required scopes (`repo` and `project`)
+4. Current rate limit status
+5. Any error conditions
 
 ### Token Storage
 

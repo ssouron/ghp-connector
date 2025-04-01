@@ -60,6 +60,29 @@ For more control, you can use the following extended configuration:
 | `rateLimit.maxRequests` | number  | No       | 5000    | Maximum number of requests per time window      |
 | `rateLimit.windowMs`    | number  | No       | 3600000 | Time window for rate limiting in milliseconds   |
 
+## Configuration Validation
+
+The Enterprise configuration is validated to ensure:
+
+- Valid URL format for `baseUrl`
+- Supported API version
+- Valid rate limit settings
+- Proper SSL/TLS configuration
+
+You can validate your configuration using:
+
+```bash
+ghp enterprise validate
+```
+
+The validation process checks:
+
+1. URL format and accessibility
+2. API version compatibility
+3. SSL/TLS certificate validity
+4. Rate limit configuration
+5. Authentication settings
+
 ## Environment Variables
 
 The following environment variables can be used to override configuration values:

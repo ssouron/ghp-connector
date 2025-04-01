@@ -49,6 +49,10 @@ The configuration file uses JSON format with the following structure:
       "direction": "desc"
     },
     "projects": {}
+  },
+  "rateLimit": {
+    "maxRequests": 5000,
+    "windowMs": 3600000
   }
 }
 ```
@@ -70,6 +74,33 @@ The configuration file uses JSON format with the following structure:
 | `issues.limit`     | Default number of issues to fetch                   | `10`      |
 | `issues.sort`      | Default sorting field                               | `created` |
 | `issues.direction` | Default sorting direction                           | `desc`    |
+
+#### Rate Limit Section
+
+| Field         | Description                                   | Default |
+| ------------- | --------------------------------------------- | ------- |
+| `maxRequests` | Maximum number of requests per time window    | 5000    |
+| `windowMs`    | Time window for rate limiting in milliseconds | 3600000 |
+
+## Token Validation
+
+The GitHub token is validated to ensure it has the required permissions:
+
+- `repo`: For repository access
+- `project`: For project board management (includes issues access)
+
+You can validate your token using:
+
+```bash
+ghp token validate
+```
+
+This will check:
+
+- Token format
+- Token validity
+- Required scopes
+- Rate limit status
 
 ## Environment Variables
 
