@@ -5,15 +5,44 @@ All notable changes to GHP Connector will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2024-04-01
+
+### Added
+
+- GitHub token validation system with:
+  - Format validation (40-character hexadecimal string)
+  - Scope validation (repo, project)
+  - Rate limit status checking
+  - Token rotation support
+  - Secure memory handling
+- New command `ghp token validate` for token validation
+- Comprehensive documentation for token management and security
+- Enterprise configuration validation with health checks
+
+### Changed
+
+- Updated configuration schema to include rate limiting settings
+- Enhanced security documentation with OWASP compliance guidelines
+- Improved error messages for token-related issues
+
+### Security
+
+- Implemented secure token storage in memory
+- Added token rotation mechanism
+- Enhanced error handling for sensitive data
+- Added audit logging for security events
+
 ## [0.1.0] - 2023-05-10
 
 ### Added
+
 - ESLint configuration with TypeScript support
 - CI/CD pipeline configuration with GitHub Actions
 - Support for multiple Node.js versions in CI pipeline
 - Linting rules for better code quality
 
 ### Fixed
+
 - Unused variables across the codebase
 - Pipeline failures in GitHub Actions
 - Improper handling of Jest cache in Git
@@ -82,4 +111,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - CLI architecture documentation
   - Architecture diagrams using Mermaid
   - Command structure and naming conventions
-  - Configuration management approach 
+  - Configuration management approach
