@@ -85,9 +85,7 @@ export function loadConfigFile(filePath: string): Partial<GHPConfig> {
     const configContent = fs.readFileSync(filePath, 'utf-8');
     return JSON.parse(configContent) as Partial<GHPConfig>;
   } catch (error) {
-    throw new Error(
-      `Failed to load config file: ${error instanceof Error ? error.message : String(error)}`
-    );
+    throw new Error(`Failed to load config file: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
@@ -151,7 +149,7 @@ function deepMerge<T>(target: T, source: Partial<T>): T {
 
   const output = { ...target };
 
-  Object.keys(source).forEach(key => {
+  Object.keys(source).forEach((key) => {
     const targetValue = (output as any)[key];
     const sourceValue = (source as any)[key];
 
@@ -227,9 +225,7 @@ export function initConfigFile(filePath: string): void {
     const configStr = JSON.stringify(defaultConfig, null, 2);
     fs.writeFileSync(filePath, configStr, 'utf-8');
   } catch (error) {
-    throw new Error(
-      `Failed to create config file: ${error instanceof Error ? error.message : String(error)}`
-    );
+    throw new Error(`Failed to create config file: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 

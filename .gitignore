@@ -41,3 +41,6 @@ temp/
 
 # Fichiers personnels
 INITIAL_MSG.md
+
+# Fichiers de configuration
+.ghprc.json

@@ -83,9 +83,7 @@ describe('Formatters Module', () => {
     });
 
     it('should extract names when ID is not available', () => {
-      expect(formatter.format({ name: 'Test Name', description: 'Test Description' })).toBe(
-        'Test Name'
-      );
+      expect(formatter.format({ name: 'Test Name', description: 'Test Description' })).toBe('Test Name');
     });
 
     it('should handle arrays of objects by extracting identifiers', () => {
@@ -97,12 +95,7 @@ describe('Formatters Module', () => {
     });
 
     it('should handle arrays with mixed identifier types', () => {
-      const mixedData = [
-        { id: 1 },
-        { number: 2 },
-        { name: 'Item 3' },
-        { description: 'No identifier' },
-      ];
+      const mixedData = [{ id: 1 }, { number: 2 }, { name: 'Item 3' }, { description: 'No identifier' }];
       expect(formatter.format(mixedData)).toBe('1\n2\nItem 3\n');
     });
 

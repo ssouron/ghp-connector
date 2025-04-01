@@ -16,6 +16,7 @@ GHP Connector is an open-source library that allows easy interaction with GitHub
 - User-friendly formatting of results for terminal display
 - Simple and intuitive interface suitable for use by humans and AI agents
 - Configuration system for default settings and repository information
+- GitHub Enterprise support with health monitoring and validation
 
 ## 🛠️ Installation
 
@@ -41,6 +42,9 @@ ghp issue update --id 123 --status closed
 
 # Initialize a configuration file
 ghp config init
+
+# Check Enterprise instance health
+ghp enterprise health
 ```
 
 ## ⚙️ Configuration
@@ -58,6 +62,7 @@ For detailed configuration instructions, see the [Configuration Guide](./docs/co
 ## 🏗️ Architecture
 
 GHP Connector uses:
+
 - **Commander.js** as the CLI framework
 - **Octokit** as the GitHub API client
 
@@ -117,6 +122,7 @@ The project roadmap is structured around the following milestones:
 
 1. **Initial Setup**: Project setup, architecture, and configuration
 2. **Issues CRUD**: Basic operations for GitHub Issues management
+3. **Enterprise Support**: GitHub Enterprise integration with health monitoring
 
 ## 📖 Documentation
 
@@ -126,6 +132,7 @@ For more details on usage and features, see the documentation files:
 - [CLI Architecture](./docs/cli-architecture.md)
 - [Architecture Diagram](./docs/architecture-diagram.md)
 - [Configuration Guide](./docs/configuration.md)
+- [Enterprise Configuration](./docs/enterprise-configuration.md)
 - [Code Coverage Reports](./docs/testing/code-coverage.md)
 
 ## 🤝 Contributing
@@ -134,4 +141,4 @@ Contributions are welcome! Feel free to open an issue or submit a pull request.
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details. 
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.

@@ -59,7 +59,7 @@ export class MinimalFormatter<T> implements Formatter<T> {
 
   private formatArray(data: any[]): string {
     return data
-      .map(item => {
+      .map((item) => {
         if (typeof item === 'object' && item !== null) {
           // For objects, try to get id or name
           if ('id' in item) return String(item.id);
@@ -106,7 +106,7 @@ export class HumanFormatter<T> implements Formatter<T> {
       return 'No items found';
     }
 
-    return data.map(item => this.formatObject(item)).join('\n\n');
+    return data.map((item) => this.formatObject(item)).join('\n\n');
   }
 
   private formatObject(data: Record<string, any>): string {

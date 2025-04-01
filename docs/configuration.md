@@ -27,6 +27,8 @@ ghp config init
 ghp config init --global
 ```
 
+> **Important**: The `.ghprc.json` file is automatically ignored by git (added to `.gitignore`). This is a security measure to prevent accidentally committing sensitive information like tokens to the repository. Never commit this file to version control, even if it doesn't contain sensitive data, as it may contain project-specific settings that shouldn't be shared with other developers.
+
 ### Configuration Schema
 
 The configuration file uses JSON format with the following structure:
@@ -47,27 +49,58 @@ The configuration file uses JSON format with the following structure:
       "direction": "desc"
     },
     "projects": {}
+  },
+  "rateLimit": {
+    "maxRequests": 5000,
+    "windowMs": 3600000
   }
 }
 ```
 
 #### GitHub Section
 
-| Field | Description | Default |
-|-------|-------------|---------|
-| `owner` | GitHub username or organization | (empty) |
-| `repo` | GitHub repository name | (empty) |
+| Field     | Description                                   | Default                  |
+| --------- | --------------------------------------------- | ------------------------ |
+| `owner`   | GitHub username or organization               | (empty)                  |
+| `repo`    | GitHub repository name                        | (empty)                  |
 | `baseUrl` | GitHub API URL (useful for GitHub Enterprise) | `https://api.github.com` |
 
 #### Defaults Section
 
-| Field | Description | Default |
-|-------|-------------|---------|
-| `format` | Output format (`human`, `json`, `table`, `minimal`) | `human` |
-| `issues.state` | Default issue state filter | `open` |
-| `issues.limit` | Default number of issues to fetch | `10` |
-| `issues.sort` | Default sorting field | `created` |
-| `issues.direction` | Default sorting direction | `desc` |
+| Field              | Description                                         | Default   |
+| ------------------ | --------------------------------------------------- | --------- |
+| `format`           | Output format (`human`, `json`, `table`, `minimal`) | `human`   |
+| `issues.state`     | Default issue state filter                          | `open`    |
+| `issues.limit`     | Default number of issues to fetch                   | `10`      |
+| `issues.sort`      | Default sorting field                               | `created` |
+| `issues.direction` | Default sorting direction                           | `desc`    |
+
+#### Rate Limit Section
+
+| Field         | Description                                   | Default |
+| ------------- | --------------------------------------------- | ------- |
+| `maxRequests` | Maximum number of requests per time window    | 5000    |
+| `windowMs`    | Time window for rate limiting in milliseconds | 3600000 |
+
+## Token Validation
+
+The GitHub token is validated to ensure it has the required permissions:
+
+- `repo`: For repository access
+- `project`: For project board management (includes issues access)
+
+You can validate your token using:
+
+```bash
+ghp token validate
+```
+
+This will check:
+
+- Token format
+- Token validity
+- Required scopes
+- Rate limit status
 
 ## Environment Variables
 
@@ -75,11 +108,11 @@ For security reasons, sensitive information like authentication tokens should be
 
 Available environment variables:
 
-| Variable | Description |
-|----------|-------------|
-| `GITHUB_TOKEN` | GitHub personal access token |
-| `GITHUB_OWNER` | GitHub username or organization |
-| `GITHUB_REPO` | GitHub repository name |
+| Variable         | Description                            |
+| ---------------- | -------------------------------------- |
+| `GITHUB_TOKEN`   | GitHub personal access token           |
+| `GITHUB_OWNER`   | GitHub username or organization        |
+| `GITHUB_REPO`    | GitHub repository name                 |
 | `GITHUB_API_URL` | GitHub API URL (for GitHub Enterprise) |
 
 Example:
@@ -105,6 +138,7 @@ When determining the final configuration, GHP Connector follows this precedence 
 5. Default values
 
 This allows you to:
+
 - Use defaults for common operations
 - Override specific settings temporarily on the command line
 - Keep sensitive information in environment variables
@@ -115,7 +149,9 @@ For most operations, you'll need a GitHub personal access token with appropriate
 
 1. Go to [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens)
 2. Click "Generate new token"
-3. Select the appropriate scopes (at minimum, `repo` for private repositories or `public_repo` for public ones)
+3. Select the following scopes:
+   - `repo`: For repository access
+   - `project`: For project board management (includes issues access)
 4. Copy the token and store it securely
 5. Set it as the `GITHUB_TOKEN` environment variable or use it with the `--token` option
 
@@ -151,4 +187,4 @@ For most operations, you'll need a GitHub personal access token with appropriate
     }
   }
 }
-``` 
+```

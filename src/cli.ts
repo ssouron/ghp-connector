@@ -36,7 +36,7 @@ configCommand
   .command('init')
   .description('Initialize a new configuration file')
   .option('-g, --global', 'Create a global configuration file in your home directory')
-  .action(options => {
+  .action((options) => {
     try {
       const targetPath = options.global
         ? path.join(os.homedir(), CONFIG_FILENAME)
@@ -76,7 +76,7 @@ program.action(() => {
 });
 
 // Catch any unhandled errors
-process.on('unhandledRejection', error => {
+process.on('unhandledRejection', (error) => {
   handleError(error, program.opts().debug);
 });
 
