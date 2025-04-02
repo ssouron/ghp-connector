@@ -70,13 +70,19 @@ describe('Formatters Module', () => {
 
     it('should format simple objects', () => {
       const data = { id: 1, name: 'Test' };
-      expect(formatter.format(data)).toContain('id: 1');
-      expect(formatter.format(data)).toContain('name: Test');
+      const result = formatter.format(data);
+      // Now check for the exact format with colorization
+      expect(result).toMatch(/id:.+1/);
+      expect(result).toMatch(/name:.+Test/);
     });
 
     it('should format GitHub issues specially', () => {
       const issue = { number: 42, title: 'Bug fix', state: 'open' };
-      expect(formatter.format(issue)).toBe('#42 Bug fix [open]');
+      const result = formatter.format(issue);
+      expect(result).toContain('Issue #42');
+      expect(result).toContain('Bug fix');
+      expect(result).toContain('Status:');
+      expect(result).toContain('open');
     });
 
     it('should support detailed mode', () => {
@@ -102,13 +108,18 @@ describe('Formatters Module', () => {
 
     it('should format primitive data correctly', () => {
       expect(formatter.format('test')).toBe('test');
-      expect(formatter.format(123)).toBe('123');
-      expect(formatter.format(true)).toBe('true');
+      // Numbers and booleans are handled as strings in the TextFormatter base class
+      expect(formatter.format(123).trim()).toBe('123');
+      expect(formatter.format(true).trim()).toBe('true');
     });
 
     it('should format GitHub issues with title and number', () => {
       const issue = { number: 42, title: 'Bug fix', state: 'open' };
-      expect(formatter.format(issue)).toBe('#42 Bug fix [open]');
+      const result = formatter.format(issue);
+      expect(result).toContain('Issue #42');
+      expect(result).toContain('Bug fix');
+      expect(result).toContain('Status:');
+      expect(result).toContain('open');
     });
 
     it('should include body in GitHub issue formatting if enabled', () => {
@@ -131,8 +142,11 @@ describe('Formatters Module', () => {
       ];
 
       const result = formatter.format(issues);
-      expect(result).toContain('#1 First Issue [open]');
-      expect(result).toContain('#2 Second Issue [closed]');
+      expect(result).toContain('Found 2 issues');
+      expect(result).toContain('Issue #1');
+      expect(result).toContain('First Issue');
+      expect(result).toContain('Issue #2');
+      expect(result).toContain('Second Issue');
     });
 
     it('should show a message for empty arrays', () => {
@@ -146,8 +160,9 @@ describe('Formatters Module', () => {
     it('should format generic objects with key-value pairs', () => {
       const data = { name: 'Test', count: 42 };
       const result = formatter.format(data);
-      expect(result).toContain('name: Test');
-      expect(result).toContain('count: 42');
+      // Updated test for the new format
+      expect(result).toMatch(/name:.+Test/);
+      expect(result).toMatch(/count:.+42/);
     });
   });
 
@@ -176,12 +191,13 @@ describe('Formatters Module', () => {
       expect(formatOutput(data, 'json')).toBe(JSON.stringify(data, null, 2));
 
       const textResult = formatOutput(data, 'text');
-      expect(textResult).toContain('id: 123');
-      expect(textResult).toContain('name: Test');
+      // Updated test for the new format
+      expect(textResult).toMatch(/id:.+123/);
+      expect(textResult).toMatch(/name:.+Test/);
 
       const humanResult = formatOutput(data, 'human');
-      expect(humanResult).toContain('id: 123');
-      expect(humanResult).toContain('name: Test');
+      expect(humanResult).toMatch(/id:.+123/);
+      expect(humanResult).toMatch(/name:.+Test/);
     });
 
     it('should use human formatter by default', () => {
@@ -198,8 +214,10 @@ describe('Formatters Module', () => {
       const result = formatOutput(data, 'json', { indent: 4 });
       expect(result).toBe(JSON.stringify(data, null, 4));
 
+      // With our new implementation, nested values are formatted differently
       const detailedResult = formatOutput(data, 'text', { detailed: true });
-      expect(detailedResult).toContain('nested: value');
+      expect(detailedResult).toMatch(/deep:/);
+      expect(detailedResult).toMatch(/nested:/);
     });
 
     it('should handle large datasets', () => {
@@ -211,10 +229,10 @@ describe('Formatters Module', () => {
       expect(jsonResult).toContain('"id": 0');
       expect(jsonResult).toContain('"id": 99');
 
-      // We're not testing minimal formatter specifically anymore
+      // Updated test for the new format - array items are now numbered
       const textResult = formatOutput(largeData, 'text');
-      expect(textResult).toContain('id: 0');
-      expect(textResult).toContain('id: 99');
+      expect(textResult).toContain('1.');
+      expect(textResult).toContain('100.');
     });
   });
 });

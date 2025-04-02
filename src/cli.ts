@@ -17,6 +17,9 @@ import { loadConfig, cmdArgsToConfig, initConfigFile, CONFIG_FILENAME } from './
 import path from 'path';
 import os from 'os';
 
+// Import our test format command
+import { testFormatCommand } from './commands/test-format';
+
 // Create the root command
 const program = new Command();
 
@@ -74,6 +77,9 @@ program.action(() => {
     program.help();
   }
 });
+
+// Add our test format command to the program
+program.addCommand(testFormatCommand);
 
 // Catch any unhandled errors
 process.on('unhandledRejection', (error) => {

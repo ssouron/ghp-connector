@@ -209,6 +209,13 @@ The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the pro
   - Reduced risk of token exposure
   - Support for enterprise requirements
 
+### Implementation Notes
+
+- **Test Command**: A temporary `test-format` command has been implemented for development and testing purposes
+  - Should be removed when primary commands are fully implemented
+  - Not intended for production use
+  - Currently registered in src/cli.ts and exported in src/commands/index.ts
+
 ### Technology Choices
 
 - **TypeScript**: For type safety and better developer experience
