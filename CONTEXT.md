@@ -17,7 +17,9 @@ GHP Connector is an open-source Node.js library for interacting with GitHub Issu
 - ESLint configuration for code quality
 - Versioning follows Semantic Versioning (SemVer) - see https://semver.org/
 - GitHub token validation system implemented
-- Output formatting system in development (Issue #13)
+- Output formatting system architecture implemented with registry/factory pattern
+- Core formatters (JSON, Text, Human) implemented
+- Output formatting documentation available
 
 ## Main Objectives
 
@@ -167,20 +169,18 @@ The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the pro
 
 ### Active Features
 
-- Output formatting system (Issue #13)
-  - Core formatting architecture
-  - Text and JSON formatters
-  - CLI integration
-  - Documentation
-  - Testing infrastructure
-
-### Upcoming Features
-
 - Advanced formatting options (Issue #14)
   - CSV support
   - Custom templates
   - Advanced table formatting
   - File output support
+
+### Upcoming Features
+
+- GitHub Projects integration
+- Issue filtering and searching
+- Batch operations for issues
+- Enterprise-specific features
 
 ### Completed Features
 
@@ -188,6 +188,13 @@ The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the pro
 - Basic project structure
 - Testing infrastructure
 - CI/CD pipeline
+- Output formatting core architecture (Issue #32)
+  - Formatter interface and base class
+  - Registry and factory system
+  - Configuration system
+  - Error handling
+  - Core formatters (JSON, Text, Human)
+  - Documentation
 
 ## Technical Decisions Log
 
@@ -357,6 +364,15 @@ NODE_ENV=development
 - Keep functions focused
 - Write unit tests
 
+### Documentation Style
+
+- Use clear, concise language in all documentation
+- Include diagrams using Mermaid when useful for understanding complex systems, workflows, or architectures
+- Provide usage examples for all major features
+- Update documentation whenever the related code changes
+- Structure documentation with appropriate headings and sections
+- Use consistent formatting throughout documentation files
+
 ### Pull Request Process
 
 - Create feature branch
@@ -394,3 +410,4 @@ NODE_ENV=development
 - [README.md](./README.md) - Main project documentation
 - [docs/initial-specs.md](./docs/initial-specs.md) - Initial specifications
 - [docs/formatting/architecture.md](./docs/formatting/architecture.md) - Output formatting architecture
+- [docs/formatting/usage-guide.md](./docs/formatting/usage-guide.md) - Output formatting usage guide

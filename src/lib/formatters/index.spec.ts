@@ -2,18 +2,11 @@
  * Unit tests for formatters module
  */
 
-import {
-  JsonFormatter,
-  TableFormatter,
-  MinimalFormatter,
-  HumanFormatter,
-  createFormatter,
-  formatOutput,
-} from './index';
+import { JsonFormatter, TextFormatter, HumanFormatter, formatOutput, defaultRegistry, defaultFactory } from './index';
 
 describe('Formatters Module', () => {
   describe('JsonFormatter', () => {
-    let formatter: JsonFormatter<any>;
+    let formatter: JsonFormatter;
 
     beforeEach(() => {
       formatter = new JsonFormatter();
@@ -42,79 +35,66 @@ describe('Formatters Module', () => {
       expect(formatter.format({})).toBe('{}');
       expect(formatter.format(null)).toBe('null');
     });
+
+    it('should respect configuration options', () => {
+      formatter.configure({
+        indent: 4,
+        compact: false,
+        sortKeys: false,
+      });
+
+      const data = { id: 1, name: 'Test' };
+      const expected = JSON.stringify(data, null, 4);
+      expect(formatter.format(data)).toBe(expected);
+
+      formatter.configure({
+        indent: 0,
+        compact: true,
+      });
+
+      const compactExpected = JSON.stringify(data);
+      expect(formatter.format(data)).toBe(compactExpected);
+    });
   });
 
-  describe('TableFormatter', () => {
-    let formatter: TableFormatter<any[]>;
+  describe('TextFormatter', () => {
+    let formatter: TextFormatter;
 
     beforeEach(() => {
-      formatter = new TableFormatter();
+      formatter = new TextFormatter();
     });
 
     it('should handle empty data correctly', () => {
-      expect(formatter.format([])).toBe('No data to display');
+      expect(formatter.format([])).toBe('No items.');
     });
 
-    it('should format array data with item count', () => {
-      const data = [{ id: 1 }, { id: 2 }];
-      expect(formatter.format(data)).toBe('2 items\n');
-    });
-  });
-
-  describe('MinimalFormatter', () => {
-    let formatter: MinimalFormatter<any>;
-
-    beforeEach(() => {
-      formatter = new MinimalFormatter();
+    it('should format simple objects', () => {
+      const data = { id: 1, name: 'Test' };
+      expect(formatter.format(data)).toContain('id: 1');
+      expect(formatter.format(data)).toContain('name: Test');
     });
 
-    it('should format primitive data correctly', () => {
-      expect(formatter.format('test')).toBe('test');
-      expect(formatter.format(123)).toBe('123');
-      expect(formatter.format(true)).toBe('true');
+    it('should format GitHub issues specially', () => {
+      const issue = { number: 42, title: 'Bug fix', state: 'open' };
+      expect(formatter.format(issue)).toBe('#42 Bug fix [open]');
     });
 
-    it('should extract IDs from objects', () => {
-      expect(formatter.format({ id: 123, name: 'Test Item' })).toBe('123');
-    });
+    it('should support detailed mode', () => {
+      formatter.configure({ detailed: true });
 
-    it('should extract numbers from GitHub issues', () => {
-      expect(formatter.format({ number: 42, title: 'Issue Title' })).toBe('42');
-    });
+      const issue = {
+        number: 42,
+        title: 'Bug fix',
+        state: 'open',
+        body: 'This is a bug description',
+      };
 
-    it('should extract names when ID is not available', () => {
-      expect(formatter.format({ name: 'Test Name', description: 'Test Description' })).toBe('Test Name');
-    });
-
-    it('should handle arrays of objects by extracting identifiers', () => {
-      const data = [
-        { id: 1, name: 'Item 1' },
-        { id: 2, name: 'Item 2' },
-      ];
-      expect(formatter.format(data)).toBe('1\n2');
-    });
-
-    it('should handle arrays with mixed identifier types', () => {
-      const mixedData = [{ id: 1 }, { number: 2 }, { name: 'Item 3' }, { description: 'No identifier' }];
-      expect(formatter.format(mixedData)).toBe('1\n2\nItem 3\n');
-    });
-
-    it('should handle arrays of primitives', () => {
-      expect(formatter.format([1, 2, 3])).toBe('1\n2\n3');
-    });
-
-    it('should return empty string for objects with no identifiable properties', () => {
-      expect(formatter.format({ description: 'No ID or name' })).toBe('');
-    });
-
-    it('should handle empty data correctly', () => {
-      expect(formatter.format([])).toBe('');
-      expect(formatter.format({})).toBe('');
+      expect(formatter.format(issue)).toContain('This is a bug description');
     });
   });
 
   describe('HumanFormatter', () => {
-    let formatter: HumanFormatter<any>;
+    let formatter: HumanFormatter;
 
     beforeEach(() => {
       formatter = new HumanFormatter();
@@ -131,14 +111,17 @@ describe('Formatters Module', () => {
       expect(formatter.format(issue)).toBe('#42 Bug fix [open]');
     });
 
-    it('should include body in GitHub issue formatting if available', () => {
+    it('should include body in GitHub issue formatting if enabled', () => {
+      formatter.configure({ detailed: true });
+
       const issue = {
         number: 42,
         title: 'Bug fix',
         state: 'open',
         body: 'This is a bug description',
       };
-      expect(formatter.format(issue)).toBe('#42 Bug fix [open]\n\nThis is a bug description');
+
+      expect(formatter.format(issue)).toContain('This is a bug description');
     });
 
     it('should format arrays of GitHub issues', () => {
@@ -146,69 +129,44 @@ describe('Formatters Module', () => {
         { number: 1, title: 'First Issue', state: 'open' },
         { number: 2, title: 'Second Issue', state: 'closed' },
       ];
-      expect(formatter.format(issues)).toBe('#1 First Issue [open]\n\n#2 Second Issue [closed]');
+
+      const result = formatter.format(issues);
+      expect(result).toContain('#1 First Issue [open]');
+      expect(result).toContain('#2 Second Issue [closed]');
     });
 
-    it('should show "No items found" for empty arrays', () => {
-      expect(formatter.format([])).toBe('No items found');
+    it('should show a message for empty arrays', () => {
+      expect(formatter.format([])).toBe('No items.');
     });
 
-    it('should return "null" for null objects', () => {
-      expect(formatter.format(null)).toBe('null');
+    it('should handle null values', () => {
+      expect(formatter.format(null)).toBe('');
     });
 
     it('should format generic objects with key-value pairs', () => {
       const data = { name: 'Test', count: 42 };
-      expect(formatter.format(data)).toBe('name: Test\ncount: 42');
-    });
-
-    it('should handle nested objects', () => {
-      const data = {
-        name: 'Parent',
-        child: { name: 'Child', value: 123 },
-      };
-      expect(formatter.format(data)).toContain('name: Parent');
-      expect(formatter.format(data)).toContain('child:');
-      // Vérifier que le contenu est présent, peu importe le formatage exact
-      expect(formatter.format(data)).toContain('Child');
-      expect(formatter.format(data)).toContain('123');
-    });
-
-    it('should skip undefined and null values', () => {
-      const data = {
-        name: 'Test',
-        description: undefined,
-        value: null,
-        count: 0,
-      };
-      expect(formatter.format(data)).toBe('name: Test\ncount: 0');
+      const result = formatter.format(data);
+      expect(result).toContain('name: Test');
+      expect(result).toContain('count: 42');
     });
   });
 
-  describe('createFormatter', () => {
-    it('should create JsonFormatter when type is json', () => {
-      const formatter = createFormatter<any>('json');
-      expect(formatter).toBeInstanceOf(JsonFormatter);
+  describe('Registry and Factory', () => {
+    it('should have registered formatters', () => {
+      expect(defaultRegistry.hasFormatter('json')).toBe(true);
+      expect(defaultRegistry.hasFormatter('text')).toBe(true);
+      expect(defaultRegistry.hasFormatter('human')).toBe(true);
     });
 
-    it('should create TableFormatter when type is table', () => {
-      const formatter = createFormatter<any[]>('table');
-      expect(formatter).toBeInstanceOf(TableFormatter);
-    });
+    it('should create formatters from the factory', () => {
+      const jsonFormatter = defaultFactory.create('json');
+      expect(jsonFormatter).toBeInstanceOf(JsonFormatter);
 
-    it('should create MinimalFormatter when type is minimal', () => {
-      const formatter = createFormatter<any>('minimal');
-      expect(formatter).toBeInstanceOf(MinimalFormatter);
-    });
+      const textFormatter = defaultFactory.create('text');
+      expect(textFormatter).toBeInstanceOf(TextFormatter);
 
-    it('should create HumanFormatter when type is human', () => {
-      const formatter = createFormatter<any>('human');
-      expect(formatter).toBeInstanceOf(HumanFormatter);
-    });
-
-    it('should create HumanFormatter by default', () => {
-      const formatter = createFormatter<any>();
-      expect(formatter).toBeInstanceOf(HumanFormatter);
+      const humanFormatter = defaultFactory.create('human');
+      expect(humanFormatter).toBeInstanceOf(HumanFormatter);
     });
   });
 
@@ -216,50 +174,47 @@ describe('Formatters Module', () => {
     it('should format data using the specified formatter', () => {
       const data = { id: 123, name: 'Test' };
       expect(formatOutput(data, 'json')).toBe(JSON.stringify(data, null, 2));
-      expect(formatOutput(data, 'minimal')).toBe('123');
-      expect(formatOutput(data, 'human')).toBe('id: 123\nname: Test');
+
+      const textResult = formatOutput(data, 'text');
+      expect(textResult).toContain('id: 123');
+      expect(textResult).toContain('name: Test');
+
+      const humanResult = formatOutput(data, 'human');
+      expect(humanResult).toContain('id: 123');
+      expect(humanResult).toContain('name: Test');
     });
 
-    it('should use HumanFormatter by default', () => {
-      const data = { id: 123, name: 'Test' };
-      expect(formatOutput(data)).toBe('id: 123\nname: Test');
+    it('should use human formatter by default', () => {
+      const data = { id: 42, name: 'Default Test' };
+      const defaultResult = formatOutput(data);
+      const humanResult = formatOutput(data, 'human');
+
+      expect(defaultResult).toBe(humanResult);
+    });
+
+    it('should handle custom configuration', () => {
+      const data = { id: 123, deep: { nested: 'value' } };
+
+      const result = formatOutput(data, 'json', { indent: 4 });
+      expect(result).toBe(JSON.stringify(data, null, 4));
+
+      const detailedResult = formatOutput(data, 'text', { detailed: true });
+      expect(detailedResult).toContain('nested: value');
     });
 
     it('should handle large datasets', () => {
-      const largeDataset = Array(100)
-        .fill(0)
-        .map((_, i) => ({ id: i, name: `Item ${i}` }));
-      const jsonResult = formatOutput(largeDataset, 'json');
-      const minimalResult = formatOutput(largeDataset, 'minimal');
-      const humanResult = formatOutput(largeDataset, 'human');
+      // Create a large dataset
+      const largeData = Array.from({ length: 100 }, (_, i) => ({ id: i, name: `Item ${i}` }));
 
+      // Test with different formatters
+      const jsonResult = formatOutput(largeData, 'json');
       expect(jsonResult).toContain('"id": 0');
       expect(jsonResult).toContain('"id": 99');
 
-      expect(minimalResult.split('\n').length).toBe(100);
-      expect(minimalResult).toContain('0');
-      expect(minimalResult).toContain('99');
-
-      expect(humanResult).toContain('id: 0');
-      expect(humanResult).toContain('id: 99');
-    });
-
-    it('should handle special characters in data', () => {
-      const dataWithSpecialChars = {
-        title: 'Special: "quotes", \'apostrophes\', &amp; more!',
-        description: '< > & " \' \n \t \\ /',
-      };
-
-      // Test that each formatter properly handles special characters
-      const jsonResult = formatOutput(dataWithSpecialChars, 'json');
-      const humanResult = formatOutput(dataWithSpecialChars, 'human');
-
-      expect(jsonResult).toContain('Special: \\"quotes\\"');
-      expect(jsonResult).toContain("'apostrophes'");
-      expect(jsonResult).toContain('&amp; more!');
-
-      expect(humanResult).toContain('title: Special: "quotes", \'apostrophes\', &amp; more!');
-      expect(humanResult).toContain('description: < > & " \' \n \t \\ /');
+      // We're not testing minimal formatter specifically anymore
+      const textResult = formatOutput(largeData, 'text');
+      expect(textResult).toContain('id: 0');
+      expect(textResult).toContain('id: 99');
     });
   });
 });

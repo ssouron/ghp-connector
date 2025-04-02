@@ -1,86 +1,134 @@
 /**
- * Output formatters
- * Provides different formatters for CLI output
+ * Output formatting system
+ * Provides different formatters for CLI output with a flexible, extensible architecture
  */
 
-/**
- * Format types supported by the formatter
- */
-export type FormatType = 'json' | 'table' | 'minimal' | 'human';
+// Export core types and interfaces
+export * from './base';
+export * from './config';
+export * from './errors';
+export * from './registry';
+export * from './factory';
 
-/**
- * Base formatter interface
- */
-export interface Formatter<T> {
-  format(data: T): string;
-}
+// Import necessary components
+import { BaseFormatter, FormatType } from './base';
+import { FormatterRegistry } from './registry';
+import { FormatterFactory } from './factory';
+import { FormatterConfig } from './config';
 
 /**
  * JSON formatter - outputs data as formatted JSON
  */
-export class JsonFormatter<T> implements Formatter<T> {
-  format(data: T): string {
-    return JSON.stringify(data, null, 2);
+export class JsonFormatter extends BaseFormatter {
+  private indent = 2;
+  private sortKeys = false;
+  private compact = false;
+
+  constructor() {
+    super('json');
+  }
+
+  format(data: any): string {
+    const space = this.compact ? 0 : this.indent;
+
+    const replacer = this.sortKeys ? (key: string, value: any) => value : undefined;
+
+    return JSON.stringify(data, replacer, space);
+  }
+
+  configure(config: FormatterConfig & { indent?: number; sortKeys?: boolean; compact?: boolean }): void {
+    if (config.indent !== undefined) this.indent = config.indent;
+    if (config.sortKeys !== undefined) this.sortKeys = config.sortKeys;
+    if (config.compact !== undefined) this.compact = config.compact;
+  }
+
+  getSupportedFormats(): FormatType[] {
+    return ['json'];
   }
 }
 
 /**
- * Table formatter - outputs data as a table
- * Currently a stub implementation - will be enhanced later
+ * Text formatter - outputs data in plain text format
  */
-export class TableFormatter<T extends object[]> implements Formatter<T> {
-  format(data: T): string {
-    if (data.length === 0) {
-      return 'No data to display';
+export class TextFormatter extends BaseFormatter {
+  private detailed = false;
+
+  constructor() {
+    super('text');
+  }
+
+  format(data: any): string {
+    if (data === null || data === undefined) {
+      return '';
     }
 
-    // Simple table formatting using console.table
-    // This is a placeholder - will be replaced with a proper table formatter
-    return `${data.length} items\n`;
-  }
-}
+    if (typeof data === 'string') {
+      return data;
+    }
 
-/**
- * Minimal formatter - outputs only essential information
- * Useful for scripting or when only IDs are needed
- */
-export class MinimalFormatter<T> implements Formatter<T> {
-  format(data: T): string {
     if (Array.isArray(data)) {
       return this.formatArray(data);
     }
 
-    if (typeof data === 'object' && data !== null) {
-      return this.formatObject(data as Record<string, any>);
+    if (typeof data === 'object') {
+      return this.formatObject(data);
     }
 
     return String(data);
   }
 
-  private formatArray(data: any[]): string {
-    return data
-      .map((item) => {
-        if (typeof item === 'object' && item !== null) {
-          // For objects, try to get id or name
-          if ('id' in item) return String(item.id);
-          if ('number' in item) return String(item.number);
-          if ('name' in item) return String(item.name);
-          // If no identifiable property, return empty string
-          return '';
-        }
-        return String(item);
-      })
+  private formatArray(arr: any[]): string {
+    if (arr.length === 0) {
+      return 'No items.';
+    }
+
+    return arr.map((item) => this.format(item)).join('\n');
+  }
+
+  private formatObject(obj: Record<string, any>): string {
+    // Special handling for GitHub issues
+    if ('number' in obj && 'title' in obj) {
+      let result = `#${obj.number} ${obj.title}`;
+      if (obj.state) {
+        result += ` [${obj.state}]`;
+      }
+
+      if (this.detailed && obj.body) {
+        result += `\n\n${obj.body}`;
+      }
+
+      return result;
+    }
+
+    // Default object formatting
+    return Object.entries(obj)
+      .filter(([, value]) => value !== null && value !== undefined)
+      .map(([key, value]) => `${key}: ${this.formatValue(value)}`)
       .join('\n');
   }
 
-  private formatObject(data: Record<string, any>): string {
-    // For objects, try to get id or name
-    if ('id' in data) return String(data.id);
-    if ('number' in data) return String(data.number);
-    if ('name' in data) return String(data.name);
+  private formatValue(value: any): string {
+    if (typeof value === 'object' && value !== null) {
+      if (Array.isArray(value)) {
+        return value.map((v) => this.formatValue(v)).join(', ');
+      }
 
-    // If no identifiable property, return empty string
-    return '';
+      return this.detailed
+        ? `\n${Object.entries(value)
+            .map(([k, v]) => `  ${k}: ${this.formatValue(v)}`)
+            .join('\n')}`
+        : '[Object]';
+    }
+
+    return String(value);
+  }
+
+  configure(config: FormatterConfig & { detailed?: boolean }): void {
+    if (config.detailed !== undefined) this.detailed = config.detailed;
+  }
+
+  getSupportedFormats(): FormatType[] {
+    return ['text', 'minimal'];
   }
 }
 
@@ -88,79 +136,39 @@ export class MinimalFormatter<T> implements Formatter<T> {
  * Human-readable formatter - outputs data in a human-friendly format
  * This is the default formatter
  */
-export class HumanFormatter<T> implements Formatter<T> {
-  format(data: T): string {
-    if (Array.isArray(data)) {
-      return this.formatArray(data);
-    }
-
-    if (typeof data === 'object' && data !== null) {
-      return this.formatObject(data as Record<string, any>);
-    }
-
-    return String(data);
+export class HumanFormatter extends TextFormatter {
+  constructor() {
+    super();
   }
 
-  private formatArray(data: any[]): string {
-    if (data.length === 0) {
-      return 'No items found';
-    }
-
-    return data.map((item) => this.formatObject(item)).join('\n\n');
-  }
-
-  private formatObject(data: Record<string, any>): string {
-    if (!data) return 'No data';
-
-    // For GitHub issues, format nicely
-    if ('title' in data && 'number' in data) {
-      let result = `#${data.number} ${data.title}`;
-
-      if (data.state) {
-        result += ` [${data.state}]`;
-      }
-
-      if (data.body) {
-        result += `\n\n${data.body}`;
-      }
-
-      return result;
-    }
-
-    // Default formatting for other object types
-    return Object.entries(data)
-      .filter(([, value]) => value !== undefined && value !== null)
-      .map(([key, value]) => {
-        if (typeof value === 'object' && !Array.isArray(value)) {
-          return `${key}:\n  ${JSON.stringify(value, null, 2).replace(/\n/g, '\n  ')}`;
-        }
-        return `${key}: ${value}`;
-      })
-      .join('\n');
+  getSupportedFormats(): FormatType[] {
+    return ['human'];
   }
 }
 
 /**
- * Create a formatter based on the specified format type
+ * Default registry with standard formatters
  */
-export function createFormatter<T>(type: FormatType = 'human'): Formatter<T> {
-  switch (type) {
-    case 'json':
-      return new JsonFormatter<T>();
-    case 'table':
-      return new TableFormatter<T extends object[] ? T : never>() as unknown as Formatter<T>;
-    case 'minimal':
-      return new MinimalFormatter<T>();
-    case 'human':
-    default:
-      return new HumanFormatter<T>();
-  }
-}
+export const defaultRegistry = new FormatterRegistry();
+
+// Register standard formatters
+defaultRegistry.register(new JsonFormatter());
+defaultRegistry.register(new TextFormatter());
+defaultRegistry.register(new HumanFormatter());
+
+/**
+ * Default formatter factory using the default registry
+ */
+export const defaultFactory = new FormatterFactory(defaultRegistry);
 
 /**
  * Format data according to the specified format type
+ * This is a convenience function that uses the default factory
+ * @param data Data to format
+ * @param format Format type to use
+ * @param config Optional configuration
+ * @returns Formatted string
  */
-export function formatOutput<T>(data: T, type: FormatType = 'human'): string {
-  const formatter = createFormatter<T>(type);
-  return formatter.format(data);
+export function formatOutput<T extends FormatType>(data: any, format: T = 'human' as T, config?: any): string {
+  return defaultFactory.format(data, format, config);
 }
