@@ -26,7 +26,9 @@ When using the GHP Connector CLI, you can specify the output format with the `--
 
 - `human`: Human-readable format (default)
 - `json`: JSON format for machine processing
+  - Options: `--pretty` (boolean), `--indent=<number>`, `--compact` (boolean, default)
 - `text`: Plain text format
+  - Options: `--detailed` (boolean), `--no-colors` (boolean)
 
 ### Examples
 
@@ -46,13 +48,19 @@ ghp issue list --format=text
 Some formats support additional options:
 
 ```bash
-# JSON with custom indentation
-ghp issue list --format=json --indent=4
+# JSON pretty-printed with default indentation (2 spaces)
+ghp issue list --format=json --pretty
+
+# JSON pretty-printed with custom indentation (4 spaces)
+ghp issue list --format=json --pretty --indent=4
+
+# JSON compact output (default, explicitly)
+ghp issue list --format=json --compact
 
 # Text with detailed output
 ghp issue list --format=text --detailed
 
-# Human-readable without colors
+# Human-readable without colors (applies to text/human)
 ghp issue list --format=human --no-colors
 ```
 
@@ -82,10 +90,15 @@ console.log(jsonOutput);
 You can pass configuration options to customize the formatter behavior:
 
 ```typescript
-// JSON with custom indentation
+// JSON pretty-printed with indent 4
 const prettyJson = formatOutput(issues, 'json', {
-  indent: 4,
-  sortKeys: true,
+  pretty: true, // Enable pretty printing
+  indent: 4, // Set indentation to 4 spaces
+});
+
+// JSON compact output (default behavior, but can be explicit)
+const compactJson = formatOutput(issues, 'json', {
+  compact: true, // Explicitly request compact output
 });
 
 // Text with detailed information

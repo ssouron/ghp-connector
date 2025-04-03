@@ -105,9 +105,9 @@ export interface TextFormatterConfig extends FormatterConfig {
   formatForTerminal?: boolean;
 }
 
-export interface JsonFormatterConfig extends FormatterConfig {
+export interface JsonFormatterOptions {
+  pretty?: boolean;
   indent?: number;
-  sortKeys?: boolean;
   compact?: boolean;
 }
 
@@ -135,10 +135,22 @@ The system comes with several built-in formatters:
 
 ### JSON Formatter
 
-Formats data as JSON with options for indentation, key sorting, and compactness.
+Formats data as JSON. Located at `src/lib/formatters/implementations/json/JsonFormatter.ts`.
+
+Key features:
+
+- **Pretty Printing**: Supports indentation via `pretty: true` and `indent: <number>` options.
+- **Compact Output**: Default behavior. Can be explicitly enabled with `compact: true`, overriding pretty-printing.
+- **Sorted Keys**: Object keys are always sorted alphabetically recursively for consistent output.
+- **Circular Reference Handling**: Detects and handles circular references gracefully, outputting `[Circular]`.
 
 ```typescript
-export class JsonFormatter extends BaseFormatter;
+export class JsonFormatter extends BaseFormatter {
+  constructor(options?: JsonFormatterOptions);
+  configure(options: JsonFormatterOptions): void;
+  clone(): this;
+  format(data: unknown): string;
+}
 ```
 
 ### Text Formatter

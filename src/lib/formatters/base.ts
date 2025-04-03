@@ -37,6 +37,13 @@ export interface IFormatter {
    * @param config Configuration options
    */
   configure?(config: any): void;
+
+  /**
+   * Optional: Create a clone of the formatter instance.
+   * Useful for factories to avoid mutating shared instances.
+   * @returns A new instance with the same configuration.
+   */
+  clone?(): this;
 }
 
 /**
@@ -81,5 +88,20 @@ export abstract class BaseFormatter implements IFormatter {
    */
   getSupportedFormats(): FormatType[] {
     return [this.formatType];
+  }
+
+  /**
+   * Default clone implementation (returns the same instance).
+   * Concrete formatters with state should override this.
+   */
+  clone(): this {
+    // Basic implementation assuming no complex state to copy.
+    // Subclasses like JsonFormatter should override this.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const constructor = this.constructor as any;
+    // Create a new instance using the same constructor parameters if possible
+    // This is a basic approach; might need refinement based on constructor args
+    // For formatters like JsonFormatter with stateful options, override is necessary.
+    return new constructor(this.formatType);
   }
 }

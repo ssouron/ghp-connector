@@ -22,39 +22,25 @@ export class FormatterFactory {
    * Create a formatter for the specified format type
    * @param format Format type to create a formatter for
    * @param config Optional configuration for the formatter
-   * @returns A formatter instance
+   * @returns The configured formatter instance
    * @throws UnsupportedFormatError if the format is not supported
    */
-  create<T extends FormatType>(format: T, config?: Partial<FormatterConfigForType<T>>): IFormatter {
-    try {
-      // Check if the format is supported
-      if (!this.registry.hasFormatter(format)) {
-        // If the format is not supported, throw an appropriate error
-        throw new UnsupportedFormatError(format);
-      }
+  create(format: FormatType, config?: FormatterConfigForType<FormatType>): IFormatter {
+    let formatter = this.registry.getFormatter(format);
 
-      // Get the formatter from the registry
-      const formatter = this.registry.getFormatter(format);
-
-      // If the formatter has a configure method, call it with the validated config
-      if ('configure' in formatter && typeof formatter.configure === 'function') {
-        const validatedConfig = validateConfig(config, format);
-        formatter.configure(validatedConfig);
-      }
-
-      return formatter;
-    } catch (error) {
-      // If the error is a UnsupportedFormatError, rethrow it directly
-      if (error instanceof UnsupportedFormatError) {
-        throw error;
-      }
-
-      // Otherwise, wrap it in a FormattingError
-      throw new FormattingError(
-        `Failed to create formatter for format '${format}': ${(error as Error).message}`,
-        error as Error
-      );
+    // If config is provided and the formatter supports cloning,
+    // clone it first to avoid mutating the shared instance in the registry.
+    if (config && formatter.clone) {
+      formatter = formatter.clone();
     }
+
+    // Configure the formatter (either the original or the clone)
+    if (config && formatter.configure) {
+      const validatedConfig = validateConfig(config, format);
+      formatter.configure(validatedConfig);
+    }
+
+    return formatter;
   }
 
   /**

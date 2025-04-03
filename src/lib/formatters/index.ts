@@ -14,42 +14,11 @@ export * from './factory';
 export * from './implementations';
 
 // Import necessary components
-import { BaseFormatter, FormatType } from './base';
+import { FormatType } from './base';
 import { FormatterRegistry } from './registry';
 import { FormatterFactory } from './factory';
-import { FormatterConfig } from './config';
 import { TextFormatter } from './implementations/text';
-
-/**
- * JSON formatter - outputs data as formatted JSON
- */
-export class JsonFormatter extends BaseFormatter {
-  private indent = 2;
-  private sortKeys = false;
-  private compact = false;
-
-  constructor() {
-    super('json');
-  }
-
-  format(data: any): string {
-    const space = this.compact ? 0 : this.indent;
-
-    const replacer = this.sortKeys ? (key: string, value: any) => value : undefined;
-
-    return JSON.stringify(data, replacer, space);
-  }
-
-  configure(config: FormatterConfig & { indent?: number; sortKeys?: boolean; compact?: boolean }): void {
-    if (config.indent !== undefined) this.indent = config.indent;
-    if (config.sortKeys !== undefined) this.sortKeys = config.sortKeys;
-    if (config.compact !== undefined) this.compact = config.compact;
-  }
-
-  getSupportedFormats(): FormatType[] {
-    return ['json'];
-  }
-}
+import { JsonFormatter } from './implementations/json';
 
 /**
  * Human-readable formatter - outputs data in a human-friendly format

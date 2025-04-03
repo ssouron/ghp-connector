@@ -2,61 +2,20 @@
  * Unit tests for formatters module
  */
 
-import { JsonFormatter, TextFormatter, HumanFormatter, formatOutput, defaultRegistry, defaultFactory } from './index';
+import {
+  FormatType,
+  UnsupportedFormatError,
+  defaultRegistry,
+  defaultFactory,
+  formatOutput,
+  TextFormatter,
+  HumanFormatter,
+} from './index';
+
+// Import the specific JsonFormatter implementation for testing its instance type
+import { JsonFormatter } from './implementations/json';
 
 describe('Formatters Module', () => {
-  describe('JsonFormatter', () => {
-    let formatter: JsonFormatter;
-
-    beforeEach(() => {
-      formatter = new JsonFormatter();
-    });
-
-    it('should format primitive data correctly', () => {
-      expect(formatter.format('test')).toBe('"test"');
-      expect(formatter.format(123)).toBe('123');
-      expect(formatter.format(true)).toBe('true');
-    });
-
-    it('should format object data with proper indentation', () => {
-      const data = { id: 1, name: 'Test Item' };
-      const expected = JSON.stringify(data, null, 2);
-      expect(formatter.format(data)).toBe(expected);
-    });
-
-    it('should format array data correctly', () => {
-      const data = [{ id: 1 }, { id: 2 }];
-      const expected = JSON.stringify(data, null, 2);
-      expect(formatter.format(data)).toBe(expected);
-    });
-
-    it('should handle empty data correctly', () => {
-      expect(formatter.format([])).toBe('[]');
-      expect(formatter.format({})).toBe('{}');
-      expect(formatter.format(null)).toBe('null');
-    });
-
-    it('should respect configuration options', () => {
-      formatter.configure({
-        indent: 4,
-        compact: false,
-        sortKeys: false,
-      });
-
-      const data = { id: 1, name: 'Test' };
-      const expected = JSON.stringify(data, null, 4);
-      expect(formatter.format(data)).toBe(expected);
-
-      formatter.configure({
-        indent: 0,
-        compact: true,
-      });
-
-      const compactExpected = JSON.stringify(data);
-      expect(formatter.format(data)).toBe(compactExpected);
-    });
-  });
-
   describe('TextFormatter', () => {
     let formatter: TextFormatter;
 
@@ -175,6 +134,7 @@ describe('Formatters Module', () => {
 
     it('should create formatters from the factory', () => {
       const jsonFormatter = defaultFactory.create('json');
+      // Use the imported JsonFormatter class for the check
       expect(jsonFormatter).toBeInstanceOf(JsonFormatter);
 
       const textFormatter = defaultFactory.create('text');
@@ -182,16 +142,18 @@ describe('Formatters Module', () => {
 
       const humanFormatter = defaultFactory.create('human');
       expect(humanFormatter).toBeInstanceOf(HumanFormatter);
+
+      expect(() => defaultFactory.create('unsupported' as FormatType)).toThrow(UnsupportedFormatError);
     });
   });
 
   describe('formatOutput', () => {
     it('should format data using the specified formatter', () => {
       const data = { id: 123, name: 'Test' };
-      expect(formatOutput(data, 'json')).toBe(JSON.stringify(data, null, 2));
+      // Expect compact, sorted output by default for json
+      expect(formatOutput(data, 'json')).toBe('{"id":123,"name":"Test"}');
 
       const textResult = formatOutput(data, 'text');
-      // Updated test for the new format
       expect(textResult).toMatch(/id:.+123/);
       expect(textResult).toMatch(/name:.+Test/);
 
@@ -209,27 +171,33 @@ describe('Formatters Module', () => {
     });
 
     it('should handle custom configuration', () => {
-      const data = { id: 123, deep: { nested: 'value' } };
+      const data = { id: 123, deep: { z: 2, a: 1 } }; // Added unsorted keys
 
-      const result = formatOutput(data, 'json', { indent: 4 });
-      expect(result).toBe(JSON.stringify(data, null, 4));
+      // Test pretty print with indent 4
+      const prettyResult = formatOutput(data, 'json', { pretty: true, indent: 4 });
+      // Expect sorted keys and indent 4
+      const expectedPretty = '{\n    "deep": {\n        "a": 1,\n        "z": 2\n    },\n    "id": 123\n}';
+      expect(prettyResult).toBe(expectedPretty);
 
-      // With our new implementation, nested values are formatted differently
+      // Test compact explicitly
+      const compactResult = formatOutput(data, 'json', { compact: true });
+      expect(compactResult).toBe('{"deep":{"a":1,"z":2},"id":123}');
+
       const detailedResult = formatOutput(data, 'text', { detailed: true });
       expect(detailedResult).toMatch(/deep:/);
-      expect(detailedResult).toMatch(/nested:/);
+      expect(detailedResult).toMatch(/z:/);
+      expect(detailedResult).toMatch(/a:/);
     });
 
     it('should handle large datasets', () => {
-      // Create a large dataset
       const largeData = Array.from({ length: 100 }, (_, i) => ({ id: i, name: `Item ${i}` }));
 
-      // Test with different formatters
+      // Expect compact output for json
       const jsonResult = formatOutput(largeData, 'json');
-      expect(jsonResult).toContain('"id": 0');
-      expect(jsonResult).toContain('"id": 99');
+      // Correct regex: Escape brackets, no need to escape quotes or braces here
+      expect(jsonResult).toMatch(/^\[{"id":0,"name":"Item 0"}/);
+      expect(jsonResult).toMatch(/{"id":99,"name":"Item 99"}\]$/);
 
-      // Updated test for the new format - array items are now numbered
       const textResult = formatOutput(largeData, 'text');
       expect(textResult).toContain('1.');
       expect(textResult).toContain('100.');
