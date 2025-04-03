@@ -20,6 +20,7 @@ GHP Connector is an open-source Node.js library for interacting with GitHub Issu
 - Output formatting system architecture implemented with registry/factory pattern
 - Core formatters (JSON, Text, Human) implemented
 - Output formatting documentation available
+- CLI integration for global formatting options (`--format`, `--pretty`, etc.) implemented (Issue #35)
 
 ## Main Objectives
 
@@ -37,6 +38,7 @@ GHP Connector is an open-source Node.js library for interacting with GitHub Issu
 - Secrets (GitHub token, API keys) are provided via environment variables or configuration file
 - No need to specify the repo in each command (--repo)
 - Output formatting system with multiple format support
+- Global CLI options control output format (`--format`) and format-specific settings (`--pretty`, `--indent`, `--no-color`, `--timezone`)
 - Secure token handling with rotation support
 
 ## Project Structure
@@ -48,6 +50,8 @@ GHP Connector is an open-source Node.js library for interacting with GitHub Issu
     - `/errors` - Error handling
     - `/test-helpers` - Testing utilities
   - `/cli` - Command-line interface
+    - `/validation.ts` - CLI option validation logic
+    - `/validation.spec.ts` - Tests for CLI validation
 - `/dist` - Compiled JavaScript code (generated)
 - `/docs` - Documentation
 - `/bin` - Executable scripts
@@ -58,6 +62,7 @@ GHP Connector is an open-source Node.js library for interacting with GitHub Issu
 - Environment variables for secrets (GITHUB_TOKEN, GITHUB_API_KEY)
 - Secrets can be provided via environment variables or configuration file
 - Format-specific configuration options
+- CLI options can override configuration file settings for formatting
 - Enterprise configuration support
 
 ## Planned Commands
@@ -70,8 +75,9 @@ Examples:
 ghp issue list
 ghp issue create --title="New bug" --body="Bug description"
 ghp issue update --id=123 --status="closed"
-ghp issue list --format=json
+ghp issue list --format=json --pretty --indent=4
 ghp issue list --format=text --no-color
+ghp issue list --format=human --timezone="America/Los_Angeles"
 ```
 
 ## Development Notes
@@ -174,6 +180,7 @@ The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the pro
   - Custom templates
   - Advanced table formatting
   - File output support
+- CLI Integration for Formatting Options (Issue #35) - In Progress / Partially Completed
 
 ### Upcoming Features
 
@@ -201,6 +208,7 @@ The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the pro
   - Recursive key sorting
   - Circular reference handling
   - Comprehensive tests
+- Core CLI integration for global formatting options (Issue #35)
 
 ## Technical Decisions Log
 
@@ -221,6 +229,8 @@ The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the pro
   - Should be removed when primary commands are fully implemented
   - Not intended for production use
   - Currently registered in src/cli.ts and exported in src/commands/index.ts
+- **CLI Option Validation**: Validation logic for combinations of format-related CLI options (e.g., `--pretty` requires `--format=json`) is implemented in `src/cli/validation.ts`.
+- **CLI Help Display**: Global options are defined on the main program but might not appear in the help text of subcommands due to `commander.js` behavior; this is accepted for simplicity.
 
 ### Technology Choices
 
@@ -401,7 +411,7 @@ NODE_ENV=development
 
 - Complete output formatting system
 - Implement basic formatters
-- Add CLI integration
+- Add CLI integration for formatting (options, validation) - Done
 - Write documentation
 
 ### Next Sprint

@@ -9,15 +9,27 @@
 export type FormatType = 'json' | 'text' | 'table' | 'minimal' | 'human' | 'csv';
 
 /**
+ * Options passed to the formatter at runtime during the format() call.
+ */
+export interface FormatterRuntimeOptions {
+  pretty?: boolean;
+  indent?: number; // Note: number, conversion happens before calling format
+  useColors?: boolean;
+  timezone?: string;
+  // Add other potential runtime options here
+}
+
+/**
  * Base formatter interface that all formatters must implement
  */
 export interface IFormatter {
   /**
    * Format data into a string representation
    * @param data The data to format
+   * @param options Optional runtime formatting options
    * @returns Formatted string
    */
-  format(data: any): string;
+  format(data: any, options?: FormatterRuntimeOptions): string;
 
   /**
    * Check if this formatter supports the given data
@@ -68,8 +80,9 @@ export abstract class BaseFormatter implements IFormatter {
    * Format data into a string representation
    * Must be implemented by concrete formatters
    * @param data The data to format
+   * @param options Optional runtime formatting options
    */
-  abstract format(data: any): string;
+  abstract format(data: any, options?: FormatterRuntimeOptions): string;
 
   /**
    * Check if this formatter supports the given data
