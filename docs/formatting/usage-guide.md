@@ -24,11 +24,15 @@ When using the GHP Connector CLI, you can specify the output format with the `--
 
 ### Available Formats
 
-- `human`: Human-readable format (default)
-- `json`: JSON format for machine processing
+- `human`: Human-readable format optimized for interactive terminal use (default)
+- `text`: Plain text format, optimized for readability and machine processing
+- `json`: JSON format for automation and integration with other tools
   - Options: `--pretty` (boolean), `--indent=<number>`, `--compact` (boolean, default)
-- `text`: Plain text format
-  - Options: `--detailed` (boolean), `--no-colors` (boolean)
+- `table`: Tabular format for displaying collections of items (planned)
+  - Options: `--columns=<list>`, `--headers=<list>`
+- `minimal`: Minimal output with just essential data, ideal for scripts (planned)
+
+> Note: The `table` and `minimal` formats are planned for future releases but not yet fully implemented.
 
 ### Examples
 

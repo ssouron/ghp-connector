@@ -49,8 +49,12 @@ In the first phase, we will focus primarily on GitHub issues-related functionali
 
 ### Output Formats
 
-- Default JSON format for interoperability
-- Human-readable formatted output for terminal display
+- Multiple output formats supported with the `--format` option:
+  - Human-readable format optimized for terminal display (default)
+  - JSON format for integration and automation
+  - Text format for simple machine processing
+  - Table and minimal formats (planned)
+- Color-coding for terminal output with `--no-color` option to disable
 - Standard return codes to facilitate integration with other tools
 
 ### Usability Features
@@ -76,4 +80,4 @@ In later phases, we plan to add:
 - Use of GitHub issues for bug and feature tracking
 - Comprehensive documentation
 - Unit tests to ensure code quality
-- Complete API documentation 
+- Complete API documentation

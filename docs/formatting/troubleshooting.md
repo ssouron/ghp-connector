@@ -2,16 +2,19 @@
 
 This document provides solutions for common issues and error scenarios when using the GHP Connector output formatting system.
 
-## Common Issues
+## Common Issues and Solutions
 
-### Format-Related Issues
+### Format Selection Issues
 
-| Issue                           | Possible Causes                                            | Solutions                                                                      |
+| Problem                         | Possible Cause                                             | Solution                                                                       |
 | ------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | Unknown format error            | Specified format is not registered                         | Use `--format` with a supported format: `json`, `text`, or `human`             |
-| Invalid formatter configuration | Configuration options conflict or are invalid              | Check option combinations (e.g., `indent` requires `pretty: true`)             |
+| Format not appropriate for task | Selected format doesn't suit the content                   | Choose `json` for machine processing, `text` or `human` for human readability  |
 | Unreadable output               | Wrong format for viewing context                           | Use `--format=human` for terminal display, `--format=json` for data processing |
 | Missing colors in output        | Terminal doesn't support colors or `--no-colors` flag used | Use `--format=human` without `--no-colors` in a color-supporting terminal      |
+| Missing emojis                  | Terminal doesn't support emoji or `--no-emoji` flag used   | Use `--format=human` without `--no-emoji` in a terminal with emoji support     |
+
+> **Note**: The `table` and `minimal` formats are planned for future releases and not yet fully implemented.
 
 ### JSON Formatter Issues
 

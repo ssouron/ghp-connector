@@ -70,12 +70,14 @@ const explicitCompactOutput = formatOutput(data, 'json', {
 
 ### Text Formatter (`text`)
 
-| Option              | Type    | Default | CLI Flag          | Description                                         |
-| ------------------- | ------- | ------- | ----------------- | --------------------------------------------------- |
-| `detailed`          | boolean | `false` | `--detailed`      | Include detailed information in output              |
-| `formatForTerminal` | boolean | `true`  | N/A               | Format output specifically for terminal display     |
-| `useColors`         | boolean | `true`  | `--no-colors`     | Use colors in output (inherited from common config) |
-| `maxWidth`          | number  | `80`    | `--max-width=<n>` | Maximum width for text wrapping                     |
+| Option              | Type    | Default   | CLI Flag              | Description                                               |
+| ------------------- | ------- | --------- | --------------------- | --------------------------------------------------------- |
+| `detailed`          | boolean | `false`   | `--detailed`          | Include detailed information in output                    |
+| `formatForTerminal` | boolean | `true`    | N/A                   | Format output specifically for terminal display           |
+| `useColors`         | boolean | `true`    | `--no-colors`         | Use colors in output (inherited from common config)       |
+| `maxWidth`          | number  | `80`      | `--max-width=<n>`     | Maximum width for text wrapping                           |
+| `dateFormat`        | string  | `'local'` | `--date-format=<fmt>` | Date format ('ISO', 'local', 'relative')                  |
+| `timezone`          | string  | `'local'` | `--timezone=<tz>`     | Timezone for date formatting (see Timezone Configuration) |
 
 #### CLI Examples
 
@@ -156,6 +158,57 @@ const customOutput = formatOutput(data, 'human', {
   maxWidth: 100,
 });
 ```
+
+## Timezone Configuration
+
+The `timezone` option controls how dates and times are displayed in the output. It's available for `text` and `human` formatters.
+
+| Option     | Type   | Default   | CLI Flag             | Description                       |
+| ---------- | ------ | --------- | -------------------- | --------------------------------- |
+| `timezone` | string | `'local'` | `--timezone=<value>` | Timezone for date/time formatting |
+
+### Valid Timezone Values
+
+- `'local'`: Use the local system timezone (default)
+- `'UTC'`: Use Coordinated Universal Time
+- IANA timezone names (e.g., `'America/New_York'`, `'Europe/Paris'`, `'Asia/Tokyo'`)
+
+### CLI Examples
+
+```bash
+# Use UTC timezone
+ghp issue list --timezone=UTC
+
+# Use a specific timezone
+ghp issue list --timezone=America/Los_Angeles
+
+# Combined with format option
+ghp issue list --format=human --timezone=Europe/Berlin
+```
+
+### Code Examples
+
+```typescript
+import { formatOutput } from 'ghp-connector';
+
+// Format with UTC timezone
+const utcOutput = formatOutput(data, 'text', {
+  timezone: 'UTC',
+});
+
+// Format with specific timezone
+const nyOutput = formatOutput(data, 'human', {
+  timezone: 'America/New_York',
+});
+```
+
+### Date Format Options
+
+The timezone setting affects how dates are displayed according to the `dateFormat` setting:
+
+- With `dateFormat: 'ISO'`, the timezone affects the UTC offset in the ISO string
+- With `dateFormat: 'local'`, dates are displayed in the specified timezone
+- With `dateFormat: 'relative'`, timezone has no effect (relative times are based on the current time)
 
 ## Configuration Combinations and Constraints
 

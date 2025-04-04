@@ -1,8 +1,20 @@
-# Output Formatting Examples
+# Formatter Examples
 
-This document provides comprehensive examples of using the GHP Connector output formatting system in various scenarios.
+This document provides practical examples of using different output formats in GHP Connector.
 
-## CLI Examples
+## Available Formatters
+
+GHP Connector provides several output formatters:
+
+- **Human (`human`)**: Default format, optimized for interactive terminal display. Enhanced version of the text formatter with additional terminal-focused features.
+- **Text (`text`)**: Plain text format optimized for readability and simple machine processing.
+- **JSON (`json`)**: Structured JSON format for integration with other tools and automated processing.
+- **Table (`table`)**: Tabular format for displaying collections of similar items (planned).
+- **Minimal (`minimal`)**: Minimal output with only essential information, ideal for scripting (planned).
+
+> Note: The `table` and `minimal` formatters are planned for future releases but not fully implemented yet.
+
+## Basic Examples
 
 ### Basic Format Selection
 

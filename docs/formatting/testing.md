@@ -27,6 +27,19 @@ The formatter testing infrastructure provides a comprehensive set of tools and u
 
 All testing utilities are centralized in the `src/lib/test-helpers` directory and exported via `index.ts`.
 
+### Formatter Types and Hierarchy
+
+The formatting system includes the following formatters, organized in a hierarchy:
+
+- **BaseFormatter** (abstract class)
+  - **JsonFormatter**: For JSON output
+  - **TextFormatter**: For plain text output
+    - **HumanFormatter**: Extends TextFormatter with enhanced terminal features
+  - **TableFormatter**: For tabular data (planned)
+  - **MinimalFormatter**: For minimal output (planned)
+
+When testing formatters, it's important to understand this hierarchy, as some formatters inherit functionality from their parent classes. For example, when testing HumanFormatter, you should also ensure that the base TextFormatter functionality works correctly.
+
 ## Testing Utilities
 
 ### Mock Data Generators

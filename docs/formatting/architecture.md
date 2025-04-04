@@ -155,7 +155,7 @@ export class JsonFormatter extends BaseFormatter {
 
 ### Text Formatter
 
-Formats data as plain text with support for details and terminal formatting.
+Formats data as plain text with support for details and terminal formatting. Optimized for machine readability while maintaining human readability.
 
 ```typescript
 export class TextFormatter extends BaseFormatter;
@@ -163,10 +163,43 @@ export class TextFormatter extends BaseFormatter;
 
 ### Human Formatter
 
-Formats data in a human-friendly way, optimized for readability.
+Formats data in a human-friendly way, optimized for terminal display and readability. The Human formatter extends the Text formatter, adding enhanced formatting specifically designed for interactive terminal usage.
 
 ```typescript
 export class HumanFormatter extends TextFormatter;
+```
+
+### Table Formatter
+
+Formats data as tables with columns and rows. Useful for displaying collections of similar objects.
+
+> Note: This formatter is planned but not yet fully implemented.
+
+```typescript
+export class TableFormatter extends BaseFormatter;
+```
+
+### Minimal Formatter
+
+Provides minimal output with just essential information, designed for use in scripts and automated processes.
+
+> Note: This formatter is planned but not yet fully implemented.
+
+```typescript
+export class MinimalFormatter extends BaseFormatter;
+```
+
+## Format Relationships
+
+The formatters have the following relationships:
+
+```mermaid
+graph TD
+    BaseFormatter --> JsonFormatter
+    BaseFormatter --> TextFormatter
+    TextFormatter --> HumanFormatter
+    BaseFormatter --> TableFormatter[TableFormatter (Planned)]
+    BaseFormatter --> MinimalFormatter[MinimalFormatter (Planned)]
 ```
 
 ## Usage

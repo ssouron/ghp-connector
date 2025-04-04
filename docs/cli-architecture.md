@@ -15,12 +15,12 @@ After evaluating several popular Node.js CLI frameworks, we have selected **Comm
 
 ### Evaluation Criteria
 
-| Framework | Pros | Cons |
-|-----------|------|------|
-| **Commander.js** | - Lightweight and simple<br>- Excellent TypeScript support<br>- Widely used (176M weekly downloads)<br>- Active maintenance<br>- Easy to learn<br>- Simple command structure | - Less structured than Oclif<br>- Fewer built-in features |
-| **Yargs** | - Rich feature set<br>- Good community support<br>- Flexible configuration | - Heavier than Commander<br>- Not maintained as actively<br>- More complex API |
-| **Oclif** | - Plugin architecture<br>- Built-in testing framework<br>- Supports command hierarchies<br>- Backed by Heroku | - More complex<br>- Steeper learning curve<br>- Generates more boilerplate code |
-| **Vorpal** | - Interactive experience<br>- Command history<br>- Tab completion | - Not maintained (last updated 8 years ago)<br>- Primarily focused on interactive mode |
+| Framework        | Pros                                                                                                                                                                         | Cons                                                                                   |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| **Commander.js** | - Lightweight and simple<br>- Excellent TypeScript support<br>- Widely used (176M weekly downloads)<br>- Active maintenance<br>- Easy to learn<br>- Simple command structure | - Less structured than Oclif<br>- Fewer built-in features                              |
+| **Yargs**        | - Rich feature set<br>- Good community support<br>- Flexible configuration                                                                                                   | - Heavier than Commander<br>- Not maintained as actively<br>- More complex API         |
+| **Oclif**        | - Plugin architecture<br>- Built-in testing framework<br>- Supports command hierarchies<br>- Backed by Heroku                                                                | - More complex<br>- Steeper learning curve<br>- Generates more boilerplate code        |
+| **Vorpal**       | - Interactive experience<br>- Command history<br>- Tab completion                                                                                                            | - Not maintained (last updated 8 years ago)<br>- Primarily focused on interactive mode |
 
 ### Reasoning for Selecting Commander.js
 
@@ -37,11 +37,11 @@ After evaluating GitHub API client options, we have selected **Octokit** as our 
 
 ### Evaluation Criteria
 
-| Library | Pros | Cons |
-|---------|------|------|
-| **Octokit** | - Official GitHub SDK<br>- Complete API coverage<br>- Excellent TypeScript support<br>- Universal (works in browsers and Node.js)<br>- Plugin system<br>- Supports REST and GraphQL APIs | - Larger package size |
-| **Axios + direct API calls** | - More control<br>- Lighter weight | - No type definitions for GitHub API<br>- Manual request handling<br>- More code to maintain |
-| **node-github** | - Simpler API | - Less active maintenance<br>- Less comprehensive coverage |
+| Library                      | Pros                                                                                                                                                                                     | Cons                                                                                         |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| **Octokit**                  | - Official GitHub SDK<br>- Complete API coverage<br>- Excellent TypeScript support<br>- Universal (works in browsers and Node.js)<br>- Plugin system<br>- Supports REST and GraphQL APIs | - Larger package size                                                                        |
+| **Axios + direct API calls** | - More control<br>- Lighter weight                                                                                                                                                       | - No type definitions for GitHub API<br>- Manual request handling<br>- More code to maintain |
+| **node-github**              | - Simpler API                                                                                                                                                                            | - Less active maintenance<br>- Less comprehensive coverage                                   |
 
 ### Reasoning for Selecting Octokit
 
@@ -57,9 +57,11 @@ After evaluating GitHub API client options, we have selected **Octokit** as our 
 The CLI will follow a consistent command structure:
 
 ```ghp <resource> <action> [options]
+
 ```
 
 Where:
+
 - `<resource>`: The GitHub resource type (e.g., issue, project)
 - `<action>`: The operation to perform (e.g., list, create, update)
 - `[options]`: Optional parameters for the command
@@ -91,17 +93,17 @@ We will follow these conventions for command naming:
 graph TD
     A[CLI Entry Point\nghp] --> B[Command Parser\nCommander.js]
     B --> C{Command Routing}
-    
+
     C -->|Issue commands| D[Issue Commands]
     C -->|Project commands| E[Project Commands]
     C -->|Other commands| F[Other Commands]
     C -->|Config operations| G[Config Manager]
-    
+
     D --> H[GitHub Client\nOctokit]
     E --> H
     F --> H
     G --> H
-    
+
     H --> I[GitHub API]
 ```
 
@@ -130,13 +132,13 @@ graph TD
     A[Command Input] --> B[Validate Input]
     B --> C[Execute Command]
     C --> D[Display Results]
-    
+
     B -->|Validation error| E[Error Handler]
     C -->|GitHub API error| E
     D -->|Formatting error| E
-    
+
     E --> F[User-friendly Message]
-    
+
     style E fill:#f96,stroke:#333
     style F fill:#9cf,stroke:#333
 ```
@@ -157,13 +159,13 @@ Example:
 ghp issue list
 
 # JSON output
-ghp issue list --format json
+ghp issue list --format=json
 
 # Table output
-ghp issue list --format table
+ghp issue list --format=table
 
 # Minimal output
-ghp issue list --format minimal
+ghp issue list --format=minimal
 ```
 
 ## Configuration Management
@@ -182,7 +184,7 @@ graph TD
     B --> C[Local Project Config]
     C --> D[Global User Config]
     D --> E[Default Values]
-    
+
     style A fill:#9cf,stroke:#333
     style B fill:#adf,stroke:#333
     style C fill:#bef,stroke:#333
@@ -219,4 +221,4 @@ graph TD
 
 ## Conclusion
 
-This architecture provides a solid foundation for the GHP Connector CLI. The selection of Commander.js and Octokit balances simplicity, maintainability, and feature completeness. The structured approach to commands, error handling, and configuration will ensure a good user experience for both human users and AI agents. 
+This architecture provides a solid foundation for the GHP Connector CLI. The selection of Commander.js and Octokit balances simplicity, maintainability, and feature completeness. The structured approach to commands, error handling, and configuration will ensure a good user experience for both human users and AI agents.
