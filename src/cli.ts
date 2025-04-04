@@ -5,7 +5,7 @@
  */
 
 import { Command, Option } from 'commander';
-import { getVersion } from './index';
+import { getVersion, createEnterpriseCommand, createTokenCommand } from './index';
 import { handleError } from './lib/errors';
 // import { loadConfig } from './lib/config'; // Removed unused import
 import os from 'os';
@@ -61,6 +61,31 @@ program
   .option('--timezone <zone>', 'Timezone for date formatting (e.g., UTC, America/New_York)');
 // -----------------------------------------
 
+// Create a string with global options for help text
+const globalOptionsHelp = `
+Global Options:
+  -o, --owner <owner>        GitHub repository owner
+  -r, --repo <repository>    GitHub repository name
+  -f, --format <format>      ${formatDescription} (default: "${defaultFormat}")
+  --no-color                 Disable color output (text/human formats)
+  --pretty                   Pretty print output (json format)
+  --indent <number>          Indentation level for pretty printing (json format) (default: "2")
+  --timezone <zone>          Timezone for date formatting (e.g., UTC, America/New_York)
+  -v, --verbose              Enable verbose output
+  --debug                    Enable debug mode
+  -h, --help                 Display help
+  -V, --version              Display version
+`;
+
+// Use a simpler approach to modify help output
+program.addHelpText('afterAll', () => globalOptionsHelp);
+
+// Also add a note to all subcommands about global options
+testFormatCommand.addHelpText(
+  'afterAll',
+  '\nNote: Global options (--format, --owner, etc.) can be used with this command.\nRun "ghp --help" to see all global options.\n'
+);
+
 // Add config command
 const configCommand = program.command('config').description('Manage GHP configuration');
 
@@ -82,9 +107,30 @@ configCommand
     }
   });
 
+// Add help text to config command as well
+configCommand.addHelpText(
+  'afterAll',
+  '\nNote: Global options (--format, --owner, etc.) can be used with this command.\nRun "ghp --help" to see all global options.\n'
+);
+
 // Register all command modules
-// For now, just registering the test command
+// Add enterprise and token commands
+const enterpriseCommand = createEnterpriseCommand();
+const tokenCommand = createTokenCommand();
+
+// Add help text to these commands as well
+enterpriseCommand.addHelpText(
+  'afterAll',
+  '\nNote: Global options (--format, --owner, etc.) can be used with this command.\nRun "ghp --help" to see all global options.\n'
+);
+tokenCommand.addHelpText(
+  'afterAll',
+  '\nNote: Global options (--format, --owner, etc.) can be used with this command.\nRun "ghp --help" to see all global options.\n'
+);
+
 program.addCommand(testFormatCommand);
+program.addCommand(enterpriseCommand);
+program.addCommand(tokenCommand);
 
 // TODO: Add more commands here
 
