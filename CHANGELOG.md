@@ -112,3 +112,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Architecture diagrams using Mermaid
   - Command structure and naming conventions
   - Configuration management approach
+
+## [UNRELEASED]
+
+### Added
+
+- Implemented `JsonFormatter` with pretty-print, compact output, key sorting, and circular reference handling (Issue #34).
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security

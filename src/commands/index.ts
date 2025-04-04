@@ -4,3 +4,4 @@
  */
 
 export { registerIssueCommands } from './issue';
+export { testFormatCommand } from './test-format';

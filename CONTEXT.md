@@ -17,7 +17,12 @@ GHP Connector is an open-source Node.js library for interacting with GitHub Issu
 - ESLint configuration for code quality
 - Versioning follows Semantic Versioning (SemVer) - see https://semver.org/
 - GitHub token validation system implemented
-- Output formatting system in development (Issue #13)
+- Output formatting system architecture implemented with registry/factory pattern
+- Core formatters (JSON, Text, Human) implemented
+- Output formatting documentation available
+- CLI integration for global formatting options (`--format`, `--pretty`, etc.) implemented (Issue #35)
+- Comprehensive formatting system documentation completed (Issue #36)
+- Formatter testing infrastructure implemented (Issue #37)
 
 ## Main Objectives
 
@@ -35,6 +40,7 @@ GHP Connector is an open-source Node.js library for interacting with GitHub Issu
 - Secrets (GitHub token, API keys) are provided via environment variables or configuration file
 - No need to specify the repo in each command (--repo)
 - Output formatting system with multiple format support
+- Global CLI options control output format (`--format`) and format-specific settings (`--pretty`, `--indent`, `--no-color`, `--timezone`)
 - Secure token handling with rotation support
 
 ## Project Structure
@@ -46,6 +52,8 @@ GHP Connector is an open-source Node.js library for interacting with GitHub Issu
     - `/errors` - Error handling
     - `/test-helpers` - Testing utilities
   - `/cli` - Command-line interface
+    - `/validation.ts` - CLI option validation logic
+    - `/validation.spec.ts` - Tests for CLI validation
 - `/dist` - Compiled JavaScript code (generated)
 - `/docs` - Documentation
 - `/bin` - Executable scripts
@@ -56,6 +64,7 @@ GHP Connector is an open-source Node.js library for interacting with GitHub Issu
 - Environment variables for secrets (GITHUB_TOKEN, GITHUB_API_KEY)
 - Secrets can be provided via environment variables or configuration file
 - Format-specific configuration options
+- CLI options can override configuration file settings for formatting
 - Enterprise configuration support
 
 ## Planned Commands
@@ -68,8 +77,9 @@ Examples:
 ghp issue list
 ghp issue create --title="New bug" --body="Bug description"
 ghp issue update --id=123 --status="closed"
-ghp issue list --format=json
+ghp issue list --format=json --pretty --indent=4
 ghp issue list --format=text --no-color
+ghp issue list --format=human --timezone="America/Los_Angeles"
 ```
 
 ## Development Notes
@@ -167,20 +177,19 @@ The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the pro
 
 ### Active Features
 
-- Output formatting system (Issue #13)
-  - Core formatting architecture
-  - Text and JSON formatters
-  - CLI integration
-  - Documentation
-  - Testing infrastructure
-
-### Upcoming Features
-
 - Advanced formatting options (Issue #14)
   - CSV support
   - Custom templates
   - Advanced table formatting
   - File output support
+- CLI Integration for Formatting Options (Issue #35) - In Progress / Partially Completed
+
+### Upcoming Features
+
+- GitHub Projects integration
+- Issue filtering and searching
+- Batch operations for issues
+- Enterprise-specific features
 
 ### Completed Features
 
@@ -188,6 +197,33 @@ The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the pro
 - Basic project structure
 - Testing infrastructure
 - CI/CD pipeline
+- Output formatting core architecture (Issue #32)
+  - Formatter interface and base class
+  - Registry and factory system
+  - Configuration system
+  - Error handling
+  - Core formatters (JSON, Text, Human)
+  - Documentation
+- JSON Formatter Implementation (Issue #34)
+  - Pretty-print and compact options
+  - Configurable indentation
+  - Recursive key sorting
+  - Circular reference handling
+  - Comprehensive tests
+- Core CLI integration for global formatting options (Issue #35)
+- Formatting System Documentation (Issue #36)
+  - Architecture documentation
+  - Usage guide
+  - Configuration options documentation
+  - Troubleshooting guide
+  - Code examples
+- Formatter Testing Infrastructure (Issue #37)
+  - Mock data generators
+  - Format-specific assertions
+  - Performance measurement utilities
+  - Test fixtures and reusable test data
+  - Integration tests for cross-format validation
+  - Memory leak detection utilities
 
 ## Technical Decisions Log
 
@@ -201,6 +237,23 @@ The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the pro
   - Enhanced security
   - Reduced risk of token exposure
   - Support for enterprise requirements
+
+### Implementation Notes
+
+- **Test Command**: A temporary `test-format` command has been implemented for development and testing purposes
+  - Should be removed when primary commands are fully implemented
+  - Not intended for production use
+  - Currently registered in src/cli.ts and exported in src/commands/index.ts
+- **CLI Option Validation**: Validation logic for combinations of format-related CLI options (e.g., `--pretty` requires `--format=json`) is implemented in `src/cli/validation.ts`.
+- **CLI Help Display**: Global options are defined on the main program but might not appear in the help text of subcommands due to `commander.js` behavior; this is accepted for simplicity.
+- **Formatter Testing Infrastructure**: A comprehensive testing infrastructure for formatters includes:
+  - `src/lib/test-helpers/formatter-test-helpers.ts`: Contains mock formatters and test registry implementations
+  - `src/lib/test-helpers/mock-data.ts`: Provides generators for GitHub-like test data
+  - `src/lib/test-helpers/assertions.ts`: Format-specific assertion utilities for validating output
+  - `src/lib/test-helpers/performance.ts`: Utilities for measuring performance and detecting memory leaks
+  - `src/lib/test-helpers/fixtures.ts`: Reusable test data structures for all formatter tests
+  - `src/lib/formatters/integration.spec.ts`: Integration tests for cross-format validation
+  - Test helpers are exported via `src/lib/test-helpers/index.ts`
 
 ### Technology Choices
 
@@ -217,6 +270,8 @@ The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the pro
 - Large dataset handling in formatters
 - Memory usage with large JSON responses
 - Network latency in enterprise environments
+- TextFormatter has limitations with circular references (detected and documented in tests)
+- JsonFormatter cannot serialize BigInt values (limitation of JSON format)
 
 ### Optimization Strategies
 
@@ -357,6 +412,15 @@ NODE_ENV=development
 - Keep functions focused
 - Write unit tests
 
+### Documentation Style
+
+- Use clear, concise language in all documentation
+- Include diagrams using Mermaid when useful for understanding complex systems, workflows, or architectures
+- Provide usage examples for all major features
+- Update documentation whenever the related code changes
+- Structure documentation with appropriate headings and sections
+- Use consistent formatting throughout documentation files
+
 ### Pull Request Process
 
 - Create feature branch
@@ -372,7 +436,7 @@ NODE_ENV=development
 
 - Complete output formatting system
 - Implement basic formatters
-- Add CLI integration
+- Add CLI integration for formatting (options, validation) - Done
 - Write documentation
 
 ### Next Sprint
@@ -394,3 +458,5 @@ NODE_ENV=development
 - [README.md](./README.md) - Main project documentation
 - [docs/initial-specs.md](./docs/initial-specs.md) - Initial specifications
 - [docs/formatting/architecture.md](./docs/formatting/architecture.md) - Output formatting architecture
+- [docs/formatting/usage-guide.md](./docs/formatting/usage-guide.md) - Output formatting usage guide
+- [docs/formatting/testing.md](./docs/formatting/testing.md) - Formatter testing guide
