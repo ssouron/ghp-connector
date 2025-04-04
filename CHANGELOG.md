@@ -5,6 +5,27 @@ All notable changes to GHP Connector will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2024-04-09
+
+### Added
+
+- Implemented enhanced `ghp issue list` command with comprehensive filtering options:
+  - Filtering by state (open, closed, all)
+  - Filtering by assignee, labels, creator, and mentioned users
+  - Filtering by milestone
+  - Filtering by creation/update date
+  - Sorting by various criteria
+- Added improved error handling for API limitations and network issues
+- Enhanced documentation with detailed examples
+- Support for JSON pretty-printing with configurable indentation
+- Implemented appropriate handling for empty result sets
+
+### Improved
+
+- Enhanced format detection for better UX
+- Refined help text with command examples
+- Better argument validation for CLI options
+
 ## [0.3.1] - 2024-04-06
 
 ### Fixed
