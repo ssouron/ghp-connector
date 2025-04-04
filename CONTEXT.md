@@ -22,6 +22,7 @@ GHP Connector is an open-source Node.js library for interacting with GitHub Issu
 - Output formatting documentation available
 - CLI integration for global formatting options (`--format`, `--pretty`, etc.) implemented (Issue #35)
 - Comprehensive formatting system documentation completed (Issue #36)
+- Formatter testing infrastructure implemented (Issue #37)
 
 ## Main Objectives
 
@@ -216,6 +217,13 @@ The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the pro
   - Configuration options documentation
   - Troubleshooting guide
   - Code examples
+- Formatter Testing Infrastructure (Issue #37)
+  - Mock data generators
+  - Format-specific assertions
+  - Performance measurement utilities
+  - Test fixtures and reusable test data
+  - Integration tests for cross-format validation
+  - Memory leak detection utilities
 
 ## Technical Decisions Log
 
@@ -238,6 +246,14 @@ The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the pro
   - Currently registered in src/cli.ts and exported in src/commands/index.ts
 - **CLI Option Validation**: Validation logic for combinations of format-related CLI options (e.g., `--pretty` requires `--format=json`) is implemented in `src/cli/validation.ts`.
 - **CLI Help Display**: Global options are defined on the main program but might not appear in the help text of subcommands due to `commander.js` behavior; this is accepted for simplicity.
+- **Formatter Testing Infrastructure**: A comprehensive testing infrastructure for formatters includes:
+  - `src/lib/test-helpers/formatter-test-helpers.ts`: Contains mock formatters and test registry implementations
+  - `src/lib/test-helpers/mock-data.ts`: Provides generators for GitHub-like test data
+  - `src/lib/test-helpers/assertions.ts`: Format-specific assertion utilities for validating output
+  - `src/lib/test-helpers/performance.ts`: Utilities for measuring performance and detecting memory leaks
+  - `src/lib/test-helpers/fixtures.ts`: Reusable test data structures for all formatter tests
+  - `src/lib/formatters/integration.spec.ts`: Integration tests for cross-format validation
+  - Test helpers are exported via `src/lib/test-helpers/index.ts`
 
 ### Technology Choices
 
@@ -254,6 +270,8 @@ The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the pro
 - Large dataset handling in formatters
 - Memory usage with large JSON responses
 - Network latency in enterprise environments
+- TextFormatter has limitations with circular references (detected and documented in tests)
+- JsonFormatter cannot serialize BigInt values (limitation of JSON format)
 
 ### Optimization Strategies
 
@@ -441,3 +459,4 @@ NODE_ENV=development
 - [docs/initial-specs.md](./docs/initial-specs.md) - Initial specifications
 - [docs/formatting/architecture.md](./docs/formatting/architecture.md) - Output formatting architecture
 - [docs/formatting/usage-guide.md](./docs/formatting/usage-guide.md) - Output formatting usage guide
+- [docs/formatting/testing.md](./docs/formatting/testing.md) - Formatter testing guide
