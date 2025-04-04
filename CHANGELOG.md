@@ -5,6 +5,14 @@ All notable changes to GHP Connector will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - 2024-04-06
+
+### Fixed
+
+- Resolved issue with global CLI options not being displayed in commander.js help output (Issue #38)
+- Consolidated CLI entry points to avoid command conflicts between files
+- Added explicit help text for global options in both main help and subcommand help outputs
+
 ## [0.3.0] - 2024-04-05
 
 ### Added

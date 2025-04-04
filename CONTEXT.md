@@ -8,7 +8,7 @@ GHP Connector is an open-source Node.js library for interacting with GitHub Issu
 
 ## Current Project Status
 
-- npm project initialization (version 0.3.0)
+- npm project initialization (version 0.3.1)
 - MIT License
 - Basic project structure in place
 - Initial specifications documented
@@ -233,6 +233,10 @@ The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the pro
   - Color-coding for terminal output (with --no-color option)
   - Base helpers for common data type formatting
   - Consistent date/time formatting with timezone support
+- CLI Help Display Enhancement (Issue #38)
+  - Fixed global options display in help output
+  - Added explicit help notes for all commands about global options
+  - Consolidated CLI entry points
 
 ## Technical Decisions Log
 
