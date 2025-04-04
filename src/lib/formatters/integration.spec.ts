@@ -243,7 +243,7 @@ describe('Formatter Integration', () => {
           { name: 'Text', fn: (data) => textFormatter.format(data) },
           { name: 'Human', fn: (data) => humanFormatter.format(data) },
         ],
-        testData,
+        [testData] as [any],
         { iterations: 10, warmupIterations: 2, logResults: true }
       );
 

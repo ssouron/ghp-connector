@@ -35,6 +35,12 @@ jest.mock('../lib', () => {
     formatOutput: jest.fn().mockImplementation((data) => JSON.stringify(data)),
     wrapWithErrorHandler: jest.fn().mockImplementation((fn) => fn),
     cmdArgsToConfig: jest.fn().mockReturnValue({}),
+    ValidationError: class ValidationError extends Error {
+      constructor(message: string) {
+        super(message);
+        this.name = 'ValidationError';
+      }
+    },
   };
 });
 
@@ -65,7 +71,7 @@ describe('Issue Commands', () => {
       expect(listCommand?.description()).toBe('List issues in a repository');
     });
 
-    it('devrait contenir les options appropriées', () => {
+    it('devrait contenir toutes les options de filtrage', () => {
       const listCommand = program.commands[0].commands.find((cmd) => cmd.name() === 'list');
       const options = listCommand?.options.map((opt) => opt.flags);
 
@@ -73,6 +79,26 @@ describe('Issue Commands', () => {
       expect(options).toContain('-l, --limit <limit>');
       expect(options).toContain('-a, --assignee <assignee>');
       expect(options).toContain('-L, --label <labels>');
+      expect(options).toContain('-S, --sort <sort>');
+      expect(options).toContain('-d, --direction <direction>');
+      expect(options).toContain('-m, --milestone <milestone>');
+      expect(options).toContain('-c, --creator <creator>');
+      expect(options).toContain('-M, --mentioned <mentioned>');
+      expect(options).toContain('--since <date>');
+    });
+
+    it('devrait définir les valeurs par défaut appropriées', () => {
+      const listCommand = program.commands[0].commands.find((cmd) => cmd.name() === 'list');
+
+      const stateOption = listCommand?.options.find((opt) => opt.flags.includes('--state'));
+      const limitOption = listCommand?.options.find((opt) => opt.flags.includes('--limit'));
+      const sortOption = listCommand?.options.find((opt) => opt.flags.includes('--sort'));
+      const directionOption = listCommand?.options.find((opt) => opt.flags.includes('--direction'));
+
+      expect(stateOption?.defaultValue).toBe('open');
+      expect(limitOption?.defaultValue).toBe('10');
+      expect(sortOption?.defaultValue).toBe('created');
+      expect(directionOption?.defaultValue).toBe('desc');
     });
   });
 

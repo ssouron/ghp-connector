@@ -14,11 +14,13 @@ import os from 'os';
 // import { /* Command types/interfaces if needed */ } from './commands/base'; // Removed non-existent import
 
 // Import config manager related stuff (if needed elsewhere)
-import { /* cmdArgsToConfig, */ initConfigFile, CONFIG_FILENAME } from './lib/config'; // Removed unused cmdArgsToConfig
+import { CONFIG_FILENAME, initConfigFile } from './lib/config'; // Removed unused cmdArgsToConfig
 import path from 'path';
 
 // Import our test format command
 import { testFormatCommand } from './commands/test-format';
+// Import issues commands
+import { registerIssueCommands } from './commands/issue';
 
 // --- Import Formatter Registry and Option ---
 import { defaultRegistry } from './lib/formatters';
@@ -131,6 +133,9 @@ tokenCommand.addHelpText(
 program.addCommand(testFormatCommand);
 program.addCommand(enterpriseCommand);
 program.addCommand(tokenCommand);
+
+// Register issue commands
+registerIssueCommands(program);
 
 // TODO: Add more commands here
 

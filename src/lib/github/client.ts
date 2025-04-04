@@ -131,10 +131,28 @@ export class GitHubClient {
 
   /**
    * Create a new issue
+   * Accepts either an options object with all parameters or separate parameters
+   * @param titleOrOptions - Either the issue title as string or an options object containing title and other parameters
+   * @param body - Optional issue body (only used if first parameter is a string)
+   * @param options - Optional additional options (only used if first parameter is a string)
    */
-  async createIssue(title: string, body?: string, options: any = {}): Promise<any> {
-    const repoOwner = options.owner || this.owner;
-    const repoName = options.repo || this.repo;
+  async createIssue(titleOrOptions: string | Record<string, any>, body?: string, options: any = {}): Promise<any> {
+    let issueOptions: Record<string, any>;
+
+    if (typeof titleOrOptions === 'string') {
+      // Legacy signature: createIssue(title, body, options)
+      issueOptions = {
+        title: titleOrOptions,
+        body,
+        ...options,
+      };
+    } else {
+      // New signature: createIssue(options)
+      issueOptions = titleOrOptions;
+    }
+
+    const repoOwner = issueOptions.owner || this.owner;
+    const repoName = issueOptions.repo || this.repo;
 
     if (!repoOwner || !repoName) {
       throw new Error(
@@ -142,14 +160,18 @@ export class GitHubClient {
       );
     }
 
+    // Validate that title is present
+    if (!issueOptions.title) {
+      throw new Error('Issue title is required');
+    }
+
     // Remove owner and repo from options and keep the rest
-    const { owner: _owner, repo: _repo, ...restOptions } = options;
+    const { owner: _owner, repo: _repo, ...restOptions } = issueOptions;
 
     const { data } = await this.octokit.rest.issues.create({
       owner: repoOwner,
       repo: repoName,
-      title,
-      body,
+      title: issueOptions.title, // Ensure title is explicitly included
       ...restOptions,
     });
 
