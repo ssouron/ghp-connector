@@ -21,6 +21,7 @@ GHP Connector is an open-source Node.js library for interacting with GitHub Issu
 - Core formatters (JSON, Text, Human) implemented
 - Output formatting documentation available
 - CLI integration for global formatting options (`--format`, `--pretty`, etc.) implemented (Issue #35)
+- Comprehensive formatting system documentation completed (Issue #36)
 
 ## Main Objectives
 
@@ -209,6 +210,12 @@ The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the pro
   - Circular reference handling
   - Comprehensive tests
 - Core CLI integration for global formatting options (Issue #35)
+- Formatting System Documentation (Issue #36)
+  - Architecture documentation
+  - Usage guide
+  - Configuration options documentation
+  - Troubleshooting guide
+  - Code examples
 
 ## Technical Decisions Log
 
