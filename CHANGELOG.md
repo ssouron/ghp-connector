@@ -5,6 +5,39 @@ All notable changes to GHP Connector will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2024-04-05
+
+### Added
+
+- Implemented comprehensive output formatting architecture with modular design (Issue #13)
+- Added support for multiple output formats:
+  - Human-readable format optimized for terminal display (default)
+  - JSON format for integration and automation
+  - Text format for simple machine processing
+- Implemented core formatters:
+  - `JsonFormatter` with pretty-print, compact output, key sorting, and circular reference handling
+  - `TextFormatter` with detailed output, color support, and date formatting
+  - `HumanFormatter` extending TextFormatter with enhanced terminal features
+- Added global CLI options for formatting:
+  - `--format` to select output format
+  - `--pretty` for JSON pretty-printing
+  - `--indent` for JSON indentation control
+  - `--no-color` to disable terminal colors
+  - `--timezone` for date/time formatting
+- Comprehensive formatter testing infrastructure with:
+  - Mock data generators
+  - Format-specific assertions
+  - Performance measurement utilities
+  - Test fixtures and cross-format validation tools
+- Detailed documentation for the formatting system
+
+### Changed
+
+- Standardized output formatting across all commands
+- Enhanced date/time formatting with timezone support
+- Improved code organization with formatter registry and factory patterns
+- Harmonized formatting system documentation
+
 ## [0.2.0] - 2024-04-01
 
 ### Added
@@ -116,8 +149,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [UNRELEASED]
 
 ### Added
-
-- Implemented `JsonFormatter` with pretty-print, compact output, key sorting, and circular reference handling (Issue #34).
 
 ### Changed
 

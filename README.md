@@ -4,7 +4,7 @@ A Node.js command line library for interacting with GitHub Issues and Projects.
 
 ## 🚀 Project Status
 
-This project is in active development. The current version is `0.2.0`.
+This project is in active development. The current version is `0.3.0`.
 
 ## 📚 About
 

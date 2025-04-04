@@ -1,6 +1,6 @@
 {
   "name": "ghp-connector",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "CLI pour interagir avec les Issues et Projects GitHub",
   "main": "dist/index.js",
   "bin": {

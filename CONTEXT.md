@@ -8,7 +8,7 @@ GHP Connector is an open-source Node.js library for interacting with GitHub Issu
 
 ## Current Project Status
 
-- npm project initialization (version 0.2.0)
+- npm project initialization (version 0.3.0)
 - MIT License
 - Basic project structure in place
 - Initial specifications documented
@@ -23,6 +23,7 @@ GHP Connector is an open-source Node.js library for interacting with GitHub Issu
 - CLI integration for global formatting options (`--format`, `--pretty`, etc.) implemented (Issue #35)
 - Comprehensive formatting system documentation completed (Issue #36)
 - Formatter testing infrastructure implemented (Issue #37)
+- Basic output formatting options support completed (Issue #13)
 
 ## Main Objectives
 
@@ -140,11 +141,13 @@ The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the pro
   - Increment MINOR version when adding functionality in a backward compatible manner
   - Increment PATCH version when making backward compatible bug fixes
 - **Version change process**:
-  1. Run `npm version <type>` (patch|minor|major)
+  1. Run `npm version <type>` (patch|minor|major) to update package.json and create a git tag
   2. Update CHANGELOG.md with new version section
   3. Update README.md Project Status section
   4. Update CONTEXT.md Current Project Status section
-  5. Create a conventional commit with message: `chore: bump version to <version>`
+  5. Create a SINGLE conventional commit with message: `chore: bump version to <version>` that includes ALL changes
+  6. All changes MUST be included in the SAME commit, not split across multiple commits
+  7. The git tag created by npm version will automatically point to this commit
 - **Version change locations**: When bumping version, ALL of these MUST be updated:
   - package.json (version field) - via npm version
   - CHANGELOG.md (add new version section)
@@ -182,7 +185,6 @@ The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the pro
   - Custom templates
   - Advanced table formatting
   - File output support
-- CLI Integration for Formatting Options (Issue #35) - In Progress / Partially Completed
 
 ### Upcoming Features
 
@@ -224,6 +226,13 @@ The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the pro
   - Test fixtures and reusable test data
   - Integration tests for cross-format validation
   - Memory leak detection utilities
+- Basic Output Formatting Options (Issue #13)
+  - Modular and extensible formatting architecture
+  - Support for human-readable and JSON formats
+  - Global --format flag for output format control
+  - Color-coding for terminal output (with --no-color option)
+  - Base helpers for common data type formatting
+  - Consistent date/time formatting with timezone support
 
 ## Technical Decisions Log
 
