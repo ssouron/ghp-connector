@@ -7,21 +7,25 @@ import { Command } from 'commander';
 import {
   GitHubClient,
   loadConfig,
-  formatOutput,
   wrapWithErrorHandler,
   ValidationError,
   FormatType,
   cmdArgsToConfig,
+  defaultFactory,
 } from '../lib';
 
 /**
  * Register issue commands with the CLI
  */
 export function registerIssueCommands(program: Command): void {
+  // Créer une commande qui hérite des options globales
   const issueCommand = program.command('issue').description('Manage GitHub issues');
 
+  // Explicitement passer les options globales à la commande issue
+  issueCommand.copyInheritedSettings(program);
+
   // List issues
-  issueCommand
+  const listCmd = issueCommand
     .command('list')
     .description('List issues in a repository')
     .option('-s, --state <state>', 'Issue state (open, closed, all)', 'open')
@@ -48,6 +52,9 @@ Examples:
     `
     )
     .action(wrapWithErrorHandler(listIssues));
+
+  // S'assurer que cette sous-commande hérite aussi des options
+  listCmd.copyInheritedSettings(issueCommand);
 
   // Get issue
   issueCommand
@@ -80,67 +87,61 @@ Examples:
 }
 
 /**
- * Détecte le format demandé à partir des options globales et des arguments
- * @param globalOpts Options globales passées par commander
- * @returns Le format à utiliser pour l'affichage
- */
-function detectFormat(globalOpts: Record<string, any>): FormatType {
-  // Vérifier si les options de format sont passées directement en arguments
-  const formatFromArgs = getFormatFromArgs();
-
-  // Priorité: 1. Format dans les arguments bruts, 2. Format dans les options globales, 3. Format par défaut (human)
-  return formatFromArgs || globalOpts.format || 'human';
-}
-
-/**
- * Extrait le format spécifié par les arguments de ligne de commande
- * @returns Le format spécifié ou undefined si aucun n'est spécifié
- */
-function getFormatFromArgs(): FormatType | undefined {
-  // Vérification de l'option courte: -f <format>
-  if (process.argv.includes('-f') && process.argv.indexOf('-f') + 1 < process.argv.length) {
-    const format = process.argv[process.argv.indexOf('-f') + 1];
-    return isValidFormat(format) ? (format as FormatType) : undefined;
-  }
-
-  // Vérification de l'option longue: --format=<format> ou --format <format>
-  const formatOption = process.argv.find((arg) => arg.startsWith('--format='));
-  if (formatOption) {
-    const format = formatOption.split('=')[1];
-    return isValidFormat(format) ? (format as FormatType) : undefined;
-  }
-
-  if (process.argv.includes('--format') && process.argv.indexOf('--format') + 1 < process.argv.length) {
-    const format = process.argv[process.argv.indexOf('--format') + 1];
-    return isValidFormat(format) ? (format as FormatType) : undefined;
-  }
-
-  return undefined;
-}
-
-/**
- * Vérifie si le format spécifié est valide
- * @param format Format à vérifier
- * @returns true si le format est valide, false sinon
- */
-function isValidFormat(format: string): boolean {
-  const validFormats: FormatType[] = ['json', 'text', 'table', 'minimal', 'human', 'csv'];
-  return validFormats.includes(format as FormatType);
-}
-
-/**
  * List issues in a repository
  */
 async function listIssues(options: any): Promise<void> {
-  // Les options globales peuvent être dans différents endroits selon la structure de commander
-  const globalOpts = options._optionValues || {};
+  // Récupérer le format et les options globales directement depuis les arguments
+  const formatType = getFormatFromArgs() || 'human';
 
-  // Parse command line options - prioritize direct options over parent options
-  const formatType = detectFormat(globalOpts);
-  const verbose = globalOpts.verbose || false;
+  // Check for --pretty directly in process.argv
+  const hasPretty = process.argv.includes('--pretty');
+
+  // Check for --indent value
+  let indent: number | undefined = undefined;
+  const indentOption = process.argv.find((arg) => arg.startsWith('--indent='));
+  if (indentOption) {
+    indent = Number(indentOption.split('=')[1]);
+  } else if (process.argv.includes('--indent') && process.argv.indexOf('--indent') + 1 < process.argv.length) {
+    const indentValue = process.argv[process.argv.indexOf('--indent') + 1];
+    // Only use the value if it's a number (not another option)
+    if (!indentValue.startsWith('-')) {
+      indent = Number(indentValue);
+    }
+  }
+
+  // Check for --no-color
+  const hasNoColor = process.argv.includes('--no-color');
+
+  // Check for --timezone
+  let timezone: string | undefined = undefined;
+  const timezoneOption = process.argv.find((arg) => arg.startsWith('--timezone='));
+  if (timezoneOption) {
+    timezone = timezoneOption.split('=')[1];
+  } else if (process.argv.includes('--timezone') && process.argv.indexOf('--timezone') + 1 < process.argv.length) {
+    const timezoneValue = process.argv[process.argv.indexOf('--timezone') + 1];
+    // Only use the value if it's not another option
+    if (!timezoneValue.startsWith('-')) {
+      timezone = timezoneValue;
+    }
+  }
+
+  const verbose = options.verbose || process.argv.includes('--verbose') || false;
+
+  // Créer les options de formatage
+  const formatterOptions: Record<string, any> = {
+    pretty: hasPretty,
+    indent: indent,
+    useColors: !hasNoColor,
+    timezone: timezone,
+  };
+
+  // Default indent for JSON pretty
+  if (formatType === 'json' && hasPretty && indent === undefined) {
+    formatterOptions.indent = 2;
+  }
 
   // Load config and merge with command line options
-  const config = loadConfig(cmdArgsToConfig(globalOpts));
+  const config = loadConfig(cmdArgsToConfig(options));
 
   // Create GitHub client
   const client = GitHubClient.fromConfig(config);
@@ -194,8 +195,20 @@ async function listIssues(options: any): Promise<void> {
       return;
     }
 
-    // Utiliser le formatOutput avec le format détecté
-    console.log(formatOutput(issues, formatType));
+    // Utilisez la même approche que test-format.ts
+    // Créer les options de formatage pour le runtime
+    const runtimeOptions = {
+      pretty: hasPretty,
+      indent: indent,
+      useColors: !hasNoColor,
+      timezone: timezone,
+    };
+
+    // Instantiate formatter using Factory
+    const formatter = defaultFactory.create(formatType);
+
+    // Format the output using the formatter directly
+    console.log(formatter.format(issues, runtimeOptions));
   } catch (error) {
     // Handle common API issues
     if (error instanceof Error) {
@@ -218,12 +231,55 @@ async function listIssues(options: any): Promise<void> {
  * Get details of a specific issue
  */
 async function getIssue(issueNumber: string, options: any): Promise<void> {
-  // Les options globales peuvent être dans différents endroits selon la structure de commander
-  const globalOpts = options._optionValues || {};
+  // Récupérer le format et les options globales directement depuis les arguments
+  const formatType = getFormatFromArgs() || 'human';
 
-  // Parse command line options - prioritize direct options over parent options
-  const formatType = detectFormat(globalOpts);
-  const verbose = globalOpts.verbose || false;
+  // Check for --pretty directly in process.argv
+  const hasPretty = process.argv.includes('--pretty');
+
+  // Check for --indent value
+  let indent: number | undefined = undefined;
+  const indentOption = process.argv.find((arg) => arg.startsWith('--indent='));
+  if (indentOption) {
+    indent = Number(indentOption.split('=')[1]);
+  } else if (process.argv.includes('--indent') && process.argv.indexOf('--indent') + 1 < process.argv.length) {
+    const indentValue = process.argv[process.argv.indexOf('--indent') + 1];
+    // Only use the value if it's a number (not another option)
+    if (!indentValue.startsWith('-')) {
+      indent = Number(indentValue);
+    }
+  }
+
+  // Check for --no-color
+  const hasNoColor = process.argv.includes('--no-color');
+
+  // Check for --timezone
+  let timezone: string | undefined = undefined;
+  const timezoneOption = process.argv.find((arg) => arg.startsWith('--timezone='));
+  if (timezoneOption) {
+    timezone = timezoneOption.split('=')[1];
+  } else if (process.argv.includes('--timezone') && process.argv.indexOf('--timezone') + 1 < process.argv.length) {
+    const timezoneValue = process.argv[process.argv.indexOf('--timezone') + 1];
+    // Only use the value if it's not another option
+    if (!timezoneValue.startsWith('-')) {
+      timezone = timezoneValue;
+    }
+  }
+
+  const verbose = options.verbose || process.argv.includes('--verbose') || false;
+
+  // Créer les options de formatage
+  const formatterOptions: Record<string, any> = {
+    pretty: hasPretty,
+    indent: indent,
+    useColors: !hasNoColor,
+    timezone: timezone,
+  };
+
+  // Default indent for JSON pretty
+  if (formatType === 'json' && hasPretty && indent === undefined) {
+    formatterOptions.indent = 2;
+  }
 
   // Validate issue number
   const issueId = parseInt(issueNumber, 10);
@@ -232,7 +288,7 @@ async function getIssue(issueNumber: string, options: any): Promise<void> {
   }
 
   // Load config and merge with command line options
-  const config = loadConfig(cmdArgsToConfig(globalOpts));
+  const config = loadConfig(cmdArgsToConfig(options));
 
   // Create GitHub client
   const client = GitHubClient.fromConfig(config);
@@ -245,20 +301,75 @@ async function getIssue(issueNumber: string, options: any): Promise<void> {
   // Fetch issue
   const issue = await client.getIssue(issueId);
 
-  // Print results
-  console.log(formatOutput(issue, formatType));
+  // Utilisez la même approche que test-format.ts
+  // Créer les options de formatage pour le runtime
+  const runtimeOptions = {
+    pretty: hasPretty,
+    indent: indent,
+    useColors: !hasNoColor,
+    timezone: timezone,
+  };
+
+  // Instantiate formatter using Factory
+  const formatter = defaultFactory.create(formatType);
+
+  // Format the output using the formatter directly
+  console.log(formatter.format(issue, runtimeOptions));
 }
 
 /**
  * Create a new issue
  */
 async function createIssue(options: any): Promise<void> {
-  // Les options globales peuvent être dans différents endroits selon la structure de commander
-  const globalOpts = options._optionValues || {};
+  // Récupérer le format et les options globales directement depuis les arguments
+  const formatType = getFormatFromArgs() || 'human';
 
-  // Parse command line options - prioritize direct options over parent options
-  const formatType = detectFormat(globalOpts);
-  const verbose = globalOpts.verbose || false;
+  // Check for --pretty directly in process.argv
+  const hasPretty = process.argv.includes('--pretty');
+
+  // Check for --indent value
+  let indent: number | undefined = undefined;
+  const indentOption = process.argv.find((arg) => arg.startsWith('--indent='));
+  if (indentOption) {
+    indent = Number(indentOption.split('=')[1]);
+  } else if (process.argv.includes('--indent') && process.argv.indexOf('--indent') + 1 < process.argv.length) {
+    const indentValue = process.argv[process.argv.indexOf('--indent') + 1];
+    // Only use the value if it's a number (not another option)
+    if (!indentValue.startsWith('-')) {
+      indent = Number(indentValue);
+    }
+  }
+
+  // Check for --no-color
+  const hasNoColor = process.argv.includes('--no-color');
+
+  // Check for --timezone
+  let timezone: string | undefined = undefined;
+  const timezoneOption = process.argv.find((arg) => arg.startsWith('--timezone='));
+  if (timezoneOption) {
+    timezone = timezoneOption.split('=')[1];
+  } else if (process.argv.includes('--timezone') && process.argv.indexOf('--timezone') + 1 < process.argv.length) {
+    const timezoneValue = process.argv[process.argv.indexOf('--timezone') + 1];
+    // Only use the value if it's not another option
+    if (!timezoneValue.startsWith('-')) {
+      timezone = timezoneValue;
+    }
+  }
+
+  const verbose = options.verbose || process.argv.includes('--verbose') || false;
+
+  // Créer les options de formatage
+  const formatterOptions: Record<string, any> = {
+    pretty: hasPretty,
+    indent: indent,
+    useColors: !hasNoColor,
+    timezone: timezone,
+  };
+
+  // Default indent for JSON pretty
+  if (formatType === 'json' && hasPretty && indent === undefined) {
+    formatterOptions.indent = 2;
+  }
 
   // Validate required fields
   if (!options.title) {
@@ -266,7 +377,7 @@ async function createIssue(options: any): Promise<void> {
   }
 
   // Load config and merge with command line options
-  const config = loadConfig(cmdArgsToConfig(globalOpts));
+  const config = loadConfig(cmdArgsToConfig(options));
 
   // Create GitHub client
   const client = GitHubClient.fromConfig(config);
@@ -294,20 +405,75 @@ async function createIssue(options: any): Promise<void> {
     labels: apiOptions.labels,
   });
 
-  // Print results
-  console.log(formatOutput(issue, formatType));
+  // Utilisez la même approche que test-format.ts
+  // Créer les options de formatage pour le runtime
+  const runtimeOptions = {
+    pretty: hasPretty,
+    indent: indent,
+    useColors: !hasNoColor,
+    timezone: timezone,
+  };
+
+  // Instantiate formatter using Factory
+  const formatter = defaultFactory.create(formatType);
+
+  // Format the output using the formatter directly
+  console.log(formatter.format(issue, runtimeOptions));
 }
 
 /**
  * Update an existing issue
  */
 async function updateIssue(issueNumber: string, options: any): Promise<void> {
-  // Les options globales peuvent être dans différents endroits selon la structure de commander
-  const globalOpts = options._optionValues || {};
+  // Récupérer le format et les options globales directement depuis les arguments
+  const formatType = getFormatFromArgs() || 'human';
 
-  // Parse command line options - prioritize direct options over parent options
-  const formatType = detectFormat(globalOpts);
-  const verbose = globalOpts.verbose || false;
+  // Check for --pretty directly in process.argv
+  const hasPretty = process.argv.includes('--pretty');
+
+  // Check for --indent value
+  let indent: number | undefined = undefined;
+  const indentOption = process.argv.find((arg) => arg.startsWith('--indent='));
+  if (indentOption) {
+    indent = Number(indentOption.split('=')[1]);
+  } else if (process.argv.includes('--indent') && process.argv.indexOf('--indent') + 1 < process.argv.length) {
+    const indentValue = process.argv[process.argv.indexOf('--indent') + 1];
+    // Only use the value if it's a number (not another option)
+    if (!indentValue.startsWith('-')) {
+      indent = Number(indentValue);
+    }
+  }
+
+  // Check for --no-color
+  const hasNoColor = process.argv.includes('--no-color');
+
+  // Check for --timezone
+  let timezone: string | undefined = undefined;
+  const timezoneOption = process.argv.find((arg) => arg.startsWith('--timezone='));
+  if (timezoneOption) {
+    timezone = timezoneOption.split('=')[1];
+  } else if (process.argv.includes('--timezone') && process.argv.indexOf('--timezone') + 1 < process.argv.length) {
+    const timezoneValue = process.argv[process.argv.indexOf('--timezone') + 1];
+    // Only use the value if it's not another option
+    if (!timezoneValue.startsWith('-')) {
+      timezone = timezoneValue;
+    }
+  }
+
+  const verbose = options.verbose || process.argv.includes('--verbose') || false;
+
+  // Créer les options de formatage
+  const formatterOptions: Record<string, any> = {
+    pretty: hasPretty,
+    indent: indent,
+    useColors: !hasNoColor,
+    timezone: timezone,
+  };
+
+  // Default indent for JSON pretty
+  if (formatType === 'json' && hasPretty && indent === undefined) {
+    formatterOptions.indent = 2;
+  }
 
   // Validate issue number
   const issueId = parseInt(issueNumber, 10);
@@ -321,7 +487,7 @@ async function updateIssue(issueNumber: string, options: any): Promise<void> {
   }
 
   // Load config and merge with command line options
-  const config = loadConfig(cmdArgsToConfig(globalOpts));
+  const config = loadConfig(cmdArgsToConfig(options));
 
   // Create GitHub client
   const client = GitHubClient.fromConfig(config);
@@ -350,6 +516,54 @@ async function updateIssue(issueNumber: string, options: any): Promise<void> {
   // Update issue
   const issue = await client.updateIssue(issueId, apiOptions);
 
-  // Print results
-  console.log(formatOutput(issue, formatType));
+  // Utilisez la même approche que test-format.ts
+  // Créer les options de formatage pour le runtime
+  const runtimeOptions = {
+    pretty: hasPretty,
+    indent: indent,
+    useColors: !hasNoColor,
+    timezone: timezone,
+  };
+
+  // Instantiate formatter using Factory
+  const formatter = defaultFactory.create(formatType);
+
+  // Format the output using the formatter directly
+  console.log(formatter.format(issue, runtimeOptions));
+}
+
+/**
+ * Extrait le format spécifié par les arguments de ligne de commande
+ * @returns Le format spécifié ou undefined si aucun n'est spécifié
+ */
+function getFormatFromArgs(): FormatType | undefined {
+  // Vérification de l'option courte: -f <format>
+  if (process.argv.includes('-f') && process.argv.indexOf('-f') + 1 < process.argv.length) {
+    const format = process.argv[process.argv.indexOf('-f') + 1];
+    return isValidFormat(format) ? (format as FormatType) : undefined;
+  }
+
+  // Vérification de l'option longue: --format=<format> ou --format <format>
+  const formatOption = process.argv.find((arg) => arg.startsWith('--format='));
+  if (formatOption) {
+    const format = formatOption.split('=')[1];
+    return isValidFormat(format) ? (format as FormatType) : undefined;
+  }
+
+  if (process.argv.includes('--format') && process.argv.indexOf('--format') + 1 < process.argv.length) {
+    const format = process.argv[process.argv.indexOf('--format') + 1];
+    return isValidFormat(format) ? (format as FormatType) : undefined;
+  }
+
+  return undefined;
+}
+
+/**
+ * Vérifie si le format spécifié est valide
+ * @param format Format à vérifier
+ * @returns true si le format est valide, false sinon
+ */
+function isValidFormat(format: string): boolean {
+  const validFormats: FormatType[] = ['json', 'text', 'table', 'minimal', 'human', 'csv'];
+  return validFormats.includes(format as FormatType);
 }

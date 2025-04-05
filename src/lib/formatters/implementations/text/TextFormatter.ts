@@ -3,7 +3,7 @@
  * Provides formatting for GitHub data in a human-readable text format
  */
 
-import { BaseFormatter, FormatType } from '../../base';
+import { BaseFormatter, FormatType, FormatterRuntimeOptions } from '../../base';
 import { TextFormatterOptions } from './types';
 import { formatIssue, formatPullRequest, formatRepository, formatUser } from './helpers';
 import { colorize } from './colors';
@@ -36,41 +36,50 @@ export class TextFormatter extends BaseFormatter {
   }
 
   /**
-   * Configure the formatter
-   * @param options Configuration options
+   * Configure the formatter with specific options
+   * @param options Options to configure
    */
   configure(options: Partial<TextFormatterOptions>): void {
-    // Merge options with defaults
-    this.options = {
-      ...this.options,
-      ...options,
-    };
+    this.options = { ...this.options, ...options };
   }
 
   /**
    * Format data into a string representation
    * @param data The data to format
+   * @param runtimeOptions Optional runtime formatting options
    * @returns Formatted string
    */
-  format(data: any): string {
-    if (data === null || data === undefined) {
-      return '';
+  format(data: any, runtimeOptions?: FormatterRuntimeOptions): string {
+    // Fusionner les options de configuration avec les options d'exécution
+    const mergedOptions = {
+      ...this.options,
+      ...(runtimeOptions || {}),
+    };
+
+    // Utiliser temporairement les options fusionnées
+    const originalOptions = { ...this.options };
+    this.options = mergedOptions;
+
+    let result = '';
+
+    try {
+      if (data === null || data === undefined) {
+        result = '';
+      } else if (typeof data === 'string') {
+        result = data;
+      } else if (typeof data === 'number' || typeof data === 'boolean') {
+        result = String(data);
+      } else if (Array.isArray(data)) {
+        result = this.formatArray(data);
+      } else {
+        result = this.formatObject(data);
+      }
+    } finally {
+      // Restaurer les options originales
+      this.options = originalOptions;
     }
 
-    // Directly return primitive types as strings
-    if (typeof data === 'string') {
-      return data;
-    }
-
-    if (typeof data === 'number' || typeof data === 'boolean') {
-      return String(data);
-    }
-
-    if (Array.isArray(data)) {
-      return this.formatArray(data);
-    }
-
-    return this.formatObject(data);
+    return result;
   }
 
   /**

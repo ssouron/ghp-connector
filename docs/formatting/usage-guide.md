@@ -65,8 +65,37 @@ ghp issue list --format=json --compact
 ghp issue list --format=text --detailed
 
 # Human-readable without colors (applies to text/human)
-ghp issue list --format=human --no-colors
+ghp issue list --format=human --no-color
 ```
+
+### Working with JSON Format in Terminal
+
+When using the JSON format with `--pretty` option, the terminal may not display the indentation correctly due to how terminals handle newline characters in output. For best results with pretty-printed JSON:
+
+1. **Redirect to a file** for correct visualization:
+   ```bash
+   ghp issue list --format=json --pretty > issues.json
+   ```
+2. **Use JSON processing tools** like `jq` (if available):
+
+   ```bash
+   ghp issue list --format=json | jq
+   ```
+
+3. **Pipe to external formatters** for improved readability:
+
+   ```bash
+   ghp issue list --format=json | python3 -m json.tool
+   ```
+
+4. **Open in an editor** with JSON syntax highlighting:
+   ```bash
+   ghp issue list --format=json --pretty > issues.json && code issues.json
+   ```
+
+#### Terminal Display Limitations
+
+Terminal emulators sometimes have difficulty correctly displaying multiline JSON output with indentation. The JSON data itself is correctly formatted, but the terminal rendering may not preserve the intended spacing and line breaks. This is a limitation of the terminal, not the formatting system.
 
 ## For Developers
 

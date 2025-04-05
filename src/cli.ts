@@ -144,7 +144,7 @@ process.on('unhandledRejection', (error) => {
   handleError(error, program.opts().debug);
 });
 
-// Parse the command line arguments (restore this simple parse call)
+// Parse the command line arguments
 try {
   program.parse(process.argv);
 } catch (error) {

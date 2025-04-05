@@ -63,7 +63,7 @@ export class FormatterFactory {
   format<T extends FormatType>(data: any, format: T, config?: Partial<FormatterConfigForType<T>>): string {
     try {
       const formatter = this.create(format, config);
-      return formatter.format(data);
+      return formatter.format(data, config as any);
     } catch (error) {
       // If the error is already a FormattingError or a UnsupportedFormatError, rethrow it
       if (error instanceof FormattingError || error instanceof UnsupportedFormatError) {
@@ -86,6 +86,6 @@ export class FormatterFactory {
    */
   formatWithDefault<T extends FormatType>(data: any, config?: Partial<FormatterConfigForType<T>>): string {
     const formatter = this.createDefault(config);
-    return formatter.format(data);
+    return formatter.format(data, config as any);
   }
 }

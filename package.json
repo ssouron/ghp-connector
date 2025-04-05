@@ -19,7 +19,10 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\"",
     "prepare": "npm run build",
-    "prepublishOnly": "npm test && npm run lint"
+    "prepublishOnly": "npm test && npm run lint",
+    "ghp": "node dist/cli.js",
+    "ghp:issue:list": "node dist/cli.js issue list",
+    "ghp:issue:get": "node dist/cli.js issue get"
   },
   "keywords": [
     "github",

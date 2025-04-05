@@ -1,4 +1,4 @@
-import { BaseFormatter } from '../../base';
+import { BaseFormatter, FormatterRuntimeOptions } from '../../base';
 import { JsonFormatterOptions } from './types';
 import { circularReferenceReplacer, sortObjectKeysRecursively } from './serializers';
 
@@ -10,12 +10,18 @@ export class JsonFormatter extends BaseFormatter {
     this.options = { ...options };
   }
 
-  format(data: unknown): string {
+  format(data: unknown, runtimeOptions?: FormatterRuntimeOptions): string {
+    // Fusionner les options de configuration avec les options d'exécution
+    const mergedOptions = {
+      ...this.options,
+      ...(runtimeOptions || {}),
+    };
+
     let indent: number | undefined;
-    if (this.options.compact === true) {
+    if (mergedOptions.compact === true) {
       indent = 0; // Compact overrides pretty and indent
-    } else if (this.options.pretty === true) {
-      indent = this.options.indent ?? 2; // Default indent is 2 only if pretty is explicitly true
+    } else if (mergedOptions.pretty === true) {
+      indent = mergedOptions.indent ?? 2; // Default indent is 2 only if pretty is explicitly true
     } else {
       indent = undefined; // Default is compact (undefined indent)
     }
@@ -24,7 +30,10 @@ export class JsonFormatter extends BaseFormatter {
       // 1. Sort keys for consistent output
       const sortedData = sortObjectKeysRecursively(data);
       // 2. Stringify with circular reference handling
-      return JSON.stringify(sortedData, circularReferenceReplacer(), indent);
+      const jsonString = JSON.stringify(sortedData, circularReferenceReplacer(), indent);
+
+      // Retourner simplement la chaîne JSON formatée
+      return jsonString;
     } catch (error) {
       // Improved error handling can be added later
       if (error instanceof Error) {

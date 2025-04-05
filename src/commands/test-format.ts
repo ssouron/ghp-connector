@@ -79,6 +79,8 @@ export const testFormatCommand = new Command('test-format')
       ];
 
       // --- Create Formatter Runtime Options from CLI options ---
+      console.log('OPTIONS =', options);
+
       const runtimeOptions: FormatterRuntimeOptions = {
         pretty: options.pretty,
         // Convert string indent from CLI to number, defaulting if undefined?
@@ -97,7 +99,7 @@ export const testFormatCommand = new Command('test-format')
 
       // --- Output sample data using the chosen formatter AND runtime options ---
       console.log('=== ISSUE ===');
-      console.log(formatter.format(issue, runtimeOptions)); // Pass runtimeOptions
+      console.log(formatter.format(issue, runtimeOptions));
       console.log('\n=== PULL REQUEST ===');
       console.log(formatter.format(pullRequest, runtimeOptions));
       console.log('\n=== REPOSITORY ===');
