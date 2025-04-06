@@ -37,6 +37,12 @@ export interface TextFormatterOptions {
    * @default false
    */
   detailed?: boolean;
+
+  /**
+   * Whether to show comments for issues
+   * @default false
+   */
+  showComments?: boolean;
 }
 
 /**
@@ -47,6 +53,11 @@ export interface ColorConfig {
    * Color for headers and titles
    */
   header: string;
+
+  /**
+   * Color for secondary headers
+   */
+  header2: string;
 
   /**
    * Color for keys/labels
@@ -67,6 +78,11 @@ export interface ColorConfig {
    * Color for URLs
    */
   url: string;
+
+  /**
+   * Color for section headers
+   */
+  section: string;
 
   /**
    * Color for status indicators

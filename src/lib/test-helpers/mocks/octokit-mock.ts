@@ -4,7 +4,7 @@
 
 import { Octokit } from 'octokit';
 import { GitHubClient } from '../../github/client';
-import { createMockIssue, createMockIssueList } from '../mock-github';
+import { createMockIssue, createMockIssueList, createMockCommentList } from '../mock-github';
 import { mock, MockProxy } from 'jest-mock-extended';
 
 /**
@@ -13,21 +13,25 @@ import { mock, MockProxy } from 'jest-mock-extended';
 export interface OctokitMockOptions {
   /** Nombre d'issues à créer par défaut */
   defaultIssueCount?: number;
+  /** Nombre de commentaires à créer par défaut */
+  defaultCommentCount?: number;
   /** Réponses personnalisées pour les requêtes */
   customResponses?: Record<string, any>;
 }
 
 /**
- * Crée un mock pour Octokit
+ * Crée un mock pour l'API Octokit
+ * @param options Options de configuration
+ * @returns Un mock de l'API Octokit
  */
 export function mockOctokit(options: OctokitMockOptions = {}) {
-  const { defaultIssueCount = 5, customResponses = {} } = options;
+  const { defaultIssueCount = 5, defaultCommentCount = 3, customResponses = {} } = options;
 
-  // Créer une implémentation partielle de Octokit avec les méthodes mockeés
+  // Créer un mock pour Octokit
   const octokitMock = {
     rest: {
       repos: {
-        get: jest.fn().mockImplementation(async () => ({
+        get: jest.fn().mockResolvedValue({
           data: {
             id: 123456,
             name: 'test-repo',
@@ -47,7 +51,7 @@ export function mockOctokit(options: OctokitMockOptions = {}) {
           status: 200,
           headers: {},
           url: 'https://api.github.com/repos/test-owner/test-repo',
-        })),
+        }),
       },
       issues: {
         listForRepo: jest.fn().mockImplementation(async () => ({
@@ -80,27 +84,17 @@ export function mockOctokit(options: OctokitMockOptions = {}) {
             headers: {},
             url: `https://api.github.com/repos/test-owner/test-repo/issues/${issue_number}`,
           })),
+        listComments: jest.fn().mockImplementation(async ({ issue_number }: { issue_number: number }) => ({
+          data:
+            customResponses.issues?.comments?.[issue_number] ||
+            createMockCommentList(issue_number, defaultCommentCount),
+          status: 200,
+          headers: {},
+          url: `https://api.github.com/repos/test-owner/test-repo/issues/${issue_number}/comments`,
+        })),
       },
     },
-    graphql: jest.fn().mockImplementation(async (query: string, variables?: Record<string, any>) => {
-      // Si une réponse personnalisée est fournie pour cette requête, l'utiliser
-      const queryKey = query.replace(/\s+/g, ' ').trim();
-      if (customResponses.graphql?.[queryKey]) {
-        return customResponses.graphql[queryKey](variables);
-      }
-
-      // Réponse par défaut
-      return {
-        repository: {
-          id: 'R_123456',
-          name: 'test-repo',
-          owner: { login: 'test-owner' },
-          issues: {
-            nodes: createMockIssueList(3),
-          },
-        },
-      };
-    }),
+    graphql: jest.fn().mockResolvedValue({}),
   };
 
   return octokitMock as unknown as Octokit;

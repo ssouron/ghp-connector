@@ -22,6 +22,19 @@ export class TextFormatter extends BaseFormatter {
     timezone: 'local',
     indentSize: 2,
     detailed: false,
+    showComments: false,
+  };
+
+  /**
+   * Default formatter options
+   */
+  private static readonly defaultOptions: TextFormatterOptions = {
+    useColors: true,
+    dateFormat: 'local',
+    timezone: 'local',
+    indentSize: 2,
+    detailed: false,
+    showComments: false,
   };
 
   /**
@@ -134,14 +147,7 @@ export class TextFormatter extends BaseFormatter {
   private formatObject(obj: Record<string, any>): string {
     // Detect and format specific GitHub entities
     if (this.isIssue(obj)) {
-      return formatIssue(
-        obj,
-        0,
-        this.options.useColors,
-        this.options.detailed,
-        this.options.dateFormat,
-        this.options.timezone
-      );
+      return this.formatIssue(obj);
     }
 
     if (this.isPullRequest(obj)) {
@@ -287,6 +293,23 @@ export class TextFormatter extends BaseFormatter {
   }
 
   /**
+   * Format an issue object
+   * @param issue Issue object
+   * @returns Formatted string
+   */
+  private formatIssue(issue: any): string {
+    return formatIssue(
+      issue,
+      0,
+      this.options.useColors ?? true,
+      this.options.detailed ?? false,
+      this.options.dateFormat ?? 'local',
+      this.options.timezone ?? 'local',
+      this.options.showComments ?? false
+    );
+  }
+
+  /**
    * Format an array of issues
    * @param issues Issues array
    * @returns Formatted string
@@ -310,7 +333,8 @@ export class TextFormatter extends BaseFormatter {
           this.options.useColors,
           this.options.detailed,
           this.options.dateFormat,
-          this.options.timezone
+          this.options.timezone,
+          this.options.showComments
         )
       ),
     ].join('\n\n');

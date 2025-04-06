@@ -96,7 +96,7 @@ export function generateLargeDataset(size: 'small' | 'medium' | 'large' | 'xlarg
     const issue = generateMockIssue(i + 1);
 
     // Add deep nested properties for testing serialization
-    let nestedObj: any = {};
+    const nestedObj: any = {};
     let current = nestedObj;
 
     for (let d = 0; d < depth; d++) {
