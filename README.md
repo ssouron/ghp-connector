@@ -128,6 +128,7 @@ The project roadmap is structured around the following milestones:
 
 For more details on usage and features, see the documentation files:
 
+- [User Manual](./docs/user-manual/index.md)
 - [Initial Specifications](./docs/initial-specs.md)
 - [CLI Architecture](./docs/cli-architecture.md)
 - [Architecture Diagram](./docs/architecture-diagram.md)
