@@ -5,6 +5,26 @@ All notable changes to GHP Connector will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2024-05-06
+
+### Added
+
+- Implemented enhanced `ghp issue get` command with comprehensive features:
+  - Detailed issue display with title, body, status, labels, assignees, and dates
+  - Support for retrieving and displaying issue comments with `--with-comments` flag
+  - GitHub URL inclusion for easy browser access
+  - Comment count and last activity display
+  - Proper error handling for non-existent issues
+- Added detailed documentation for `issue get` command in user manual
+- Enhanced testing infrastructure for command testing
+- Improved error messages for better user experience
+
+### Improved
+
+- Refined test organization for better maintainability
+- Enhanced output formatting for issue details
+- Added proper inheritance of formatting options to subcommands
+
 ## [0.4.0] - 2024-04-09
 
 ### Added

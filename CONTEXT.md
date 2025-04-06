@@ -8,7 +8,7 @@ GHP Connector is an open-source Node.js library for interacting with GitHub Issu
 
 ## Current Project Status
 
-- npm project initialization (version 0.4.0)
+- npm project initialization (version 0.5.0)
 - MIT License
 - Basic project structure in place
 - Initial specifications documented
@@ -25,6 +25,7 @@ GHP Connector is an open-source Node.js library for interacting with GitHub Issu
 - Formatter testing infrastructure implemented (Issue #37)
 - Basic output formatting options support completed (Issue #13)
 - Enhanced issue list command with comprehensive filtering options (Issue #4)
+- Enhanced issue get command with support for comments and detailed information display (Issue #6)
 
 ## Main Objectives
 
@@ -238,6 +239,12 @@ The following rules MUST be followed WITHOUT EXCEPTION in all aspects of the pro
   - Fixed global options display in help output
   - Added explicit help notes for all commands about global options
   - Consolidated CLI entry points
+- Enhanced Issue Get Command (Issue #6)
+  - Detailed display of issue information
+  - Support for retrieving and displaying issue comments
+  - GitHub URL and last activity information
+  - Proper error handling for non-existent issues
+  - Comprehensive user documentation
 
 ## Technical Decisions Log
 
