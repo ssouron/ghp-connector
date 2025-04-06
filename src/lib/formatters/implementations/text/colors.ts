@@ -11,10 +11,12 @@ import { ColorConfig } from './types';
  */
 export const defaultColors: ColorConfig = {
   header: 'blue',
+  header2: 'magenta', // Secondary header color for comment headers
   key: 'cyan',
   value: 'white',
   date: 'yellow',
   url: 'green',
+  section: 'cyan', // Section headers for content categories
   status: {
     success: 'green',
     warning: 'yellow',

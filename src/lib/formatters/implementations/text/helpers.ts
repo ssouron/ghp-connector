@@ -89,6 +89,7 @@ function getRelativeTime(date: Date): string {
  * @param detailed Whether to include detailed information
  * @param dateFormat Date format to use
  * @param timezone Timezone to use
+ * @param showComments Whether to display comments
  * @returns Formatted issue string
  */
 export function formatIssue(
@@ -97,7 +98,8 @@ export function formatIssue(
   useColors = true,
   detailed = false,
   dateFormat: 'ISO' | 'local' | 'relative' = 'local',
-  timezone = 'local'
+  timezone = 'local',
+  showComments = false
 ): string {
   if (!issue) {
     return '';
@@ -117,11 +119,32 @@ export function formatIssue(
     lines.push(`${statusLabel}${status}`);
   }
 
+  // GitHub URL
+  if (issue.html_url) {
+    const urlLabel = `${indent}URL: `;
+    const url = useColors ? colorize(issue.html_url, 'url', useColors) : issue.html_url;
+    lines.push(`${urlLabel}${url}`);
+  }
+
   // Creation date
   if (issue.created_at) {
     const dateLabel = `${indent}Created: `;
     const date = formatDate(issue.created_at, dateFormat, timezone, useColors);
     lines.push(`${dateLabel}${date}`);
+  }
+
+  // Updated date (last activity)
+  if (issue.updated_at) {
+    const dateLabel = `${indent}Last updated: `;
+    const date = formatDate(issue.updated_at, dateFormat, timezone, useColors);
+    lines.push(`${dateLabel}${date}`);
+  }
+
+  // Creator
+  if (issue.user) {
+    const creatorLabel = `${indent}Created by: `;
+    const creator = useColors ? colorize(issue.user.login, 'value', useColors) : issue.user.login;
+    lines.push(`${creatorLabel}${creator}`);
   }
 
   // Labels
@@ -138,10 +161,51 @@ export function formatIssue(
     lines.push(`${assigneesLabel}${useColors ? colorize(assigneesStr, 'value', useColors) : assigneesStr}`);
   }
 
+  // Milestone
+  if (issue.milestone) {
+    const milestoneLabel = `${indent}Milestone: `;
+    const milestone = useColors ? colorize(issue.milestone.title, 'value', useColors) : issue.milestone.title;
+    lines.push(`${milestoneLabel}${milestone}`);
+  }
+
+  // Comment count
+  if (issue.comments !== undefined) {
+    const commentsLabel = `${indent}Comments: `;
+    const commentsCount = useColors
+      ? colorize(issue.comments.toString(), 'value', useColors)
+      : issue.comments.toString();
+    lines.push(`${commentsLabel}${commentsCount}`);
+  }
+
   // Add body if detailed view is requested
   if (detailed && issue.body) {
     lines.push(''); // Empty line for separation
+    lines.push(`${indent}${useColors ? colorize('Description:', 'section', useColors) : 'Description:'}`);
     lines.push(`${indent}${issue.body}`);
+  }
+
+  // Add comments if available and requested
+  if (showComments && issue.comments_data && issue.comments_data.length > 0) {
+    lines.push(''); // Empty line for separation
+    lines.push(`${indent}${useColors ? colorize('Comments:', 'section', useColors) : 'Comments:'}`);
+
+    issue.comments_data.forEach((comment: any, index: number) => {
+      if (index > 0) {
+        lines.push(''); // Add separation between comments
+      }
+
+      // Comment header with author and date
+      const commentHeader = `${indent}  ${comment.user.login} commented ${formatDate(comment.created_at, dateFormat, timezone, useColors)}:`;
+      lines.push(`${useColors ? colorize(commentHeader, 'header2', useColors) : commentHeader}`);
+
+      // Comment body with indentation
+      if (comment.body) {
+        const bodyLines = comment.body.split('\n');
+        bodyLines.forEach((line: string) => {
+          lines.push(`${indent}    ${line}`);
+        });
+      }
+    });
   }
 
   return lines.join('\n');

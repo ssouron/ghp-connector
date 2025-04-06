@@ -7,6 +7,7 @@ This directory contains user documentation for the GHP Connector command-line to
 ### GitHub Issues
 
 - [Issue List Command](./issue-list.md) - Listing and filtering GitHub issues
+- [Issue Get Command](./issue-get.md) - Retrieving detailed information about a specific issue
 
 ## General Topics
 
@@ -22,6 +23,5 @@ This directory contains user documentation for the GHP Connector command-line to
 
 ## Upcoming Documentation
 
-- Issue Get Command
 - Issue Create Command
 - Issue Update Command

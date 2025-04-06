@@ -57,11 +57,24 @@ Examples:
   listCmd.copyInheritedSettings(issueCommand);
 
   // Get issue
-  issueCommand
+  const getCmd = issueCommand
     .command('get')
     .description('Get details of a specific issue')
     .argument('<issue-number>', 'Issue number')
+    .option('--with-comments', 'Include issue comments in the output')
+    .addHelpText(
+      'after',
+      `
+Examples:
+  $ ghp issue get 123                  Get issue #123
+  $ ghp issue get 123 --with-comments  Get issue #123 with its comments
+  $ ghp issue get 123 --format=json    Get issue #123 in JSON format
+    `
+    )
     .action(wrapWithErrorHandler(getIssue));
+
+  // S'assurer que cette sous-commande hérite aussi des options
+  getCmd.copyInheritedSettings(issueCommand);
 
   // Create issue
   issueCommand
@@ -268,23 +281,22 @@ async function getIssue(issueNumber: string, options: any): Promise<void> {
 
   const verbose = options.verbose || process.argv.includes('--verbose') || false;
 
+  // Check for --with-comments flag
+  const withComments = options.withComments || false;
+
   // Créer les options de formatage
   const formatterOptions: Record<string, any> = {
     pretty: hasPretty,
     indent: indent,
     useColors: !hasNoColor,
     timezone: timezone,
+    detailed: true, // Always show detailed information for get command
+    showComments: withComments,
   };
 
   // Default indent for JSON pretty
   if (formatType === 'json' && hasPretty && indent === undefined) {
     formatterOptions.indent = 2;
-  }
-
-  // Validate issue number
-  const issueId = parseInt(issueNumber, 10);
-  if (isNaN(issueId)) {
-    throw new ValidationError('Issue number must be a valid number');
   }
 
   // Load config and merge with command line options
@@ -293,28 +305,66 @@ async function getIssue(issueNumber: string, options: any): Promise<void> {
   // Create GitHub client
   const client = GitHubClient.fromConfig(config);
 
+  // Validate issue number
+  const issueId = parseInt(issueNumber, 10);
+  if (isNaN(issueId)) {
+    throw new ValidationError('Issue number must be a valid number');
+  }
+
   // Optional extra information in verbose mode
   if (verbose) {
     console.log(`Fetching issue #${issueId} from ${config.github.owner}/${config.github.repo}`);
+    if (withComments) {
+      console.log('Including comments in the output');
+    }
   }
 
-  // Fetch issue
-  const issue = await client.getIssue(issueId);
+  try {
+    // Fetch issue
+    const issue = await client.getIssue(issueId);
 
-  // Utilisez la même approche que test-format.ts
-  // Créer les options de formatage pour le runtime
-  const runtimeOptions = {
-    pretty: hasPretty,
-    indent: indent,
-    useColors: !hasNoColor,
-    timezone: timezone,
-  };
+    // Fetch comments if requested
+    if (withComments) {
+      // Get comments and add them to the issue object
+      const comments = await client.getIssueComments(issueId);
+      if (comments) {
+        issue.comments_data = comments;
+      }
+    }
 
-  // Instantiate formatter using Factory
-  const formatter = defaultFactory.create(formatType);
+    // Créer les options de formatage pour le runtime
+    const runtimeOptions = {
+      pretty: hasPretty,
+      indent: indent,
+      useColors: !hasNoColor,
+      timezone: timezone,
+      detailed: true,
+      showComments: withComments,
+    };
 
-  // Format the output using the formatter directly
-  console.log(formatter.format(issue, runtimeOptions));
+    // Instantiate formatter using Factory
+    const formatter = defaultFactory.create(formatType);
+
+    // Format the output using the formatter directly
+    console.log(formatter.format(issue, runtimeOptions));
+  } catch (error) {
+    // Handle common API issues
+    if (error instanceof Error) {
+      if (error.message.includes('rate limit')) {
+        throw new Error('GitHub API rate limit exceeded. Please wait or provide a valid token.');
+      } else if (error.message.includes('network')) {
+        throw new Error('Network error occurred. Please check your internet connection.');
+      } else if (error.message.includes('401')) {
+        throw new Error('Authentication error. Please check your GitHub token.');
+      } else if (error.message.includes('404')) {
+        throw new Error(
+          `Issue #${issueId} not found in ${config.github.owner}/${config.github.repo} or you don't have access.`
+        );
+      }
+    }
+    // Re-throw other errors
+    throw error;
+  }
 }
 
 /**

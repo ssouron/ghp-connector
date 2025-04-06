@@ -130,6 +130,36 @@ export class GitHubClient {
   }
 
   /**
+   * Get comments for an issue
+   * @param issueNumber The issue number
+   * @param options Additional options
+   * @returns Array of comment objects
+   */
+  async getIssueComments(issueNumber: number, options: any = {}): Promise<any[]> {
+    const repoOwner = options.owner || this.owner;
+    const repoName = options.repo || this.repo;
+
+    if (!repoOwner || !repoName) {
+      throw new Error(
+        'Repository owner and name are required. Provide them as parameters or set them in the configuration.'
+      );
+    }
+
+    // Define pagination and sorting options
+    const apiOptions = {
+      owner: repoOwner,
+      repo: repoName,
+      issue_number: issueNumber,
+      per_page: options.per_page || 100,
+      sort: options.sort || 'created',
+      direction: options.direction || 'asc',
+    };
+
+    const { data } = await this.octokit.rest.issues.listComments(apiOptions);
+    return data;
+  }
+
+  /**
    * Create a new issue
    * Accepts either an options object with all parameters or separate parameters
    * @param titleOrOptions - Either the issue title as string or an options object containing title and other parameters
